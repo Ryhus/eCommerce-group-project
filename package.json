@@ -11,7 +11,7 @@
     "preview": "vite preview",
     "test": "vitest",
     "test:watch": "vitest --watch",
-    "deploy:prod": "npm run build && gh-pages -d dist --dest eCommerce-group-project"
+    "deploy:prod": "npm run build && gh-pages -d dist"
   },
   "dependencies": {
     "axios": "1.9.0",
