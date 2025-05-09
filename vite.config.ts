@@ -4,6 +4,7 @@ import eslint from "vite-plugin-eslint";
 
 // https://vite.dev/config/
 export default defineConfig({
+  base: "/eCommerce-group-project/",
   plugins: [react(), eslint()],
   test: {
     globals: true,

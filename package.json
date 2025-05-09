@@ -3,14 +3,15 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://github.com/Ryhus/eCommerce-group-project/",
+  "homepage": "https://Ryhus.github.io/eCommerce-group-project/",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint . --max-warnings 0",
     "preview": "vite preview",
     "test": "vitest",
-    "test:watch": "vitest --watch"
+    "test:watch": "vitest --watch",
+    "deploy:prod": "npm run build && gh-pages -d dist --dest eCommerce-group-project"
   },
   "dependencies": {
     "axios": "1.9.0",
