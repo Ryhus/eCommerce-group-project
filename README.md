@@ -33,6 +33,8 @@ The application is powered by CommerceTools 🌐, a leading provider of commerce
 ### Linting and formatting
 
 1. To run linter: `npm run lint`
+2. To run prettier: `npm run format` or `npm run format:check` for checking without rewriting
+3. Husky is configured for linting and format checking on precommits
 
 ### Deploy
 
@@ -47,3 +49,4 @@ The application is powered by CommerceTools 🌐, a leading provider of commerce
 4. Vitest
 5. Eslit
 6. Prettier
+7. Husky
