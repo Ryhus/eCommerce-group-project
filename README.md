@@ -25,6 +25,20 @@ The application is powered by CommerceTools 🌐, a leading provider of commerce
 4. Start developing project: `npm run dev`
 5. Build project: `npm run build`
 
+### Testing
+
+1. To execute all tests: `npm test`
+2. To run tests in live mode: `npm run test:watch`
+
+### Linting and formatting
+
+1. To run linter: `npm run lint`
+
+### Deploy
+
+1. Production URL: https://ryhus.github.io/eCommerce-group-project/
+2. To deploy project mannualy to **Production**: `npm run deploy:prod`
+
 ### Used Technologies
 
 1. TypeScript + React
