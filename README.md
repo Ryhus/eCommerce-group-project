@@ -50,3 +50,9 @@ The application is powered by CommerceTools 🌐, a leading provider of commerce
 5. Eslit
 6. Prettier
 7. Husky
+
+### Setup eCommerce
+
+1. Create account on https://docs.commercetools.com/getting-started/initial-setup
+2. Generate API keys
+3. Use dot.env.vault for secure storage of env variables
