@@ -1,9 +1,21 @@
 import { Link } from "react-router-dom";
+import "./Navigation.scss";
 
 function Nav() {
   return (
-    <nav>
-      <Link to="/">Home</Link> |<Link to="/login">Login</Link> |<Link to="/register">Registrartion</Link>
+    <nav className="nav">
+      <Link className="home-logo" to="/">
+        Sport Gear
+      </Link>
+
+      <div className="auth-links-container">
+        <Link className="auth-link" to="/login">
+          Log in
+        </Link>
+        <Link className="auth-link" to="/register">
+          Sign up
+        </Link>
+      </div>
     </nav>
   );
 }

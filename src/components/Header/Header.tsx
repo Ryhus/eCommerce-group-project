@@ -1,8 +1,10 @@
 import Nav from "../Navigation/Navigation";
 
+import "./Header.scss";
+
 function Header() {
   return (
-    <header>
+    <header className="header">
       <Nav />
     </header>
   );
