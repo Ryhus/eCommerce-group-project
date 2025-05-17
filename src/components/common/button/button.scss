@@ -1,0 +1,52 @@
+
+
+.btn {
+	// general btn styling
+	display: flex;
+	width: 100%; // should be adjustmed in use
+	max-width: 400px;
+	height: 52px;
+	padding: 16px 54px;
+	justify-content: center;
+	align-items: center;
+	gap: 12px;
+	flex-shrink: 0;
+	border-radius: 62px;
+
+	// typography for button text
+	color: #FFF;
+	font-family: 'Roboto', sans-serif;
+	font-size: 16px;
+	font-style: normal;
+	font-weight: 500;
+	line-height: normal;
+
+	&:not(:disabled):hover {
+		opacity: 0.8;
+	}
+	&:not(:disabled):active {
+		transform: scale(0.98);
+	  }
+
+	&:disabled,
+  	&.btn--disabled {
+		background-color: #F0F0F0;
+		color: #DDD;
+		cursor: not-allowed;
+		
+  }
+}
+
+
+// Dark variant: black background, white text (.btn--dark)
+.btn--dark {
+	background-color: #000;
+	color: #fff;
+  }
+  
+// Light variant: white background, black text (.btn--light)
+.btn--light {
+	background-color: #fff;
+	color: #000;
+	border: 1px solid #000;
+}
