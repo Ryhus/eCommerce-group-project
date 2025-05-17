@@ -7,8 +7,11 @@ type InputFieldProps = {
   placeholder?: string; // Optional placeholder text
   disabled?: boolean; // Disable interaction
   isValid?: boolean; // Mark input as invalid
-  className?: string;
-}; // to do: add optional icon
+  wrapperClassName?: string;
+  inputClassName?: string;
+  type?: string;
+  icon?: React.ReactNode;
+};
 
 const InputField: React.FC<InputFieldProps> = ({
   value,
@@ -16,20 +19,28 @@ const InputField: React.FC<InputFieldProps> = ({
   placeholder = "",
   disabled = false, // Default to enabled
   isValid = true, // Default to valid
-  className = "",
+  wrapperClassName = "",
+  inputClassName = "",
+  type = "text",
+  icon,
 }) => {
   const errorClass = isValid ? "" : "input--error";
-  const inputClass = `input ${errorClass} ${className}`.trim();
+  const inputClass = `input ${errorClass} ${inputClassName}`.trim();
+  const wrapperClass = `input-wrapper ${wrapperClassName}`.trim();
+
   return (
-    <input
-      className={inputClass}
-      type="text"
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      placeholder={placeholder}
-      disabled={disabled}
-      aria-invalid={!isValid}
-    />
+    <div className={wrapperClass}>
+      {icon && <span className="input-icon">{icon}</span>}
+      <input
+        className={inputClass}
+        type={type}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+        disabled={disabled}
+        aria-invalid={!isValid}
+      />
+    </div>
   );
 };
 
