@@ -4,7 +4,7 @@
 	// general btn styling
 	display: flex;
 	width: 100%; // should be adjustmed in use
-	max-width: 400px;
+	// max-width: 400px; // better to set to each btn separately 
 	height: 52px;
 	padding: 16px 54px;
 	justify-content: center;
@@ -33,7 +33,6 @@
 		background-color: #F0F0F0;
 		color: #DDD;
 		cursor: not-allowed;
-		
   }
 }
 
@@ -42,7 +41,13 @@
 .btn--dark {
 	background-color: #000;
 	color: #fff;
-  }
+
+	&:disabled,
+	&.btn--dark--disabled {
+		background-color: #000;
+		opacity: 0.5;
+	}
+}
   
 // Light variant: white background, black text (.btn--light)
 .btn--light {

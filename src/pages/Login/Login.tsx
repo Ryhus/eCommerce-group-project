@@ -1,43 +1,123 @@
+import { useState } from "react";
 import Button from "../../components/common/button/button";
 import InputField from "../../components/common/inputField/inputField";
 import Link from "../../components/common/link/link";
 import Paragraph from "../../components/common/paragraph/paragraph";
 import { H2 } from "../../components/common/headings/H2";
 import "./Login.scss";
-
-// delete
-function setEmail() {
-  return;
-}
-function isValidEmail() {
-  return true;
-}
-//end delete
+import { FaLock, FaEnvelope } from "react-icons/fa";
 
 export default function LoginPage() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handleEmailChange = (value: string) => {
+    setEmail(value);
+    if (emailError) validateEmail(value);
+  };
+
+  const handlePasswordChange = (value: string) => {
+    setPassword(value);
+    if (passwordError) validatePassword(value);
+  };
+
+  const toggleShowPassword = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    setShowPassword((prev) => !prev);
+  };
+
+  const handleLogin = () => {
+    const isEmailValid = validateEmail(email);
+    const isPasswordValid = validatePassword(password);
+
+    if (!isEmailValid || !isPasswordValid) return;
+
+    console.log("Logging in:", { email, password });
+  };
+
+  const validateEmail = (value: string) => {
+    const isValid = /\S+@\S+\.\S+/.test(value);
+    setEmailError(isValid ? "" : "Please enter a valid email.");
+    return isValid;
+  };
+
+  const validatePassword = (value: string) => {
+    const isValidLength = value.length >= 8;
+    const hasUpperCase = /[A-Z]/.test(value);
+    const hasDigit = /[0-9]/.test(value);
+    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(value);
+    const hasOnlyValidChars = /^[A-Za-z0-9!@#$%^&*(),.?":{}|<>]+$/.test(value);
+
+    if (!isValidLength) {
+      setPasswordError("Password must be at least 8 characters.");
+      return false;
+    }
+    if (!hasUpperCase) {
+      setPasswordError("Password must include at least one uppercase letter.");
+      return false;
+    }
+    if (!hasDigit) {
+      setPasswordError("Password must include at least one digit.");
+      return false;
+    }
+    if (!hasSpecialChar) {
+      setPasswordError("Password must include at least one special character.");
+      return false;
+    }
+    if (!hasOnlyValidChars) {
+      setPasswordError("Password contains invalid characters.");
+      return false;
+    }
+
+    setPasswordError("");
+    return true;
+  };
+
   return (
     <div className="login-wrapper">
       <H2 text="Login" />
+
       <div className="field-group">
         <Paragraph text="Enter your email address." />
-        <InputField value={""} onChange={setEmail} isValid={isValidEmail()} placeholder="you@example.com" />
-        <Paragraph text="Email must <list requariments>" isError className="email-error-msg" />
+        <InputField
+          value={email}
+          onChange={handleEmailChange}
+          isValid={!emailError}
+          placeholder="you@example.com"
+          icon={<FaEnvelope />}
+        />
+        {emailError && <Paragraph text={emailError} isError className="email-error-msg" />}
       </div>
+
       <div className="field-group">
         <div className="password-label">
           <Paragraph text="Enter your password." />
-          <Link text="Show password" href="#" />
+          <Link text={showPassword ? "Hide password" : "Show password"} href="#" onClick={toggleShowPassword} />
         </div>
-        <InputField value={""} onChange={setEmail} isValid={isValidEmail()} placeholder="Password" />
-        <Paragraph text="Passwor must <list requariments>" isError className="email-error-msg" />
+        <InputField
+          value={password}
+          onChange={handlePasswordChange}
+          isValid={!passwordError}
+          placeholder="Enter your password"
+          type={showPassword ? "text" : "password"}
+          icon={<FaLock />}
+        />
+        {passwordError && <Paragraph text={passwordError} isError className="email-error-msg" />}
       </div>
-      <Button className="login-btn" text="Log in" />
+
+      <Button
+        className="login-btn"
+        text="Log in"
+        onClick={handleLogin}
+        // disabled={!email || !password || !!emailError || !!passwordError}
+      />
+
       <Link text="Don't have an account? Register" href="#" className="registration-link" />
     </div>
   );
 }
-
-{
-  /* Optionally: */
-}
-<span className="error-message">Please enter a valid email.</span>;

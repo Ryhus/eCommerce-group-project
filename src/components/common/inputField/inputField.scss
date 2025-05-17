@@ -1,42 +1,54 @@
-.input {
-	width: 100%;                                   // Full-width by default
-	font-family: 'Roboto', sans-serif;
-	font-size: 16px;
-	font-style: normal;
-	font-weight: 500;
-	line-height: normal;
-	color: #0000004d;
-	padding: 12px 16px;
-	justify-content: center;
-	align-items: center;
-	gap: 12px;
-	border-radius: 62px;
-	border-width: 0px;
-	border-color: #ffffff;
-	// background: #F0F0F0;
-	background: #ffffff;
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
 
-  
-	// Focus state to aid accessibility
-	&:focus, &:focus-visible {
-	  border-color: #000;
-	  border-width: 1px;
-	  color: #000;
-	}
-  
+  .input-icon {
+    position: absolute;
+	  top: 16px;
+    left: 12px;
+    pointer-events: none;
+    color: #aaa;
+  }
+}
+
+.input {
+  width: 100%;                                   // Full-width by default
+  font-family: 'Roboto', sans-serif;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  color: #0000004d;
+  padding: 12px 30px;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  border-radius: 62px;
+  border-width: 0px;
+  border-color: #ffffff;
+  // background: #F0F0F0;
+  background: #ffffff;
+
+	
+  // Focus state to aid accessibility
+  &:focus, &:focus-visible {
+    border-color: #000;
+    border-width: 1px;
+    color: #000;
+  }
+	
 	// Disabled state
 	&:disabled {
 	  background-color: #ffffff;                   // Light gray background
 	  color: #777;                                 // Gray text
 	  cursor: not-allowed;                         // Disabled cursor
 	}
-  }
-  
-  // Error state styling
-  .input--error {
-	border-color: #FF3333;
-	border-width: 1px;
-	color: #FF3333;
-  }
-  
- 
+}
+
+// Error state styling
+.input--error {
+  border-color: #FF3333;
+  border-width: 1px;
+  color: #FF3333;
+}
