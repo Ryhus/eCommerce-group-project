@@ -3,7 +3,8 @@
 .btn {
 	// general btn styling
 	display: flex;
-	width: 210px; // should be adjustmed
+	width: 100%; // should be adjustmed in use
+	max-width: 400px;
 	height: 52px;
 	padding: 16px 54px;
 	justify-content: center;
@@ -19,7 +20,23 @@
 	font-style: normal;
 	font-weight: 500;
 	line-height: normal;
+
+	&:not(:disabled):hover {
+		opacity: 0.8;
+	}
+	&:not(:disabled):active {
+		transform: scale(0.98);
+	  }
+
+	&:disabled,
+  	&.btn--disabled {
+		background-color: #F0F0F0;
+		color: #DDD;
+		cursor: not-allowed;
+		
+  }
 }
+
 
 // Dark variant: black background, white text (.btn--dark)
 .btn--dark {
