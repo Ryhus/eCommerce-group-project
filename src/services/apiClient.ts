@@ -2,6 +2,7 @@ import axios from "axios";
 import type { AxiosInstance } from "axios";
 import { TokenService } from "./TokenService";
 import { AuthService } from "./AuthService";
+import { serverErrorHandler } from "./ErrorService";
 
 const API_URL = import.meta.env.VITE_CTP_API_URL;
 
@@ -23,6 +24,7 @@ apiClient.interceptors.request.use((config) => {
 });
 
 // response interceptor automatically intercepts response and refresh keys if possible
+// catches error for all apiClient functions
 apiClient.interceptors.response.use(
   (response) => response,
   async (error) => {
@@ -41,7 +43,7 @@ apiClient.interceptors.response.use(
         AuthService.logout();
       }
     }
-
-    return Promise.reject(error);
+    const handledError = serverErrorHandler(error);
+    return Promise.reject(handledError);
   }
 );

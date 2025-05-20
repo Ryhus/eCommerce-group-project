@@ -1,5 +1,6 @@
 import axios from "axios";
 import { TokenService } from "./TokenService.js";
+import { serverErrorHandler } from "./ErrorService.js";
 
 export interface PasswordTokenResponse {
   access_token: string;
@@ -27,17 +28,24 @@ export const AuthService = {
       password: password,
       scope: SCOPES,
     }).toString();
+    try {
+      const response = await axios.post<PasswordTokenResponse>(
+        `${AUTH_URL}/oauth/${PROJECT_KEY}/customers/token`,
+        data,
+        {
+          auth: { username: CLIENT_ID, password: CLIENT_SECRET },
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        }
+      );
 
-    const response = await axios.post<PasswordTokenResponse>(`${AUTH_URL}/oauth/${PROJECT_KEY}/customers/token`, data, {
-      auth: { username: CLIENT_ID, password: CLIENT_SECRET },
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    });
+      const { access_token, refresh_token } = response.data;
+      TokenService.setAccessToken(access_token);
+      TokenService.setRefreshToken(refresh_token);
 
-    const { access_token, refresh_token } = response.data;
-    TokenService.setAccessToken(access_token);
-    TokenService.setRefreshToken(refresh_token);
-
-    return response.data;
+      return response.data;
+    } catch (error: unknown) {
+      serverErrorHandler(error);
+    }
   },
 
   refreshAccessToken: async () => {
