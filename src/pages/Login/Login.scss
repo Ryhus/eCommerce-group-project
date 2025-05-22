@@ -1,29 +1,30 @@
 .login-wrapper {
-	max-width: 500px;
-	padding: 30px;
-	margin: 2rem auto;
-	background: #f0f0f0;
-	border-radius: 40px;
-  
-	display: flex;
-	flex-direction: column;
-	gap: 30px;
-  }
+  max-width: 500px;
+  padding: 30px;
+  margin: 2rem auto;
+  background: #f0f0f0;
+  border-radius: 40px;
 
-  .field-group {
-	display: flex;
-	flex-direction: column;
-	gap: 0.5rem;
-  }
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
 
-  .password-label{
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-  }
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
 
-  .registration-link, .login-btn{
-	text-align: center;
-	margin: 0 auto;
-	cursor: pointer;
-  }
+.password-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.registration-link,
+.login-btn {
+  text-align: center;
+  margin: 0 auto;
+  cursor: pointer;
+}

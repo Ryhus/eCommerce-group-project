@@ -5,7 +5,7 @@
 
   .input-icon {
     position: absolute;
-	  top: 16px;
+    top: 16px;
     left: 12px;
     pointer-events: none;
     color: #aaa;
@@ -13,8 +13,8 @@
 }
 
 .input {
-  width: 100%;                                   // Full-width by default
-  font-family: 'Roboto', sans-serif;
+  width: 100%; // Full-width by default
+  font-family: "Roboto", sans-serif;
   font-size: 16px;
   font-style: normal;
   font-weight: 500;
@@ -30,25 +30,25 @@
   // background: #F0F0F0;
   background: #ffffff;
 
-	
   // Focus state to aid accessibility
-  &:focus, &:focus-visible {
+  &:focus,
+  &:focus-visible {
     border-color: #000;
     border-width: 1px;
     color: #000;
   }
-	
-	// Disabled state
-	&:disabled {
-	  background-color: #ffffff;                   // Light gray background
-	  color: #777;                                 // Gray text
-	  cursor: not-allowed;                         // Disabled cursor
-	}
+
+  // Disabled state
+  &:disabled {
+    background-color: #ffffff; // Light gray background
+    color: #777; // Gray text
+    cursor: not-allowed; // Disabled cursor
+  }
 }
 
 // Error state styling
 .input--error {
-  border-color: #FF3333;
+  border-color: #ff3333;
   border-width: 1px;
-  color: #FF3333;
+  color: #ff3333;
 }
