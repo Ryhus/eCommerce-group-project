@@ -11,6 +11,7 @@ type InputFieldProps = {
   inputClassName?: string;
   type?: string;
   icon?: React.ReactNode;
+  rightIcon?: React.ReactNode;
 };
 
 const InputField: React.FC<InputFieldProps> = ({
@@ -23,6 +24,7 @@ const InputField: React.FC<InputFieldProps> = ({
   inputClassName = "",
   type = "text",
   icon,
+  rightIcon,
 }) => {
   const errorClass = isValid ? "" : "input--error";
   const inputClass = `input ${errorClass} ${inputClassName}`.trim();
@@ -40,6 +42,7 @@ const InputField: React.FC<InputFieldProps> = ({
         disabled={disabled}
         aria-invalid={!isValid}
       />
+      {rightIcon && <span className="input-right-icon">{rightIcon}</span>}
     </div>
   );
 };

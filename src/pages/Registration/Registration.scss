@@ -1,0 +1,41 @@
+.registration-wrapper {
+  max-width: 500px;
+  padding: 30px;
+  margin: 2rem auto;
+  background: #f0f0f0;
+  border-radius: 40px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  .required {
+    &::after {
+      content: " *";
+      color: #ff3333;
+    }
+  }
+}
+
+.register-btn {
+  text-align: center;
+  margin: 0 auto;
+  cursor: pointer;
+}
+
+.login-link {
+  font-size: 16px;
+  text-align: center;
+  margin: 0 auto;
+  cursor: pointer;
+
+  span {
+    text-decoration: underline;
+  }
+}

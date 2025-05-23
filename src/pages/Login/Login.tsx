@@ -1,11 +1,13 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { FaLock, FaEnvelope, FaEye, FaEyeSlash } from "react-icons/fa";
 import Button from "../../components/common/button/button";
 import InputField from "../../components/common/inputField/inputField";
-import Link from "../../components/common/link/link";
+// import Link from "../../components/common/link/link";
 import Paragraph from "../../components/common/paragraph/paragraph";
 import { H2 } from "../../components/common/headings/H2";
+import { validateEmailFormat, validatePasswordStrength } from "../../utils/validation";
 import "./Login.scss";
-import { FaLock, FaEnvelope } from "react-icons/fa";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -41,42 +43,18 @@ export default function LoginPage() {
   };
 
   const validateEmail = (value: string) => {
-    const isValid = /\S+@\S+\.\S+/.test(value);
+    const isValid = validateEmailFormat(value);
     setEmailError(isValid ? "" : "Please enter a valid email.");
     return isValid;
   };
 
   const validatePassword = (value: string) => {
-    const isValidLength = value.length >= 8;
-    const hasUpperCase = /[A-Z]/.test(value);
-    const hasDigit = /[0-9]/.test(value);
-    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(value);
-    const hasOnlyValidChars = /^[A-Za-z0-9!@#$%^&*(),.?":{}|<>]+$/.test(value);
-
-    if (!isValidLength) {
-      setPasswordError("Password must be at least 8 characters.");
-      return false;
-    }
-    if (!hasUpperCase) {
-      setPasswordError("Password must include at least one uppercase letter.");
-      return false;
-    }
-    if (!hasDigit) {
-      setPasswordError("Password must include at least one digit.");
-      return false;
-    }
-    if (!hasSpecialChar) {
-      setPasswordError("Password must include at least one special character.");
-      return false;
-    }
-    if (!hasOnlyValidChars) {
-      setPasswordError("Password contains invalid characters.");
-      return false;
-    }
-
-    setPasswordError("");
-    return true;
+    const error = validatePasswordStrength(value);
+    setPasswordError(error || "");
+    return !error;
   };
+
+  const navigate = useNavigate();
 
   return (
     <div className="login-wrapper">
@@ -97,7 +75,6 @@ export default function LoginPage() {
       <div className="field-group">
         <div className="password-label">
           <Paragraph text="Enter your password." />
-          <Link text={showPassword ? "Hide password" : "Show password"} href="#" onClick={toggleShowPassword} />
         </div>
         <InputField
           value={password}
@@ -106,18 +83,20 @@ export default function LoginPage() {
           placeholder="Enter your password"
           type={showPassword ? "text" : "password"}
           icon={<FaLock />}
+          rightIcon={
+            <span onClick={toggleShowPassword} style={{ cursor: "pointer" }}>
+              {showPassword ? <FaEyeSlash /> : <FaEye />}
+            </span>
+          }
         />
         {passwordError && <Paragraph text={passwordError} isError className="email-error-msg" />}
       </div>
 
-      <Button
-        className="login-btn"
-        text="Log in"
-        onClick={handleLogin}
-        // disabled={!email || !password || !!emailError || !!passwordError}
-      />
+      <Button className="login-btn" text="Log in" onClick={handleLogin} />
 
-      <Link text="Don't have an account? Register" href="#" className="registration-link" />
+      <p className="registration-link" onClick={() => navigate("/register")}>
+        Don’t have an account? <span>Register</span>
+      </p>
     </div>
   );
 }
