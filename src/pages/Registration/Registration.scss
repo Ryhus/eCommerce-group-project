@@ -1,0 +1,49 @@
+.registration-wrapper {
+  max-width: 500px;
+  padding: 30px;
+  margin: 2rem auto;
+  background: #f0f0f0;
+  border-radius: 40px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.register-btn {
+  text-align: center;
+  margin: 0 auto;
+  cursor: pointer;
+}
+
+.login-link {
+  font-size: 16px;
+  text-align: center;
+  margin: 0 auto;
+  cursor: pointer;
+
+  span {
+    text-decoration: underline;
+  }
+}
+
+select.input {
+  appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg fill='gray' height='16' viewBox='0 0 20 20' width='16' xmlns='http://www.w3.org/2000/svg'><path d='M5.293 7.293l4.707 4.707 4.707-4.707-1.414-1.414L10 9.586 6.707 5.879z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 1.5rem top 55%;
+  background-size: 2rem;
+}
+
+.input-wrapper input[type="date"]::-webkit-calendar-picker-indicator {
+  position: absolute;
+  right: 1.5rem;
+  z-index: 1;
+  cursor: pointer;
+}
