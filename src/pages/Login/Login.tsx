@@ -6,7 +6,7 @@ import InputField from "../../components/common/inputField/inputField";
 // import Link from "../../components/common/link/link";
 import Paragraph from "../../components/common/paragraph/paragraph";
 import { H2 } from "../../components/common/headings/H2";
-import { validateEmailFormat, validatePasswordStrength } from "../../utils/validation";
+import { validateEmailFormat } from "../../utils/validation";
 import "./Login.scss";
 
 export default function LoginPage() {
@@ -49,9 +49,9 @@ export default function LoginPage() {
   };
 
   const validatePassword = (value: string) => {
-    const error = validatePasswordStrength(value);
-    setPasswordError(error || "");
-    return !error;
+    const isValid = value.trim() !== "";
+    setPasswordError(isValid ? "" : "A password or email are not valid. Please enter valid credentials.");
+    return isValid;
   };
 
   const navigate = useNavigate();
