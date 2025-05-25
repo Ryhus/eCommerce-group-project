@@ -6,7 +6,7 @@ import InputField from "../../components/common/inputField/inputField";
 import Paragraph from "../../components/common/paragraph/paragraph";
 import Link from "../../components/common/link/link";
 import { H2 } from "../../components/common/headings/H2";
-import { validateEmailFormat } from "../../utils/validation";
+import { validateEmailFormat, validatePasswordStrength } from "../../utils/validation";
 import { AuthService } from "../../services/AuthService";
 import { signIn } from "../../services/customerService/customerService";
 import { TokenService } from "../../services/TokenService";
@@ -73,10 +73,16 @@ export default function LoginPage() {
     return isValid;
   };
 
+  // const validatePassword = (value: string) => {
+  //   const isValid = value.trim() !== "";
+  //   setPasswordError(isValid ? "" : "A password or email are not valid. Please enter valid credentials.");
+  //   return isValid;
+  // };
+
   const validatePassword = (value: string) => {
-    const isValid = value.trim() !== "";
-    setPasswordError(isValid ? "" : "A password or email are not valid. Please enter valid credentials.");
-    return isValid;
+    const error = validatePasswordStrength(value);
+    setPasswordError(error || "");
+    return !error;
   };
 
   return (
