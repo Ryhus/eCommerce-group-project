@@ -336,15 +336,11 @@ export default function RegistrationPage() {
       <Button className="register-btn" text="Sign up" onClick={handleRegister} />
       {authError && <Paragraph text={authError} isError className="auth-error-msg" />}
 
-      {/* <p className="login-link" onClick={() => navigate("/login")}>
-        Already have an account? <span>Log in</span>
-      </p> */}
-
       <Link
         className="login-link"
         text="Already have an account? Log in"
         onClick={() => navigate("/login")}
-        href={""}
+        href={"/login"}
       />
     </div>
   );

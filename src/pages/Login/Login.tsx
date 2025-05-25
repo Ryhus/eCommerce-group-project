@@ -73,12 +73,6 @@ export default function LoginPage() {
     return isValid;
   };
 
-  // const validatePassword = (value: string) => {
-  //   const isValid = value.trim() !== "";
-  //   setPasswordError(isValid ? "" : "A password or email are not valid. Please enter valid credentials.");
-  //   return isValid;
-  // };
-
   const validatePassword = (value: string) => {
     const error = validatePasswordStrength(value);
     setPasswordError(error || "");
@@ -124,15 +118,11 @@ export default function LoginPage() {
       <Button className="login-btn" text="Log in" onClick={handleLogin} />
       {authError && <Paragraph text={authError} isError className="auth-error-msg" />}
 
-      {/* <p className="registration-link" onClick={() => navigate("/sign-up")}>
-        Don’t have an account? <span>Sign up</span>
-      </p> */}
-
       <Link
         className="registration-link"
         text="Don’t have an account? Sign up"
         onClick={() => navigate("/sign-up")}
-        href={""}
+        href={"/sign-up"}
       />
     </div>
   );
