@@ -1,15 +1,28 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaLock, FaEnvelope, FaEye, FaEyeSlash } from "react-icons/fa";
 import Button from "../../components/common/button/button";
 import InputField from "../../components/common/inputField/inputField";
-// import Link from "../../components/common/link/link";
 import Paragraph from "../../components/common/paragraph/paragraph";
 import { H2 } from "../../components/common/headings/H2";
 import { validateEmailFormat } from "../../utils/validation";
+import { AuthService } from "../../services/AuthService";
+import { signIn } from "../../services/customerService/customerService";
+import { TokenService } from "../../services/TokenService";
 import "./Login.scss";
 
 export default function LoginPage() {
+  const isLoggedIn = TokenService.getAccessToken();
+
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (isLoggedIn) {
+      navigate("/");
+    }
+  }, [isLoggedIn, navigate]);
+
+  const [authError, setAuthError] = useState("");
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -33,13 +46,24 @@ export default function LoginPage() {
     setShowPassword((prev) => !prev);
   };
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     const isEmailValid = validateEmail(email);
     const isPasswordValid = validatePassword(password);
 
     if (!isEmailValid || !isPasswordValid) return;
 
     console.log("Logging in:", { email, password });
+
+    try {
+      setAuthError("");
+      const userAuthData = await AuthService.authenticate(email, password);
+      const customerData = await signIn(email, password);
+      navigate("/");
+      console.log("User logged in:", userAuthData);
+      console.log("User data:", customerData);
+    } catch {
+      setAuthError("Wrong email or password. Pls try again");
+    }
   };
 
   const validateEmail = (value: string) => {
@@ -53,8 +77,6 @@ export default function LoginPage() {
     setPasswordError(isValid ? "" : "A password or email are not valid. Please enter valid credentials.");
     return isValid;
   };
-
-  const navigate = useNavigate();
 
   return (
     <div className="login-wrapper">
@@ -93,6 +115,7 @@ export default function LoginPage() {
       </div>
 
       <Button className="login-btn" text="Log in" onClick={handleLogin} />
+      {authError && <Paragraph text={authError} isError className="auth-error-msg" />}
 
       <p className="registration-link" onClick={() => navigate("/register")}>
         Don’t have an account? <span>Register</span>

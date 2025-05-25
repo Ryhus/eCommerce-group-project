@@ -48,6 +48,31 @@ export const AuthService = {
     }
   },
 
+  anonymousAuthenticate: async () => {
+    const data = new URLSearchParams({
+      grant_type: "client_credentials",
+      scope: SCOPES,
+    }).toString();
+    try {
+      const response = await axios.post<AnonymousTokenResponse>(
+        `${AUTH_URL}/oauth/${PROJECT_KEY}/anonymous/token`,
+        data,
+        {
+          auth: { username: CLIENT_ID, password: CLIENT_SECRET },
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        }
+      );
+
+      const { access_token, refresh_token } = response.data;
+      TokenService.setAccessToken(access_token);
+      TokenService.setRefreshToken(refresh_token);
+
+      return response.data;
+    } catch (error: unknown) {
+      serverErrorHandler(error);
+    }
+  },
+
   refreshAccessToken: async () => {
     const refreshToken = TokenService.getRefreshToken();
 

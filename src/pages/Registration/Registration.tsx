@@ -15,10 +15,14 @@ import Button from "../../components/common/button/button";
 import InputField from "../../components/common/inputField/inputField";
 import Paragraph from "../../components/common/paragraph/paragraph";
 import { H2 } from "../../components/common/headings/H2";
+import { AuthService } from "../../services/AuthService";
+import { signUp } from "../../services/customerService/customerService";
+// import { TokenService } from "../../services/TokenService";
 import "./Registration.scss";
 
 export default function RegistrationPage() {
   const navigate = useNavigate();
+  const [authError, setAuthError] = useState("");
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -97,7 +101,7 @@ export default function RegistrationPage() {
     return isValid;
   };
 
-  const handleRegister = () => {
+  const handleRegister = async () => {
     const isEmailValid = validateEmail(email);
     const isPasswordValid = validatePassword(password);
     const isConfirmValid = validateConfirmPassword(confirmPassword);
@@ -129,6 +133,24 @@ export default function RegistrationPage() {
       countryValid
     ) {
       console.log("Registering:", { firstName, lastName, email, password, dob, street, city, postalCode, country });
+
+      try {
+        setAuthError("");
+        const userAuthData = await AuthService.anonymousAuthenticate();
+        const customerData = await signUp(email, password, firstName, lastName, dob, [
+          {
+            street,
+            city,
+            postalCode,
+            country,
+          },
+        ]);
+        navigate("/");
+        console.log("User signed in:", userAuthData);
+        console.log("User data:", customerData);
+      } catch {
+        setAuthError("Sign up failed. Pls try again");
+      }
     }
   };
 
@@ -304,6 +326,7 @@ export default function RegistrationPage() {
       </div>
 
       <Button className="register-btn" text="Sign up" onClick={handleRegister} />
+      {authError && <Paragraph text={authError} isError className="auth-error-msg" />}
 
       <p className="login-link" onClick={() => navigate("/login")}>
         Already have an account? <span>Log in</span>

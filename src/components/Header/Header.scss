@@ -5,89 +5,84 @@
   align-items: center;
   padding: 20px;
   background-color: #fff;
-  z-index: 100;   
+  z-index: 100;
   height: auto;
 }
 .burger-menu {
-	display: none;
-	font-size: 28px;            
-	cursor: pointer;
-  }
+  display: none;
+  font-size: 28px;
+  cursor: pointer;
+}
 
 .home-logo {
-    text-transform: uppercase;
-    text-decoration: none;
-    letter-spacing: 0.3rem;
-	font-size: 32px;
-	font-style: normal;
-	font-weight: 700;
-	line-height: normal;
+  text-transform: uppercase;
+  text-decoration: none;
+  letter-spacing: 0.3rem;
+  font-size: 32px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+}
+
+.auth-links-container {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+@media only screen and (max-width: 916px) {
+  .header {
+    padding: 8px 16px;
+
+    .burger-menu {
+      display: block;
+    }
+
+    nav,
+    .auth-links-container {
+      display: none;
+      width: 100%;
+      text-align: center;
+      z-index: 1001;
+    }
+
+    &.menu-open {
+      flex-direction: column;
+      align-items: stretch;
+
+      .home-logo {
+        margin: 0 auto 8px;
+      }
+
+      .burger-menu {
+        position: absolute;
+        top: 8px;
+        right: 16px;
+        z-index: 1001;
+      }
+
+      nav,
+      .auth-links-container {
+        display: block;
+        background-color: #fff;
+        padding: 8px 0;
+      }
+
+      nav a,
+      .auth-links-container .auth-link {
+        display: block;
+        margin: 4px 0;
+      }
+    }
   }
 
-  .auth-links-container {
-    display: flex;
-    gap: 10px;
-	justify-content: flex-end;
+  .overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #fff;
+    z-index: 500;
   }
-
-
-  
-  @media only screen and (max-width: 916px) {
-	.header {
-	  padding: 8px 16px;          
-  
-	  .burger-menu {
-		display: block;
-	  }
-  
-	  nav,
-	  .auth-links-container {
-		display: none;
-		width: 100%;
-		text-align: center;
-		z-index: 1001;
-	  }
-  
-	  &.menu-open {
-		flex-direction: column;
-		align-items: stretch;
-  
-		.home-logo {
-		  margin: 0 auto 8px;     
-		}
-  
-		.burger-menu {
-		  position: absolute;
-		  top: 8px;
-		  right: 16px;
-		  z-index: 1001;
-		}
-  
-		nav,
-		.auth-links-container {
-		  display: block;
-		  background-color: #fff;
-		  padding: 8px 0;
-		}
-  
-		nav a,
-		.auth-links-container .auth-link {
-		  display: block;
-		  margin: 4px 0;         
-		}
-	  }
-	}
-  
-	.overlay {
-	  position: fixed;
-	  top: 0;
-	  left: 0;
-	  right: 0;
-	  bottom: 0;
-	  background-color: #fff;
-	  z-index: 500;
-	}
-  }
-  
-
-  
+}
