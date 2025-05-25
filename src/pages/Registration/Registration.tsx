@@ -339,7 +339,10 @@ export default function RegistrationPage() {
       <Link
         className="login-link"
         text="Already have an account? Log in"
-        onClick={() => navigate("/login")}
+        onClick={(e) => {
+          e.preventDefault();
+          navigate("/login");
+        }}
         href={"/login"}
       />
     </div>

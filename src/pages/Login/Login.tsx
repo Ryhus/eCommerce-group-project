@@ -121,7 +121,10 @@ export default function LoginPage() {
       <Link
         className="registration-link"
         text="Don’t have an account? Sign up"
-        onClick={() => navigate("/sign-up")}
+        onClick={(e) => {
+          e.preventDefault();
+          navigate("/sign-up");
+        }}
         href={"/sign-up"}
       />
     </div>
