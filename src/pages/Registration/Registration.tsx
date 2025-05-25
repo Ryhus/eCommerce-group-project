@@ -91,12 +91,6 @@ export default function RegistrationPage() {
     setShowPassword((prev) => !prev);
   };
 
-  // const validateEmail = (value: string) => {
-  //   const isValid = validateEmailFormat(value);
-  //   setEmailError(isValid ? "" : "Please enter a valid email.");
-  //   return isValid;
-  // };
-
   const validateEmail = (value: string) => {
     const error = validateEmailFormat(value);
     setEmailError(error || "");
@@ -146,12 +140,10 @@ export default function RegistrationPage() {
       postalValid &&
       countryValid
     ) {
-      console.log("Registering:", { firstName, lastName, email, password, dob, street, city, postalCode, country });
-
       try {
         setAuthError("");
-        const userAuthData = await AuthService.anonymousAuthenticate();
-        const customerData = await signUp(email, password, firstName, lastName, dob, [
+        await AuthService.anonymousAuthenticate();
+        await signUp(email, password, firstName, lastName, dob, [
           {
             street,
             city,
@@ -161,8 +153,6 @@ export default function RegistrationPage() {
         ]);
         TokenService.setLogin("true");
         navigate("/");
-        console.log("User signed in:", userAuthData);
-        console.log("User data:", customerData);
       } catch {
         setAuthError("Sign up failed. Pls try again");
       }

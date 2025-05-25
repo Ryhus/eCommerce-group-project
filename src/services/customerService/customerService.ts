@@ -1,5 +1,5 @@
 import { apiClient } from "../apiClient";
-import type { CustomerResponse, CartResponse } from "./types";
+import type { CustomerResponse, CartResponse, Address } from "./types";
 
 const API_URL = import.meta.env.VITE_CTP_API_URL;
 const PROJECT_KEY = import.meta.env.VITE_CTP_PROJECT_KEY;
@@ -23,7 +23,7 @@ export async function signUp(
   firstName: string,
   lastName: string,
   dateOfBirth: string,
-  address: [{ street: string; city: string; postalCode: string; country: string }]
+  address: Address[]
 ) {
   const response = await apiClient.post<{ customer: CustomerResponse; cart: CartResponse }>(
     `${API_URL}/${PROJECT_KEY}/customers`,
@@ -33,7 +33,7 @@ export async function signUp(
       firstName,
       lastName,
       dateOfBirth,
-      address,
+      addresses: address,
     }
   );
 

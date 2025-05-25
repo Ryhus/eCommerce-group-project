@@ -1,4 +1,7 @@
-interface Address {
+export interface Address {
+  street: string;
+  city: string;
+  postalCode: string;
   country: string;
 }
 export interface CartResponse {
@@ -14,4 +17,17 @@ export interface CustomerResponse {
   authenticationMode: "Password" | "ExternalAuth";
   createdAt: Date;
   lastModifiedAt: Date;
+}
+
+export interface SignUpRequest {
+  email: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+  dateOfBirth: string;
+  addresses: Address[];
+  shippingAddresses?: number[];
+  billingAddresses?: number[];
+  defaultShippingAddress?: number;
+  defaultBillingAddress?: number;
 }

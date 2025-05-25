@@ -55,12 +55,10 @@ export default function LoginPage() {
 
     try {
       setAuthError("");
-      const userAuthData = await AuthService.authenticate(email, password);
-      const customerData = await signIn(email, password);
+      await AuthService.authenticate(email, password);
+      await signIn(email, password);
       TokenService.setLogin("true");
       navigate("/");
-      console.log("User logged in:", userAuthData);
-      console.log("User data:", customerData);
     } catch {
       setAuthError("Wrong email or password. Pls try again");
     }
