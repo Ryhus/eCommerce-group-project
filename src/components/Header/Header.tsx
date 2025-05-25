@@ -62,7 +62,7 @@ function Header() {
         {isAuthenticated ? (
           <Button className="auth-link btn-medium" text="Profile" onClick={() => navigate("/profile")} />
         ) : (
-          <Button className="auth-link btn-medium" text="Register" onClick={() => navigate("/register")} />
+          <Button className="auth-link btn-medium" text="Sign up" onClick={() => navigate("/sign-up")} />
         )}
       </div>
       {menuOpen && <div className="overlay" onClick={() => setMenuOpen(false)} />}

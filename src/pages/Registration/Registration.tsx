@@ -14,6 +14,7 @@ import { FaLock, FaEnvelope, FaEye, FaEyeSlash, FaUser, FaCalendar, FaMapMarkerA
 import Button from "../../components/common/button/button";
 import InputField from "../../components/common/inputField/inputField";
 import Paragraph from "../../components/common/paragraph/paragraph";
+import Link from "../../components/common/link/link";
 import { H2 } from "../../components/common/headings/H2";
 import { AuthService } from "../../services/AuthService";
 import { signUp } from "../../services/customerService/customerService";
@@ -335,9 +336,16 @@ export default function RegistrationPage() {
       <Button className="register-btn" text="Sign up" onClick={handleRegister} />
       {authError && <Paragraph text={authError} isError className="auth-error-msg" />}
 
-      <p className="login-link" onClick={() => navigate("/login")}>
+      {/* <p className="login-link" onClick={() => navigate("/login")}>
         Already have an account? <span>Log in</span>
-      </p>
+      </p> */}
+
+      <Link
+        className="login-link"
+        text="Already have an account? Log in"
+        onClick={() => navigate("/login")}
+        href={""}
+      />
     </div>
   );
 }

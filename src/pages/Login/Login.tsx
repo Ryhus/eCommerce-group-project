@@ -4,6 +4,7 @@ import { FaLock, FaEnvelope, FaEye, FaEyeSlash } from "react-icons/fa";
 import Button from "../../components/common/button/button";
 import InputField from "../../components/common/inputField/inputField";
 import Paragraph from "../../components/common/paragraph/paragraph";
+import Link from "../../components/common/link/link";
 import { H2 } from "../../components/common/headings/H2";
 import { validateEmailFormat } from "../../utils/validation";
 import { AuthService } from "../../services/AuthService";
@@ -117,9 +118,16 @@ export default function LoginPage() {
       <Button className="login-btn" text="Log in" onClick={handleLogin} />
       {authError && <Paragraph text={authError} isError className="auth-error-msg" />}
 
-      <p className="registration-link" onClick={() => navigate("/register")}>
-        Don’t have an account? <span>Register</span>
-      </p>
+      {/* <p className="registration-link" onClick={() => navigate("/sign-up")}>
+        Don’t have an account? <span>Sign up</span>
+      </p> */}
+
+      <Link
+        className="registration-link"
+        text="Don’t have an account? Sign up"
+        onClick={() => navigate("/sign-up")}
+        href={""}
+      />
     </div>
   );
 }
