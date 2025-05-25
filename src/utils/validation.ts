@@ -1,5 +1,38 @@
-export const validateEmailFormat = (value: string): boolean => {
-  return /\S+@\S+\.\S+/.test(value);
+export const validateEmailFormat = (value: string): string | null => {
+  const trimmedValue = value.trim();
+
+  if (trimmedValue !== value) {
+    return "Email address must not contain leading or trailing whitespace.";
+  }
+
+  const atIndex = trimmedValue.indexOf("@");
+  const hasAtSymbol = atIndex > 0 && atIndex === trimmedValue.lastIndexOf("@");
+
+  if (!hasAtSymbol) {
+    return "Email address must contain an '@' symbol separating local part and domain name.";
+  }
+
+  const [localPart, domain] = trimmedValue.split("@");
+
+  if (!localPart || !domain) {
+    return "Email address must contain a local part and a domain name.";
+  }
+
+  if (/\s/.test(localPart) || /\s/.test(domain)) {
+    return "Email address must not contain spaces in the local or domain part.";
+  }
+
+  const domainParts = domain.split(".");
+  if (domainParts.length < 2 || domainParts.some((part) => part.length === 0)) {
+    return "Email address must contain a domain name (e.g., example.com).";
+  }
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(trimmedValue)) {
+    return "Email address must be properly formatted (e.g., user@example.com).";
+  }
+
+  return null;
 };
 
 export const validatePasswordStrength = (value: string): string | null => {

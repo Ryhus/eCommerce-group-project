@@ -68,9 +68,9 @@ export default function LoginPage() {
   };
 
   const validateEmail = (value: string) => {
-    const isValid = validateEmailFormat(value);
-    setEmailError(isValid ? "" : "Please enter a valid email.");
-    return isValid;
+    const error = validateEmailFormat(value);
+    setEmailError(error || "");
+    return !error;
   };
 
   const validatePassword = (value: string) => {
