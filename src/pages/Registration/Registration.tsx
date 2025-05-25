@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   validateEmailFormat,
@@ -17,11 +17,18 @@ import Paragraph from "../../components/common/paragraph/paragraph";
 import { H2 } from "../../components/common/headings/H2";
 import { AuthService } from "../../services/AuthService";
 import { signUp } from "../../services/customerService/customerService";
-// import { TokenService } from "../../services/TokenService";
+import { TokenService } from "../../services/TokenService";
 import "./Registration.scss";
 
 export default function RegistrationPage() {
+  const isLoggedIn = TokenService.getAccessToken();
   const navigate = useNavigate();
+  useEffect(() => {
+    if (isLoggedIn) {
+      navigate("/");
+    }
+  }, [isLoggedIn, navigate]);
+
   const [authError, setAuthError] = useState("");
 
   const [firstName, setFirstName] = useState("");
