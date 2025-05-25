@@ -1,4 +1,4 @@
-export declare const validateEmailFormat: (value: string) => boolean;
+export declare const validateEmailFormat: (value: string) => string | null;
 export declare const validatePasswordStrength: (value: string) => string | null;
 export declare const validateName: (value: string, fieldName: string) => string | null;
 export declare const validateDateOfBirth: (value: string) => string | null;

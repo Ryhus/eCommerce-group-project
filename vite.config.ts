@@ -4,7 +4,8 @@ import eslint from "vite-plugin-eslint";
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: "/eCommerce-group-project/",
+  // base: "/eCommerce-group-project/", // gh-page
+  base: "/", // for Netify
   plugins: [react(), eslint()],
   test: {
     globals: true,

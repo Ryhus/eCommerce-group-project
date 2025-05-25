@@ -28,7 +28,7 @@ const router = createBrowserRouter(
     },
   ],
   {
-    basename: "/eCommerce-group-project",
+    basename: "/",
   }
 );
 
