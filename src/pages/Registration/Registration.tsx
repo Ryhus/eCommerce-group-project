@@ -22,7 +22,7 @@ import { TokenService } from "../../services/TokenService";
 import "./Registration.scss";
 
 export default function RegistrationPage() {
-  const isLoggedIn = TokenService.getAccessToken();
+  const isLoggedIn = TokenService.getLogin();
   const navigate = useNavigate();
   useEffect(() => {
     if (isLoggedIn) {
@@ -91,10 +91,16 @@ export default function RegistrationPage() {
     setShowPassword((prev) => !prev);
   };
 
+  // const validateEmail = (value: string) => {
+  //   const isValid = validateEmailFormat(value);
+  //   setEmailError(isValid ? "" : "Please enter a valid email.");
+  //   return isValid;
+  // };
+
   const validateEmail = (value: string) => {
-    const isValid = validateEmailFormat(value);
-    setEmailError(isValid ? "" : "Please enter a valid email.");
-    return isValid;
+    const error = validateEmailFormat(value);
+    setEmailError(error || "");
+    return !error;
   };
 
   const validatePassword = (value: string) => {
@@ -153,6 +159,7 @@ export default function RegistrationPage() {
             country,
           },
         ]);
+        TokenService.setLogin("true");
         navigate("/");
         console.log("User signed in:", userAuthData);
         console.log("User data:", customerData);

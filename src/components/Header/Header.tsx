@@ -12,10 +12,10 @@ function Header() {
 
   const location = useLocation();
 
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(!!TokenService.getAccessToken());
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(!!TokenService.getLogin());
 
   useEffect(() => {
-    setIsAuthenticated(!!TokenService.getAccessToken());
+    setIsAuthenticated(!!TokenService.getLogin());
   }, [location]);
 
   const [menuOpen, setMenuOpen] = useState(false);

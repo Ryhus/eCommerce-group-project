@@ -13,7 +13,7 @@ import { TokenService } from "../../services/TokenService";
 import "./Login.scss";
 
 export default function LoginPage() {
-  const isLoggedIn = TokenService.getAccessToken();
+  const isLoggedIn = TokenService.getLogin();
 
   const navigate = useNavigate();
   useEffect(() => {
@@ -53,12 +53,11 @@ export default function LoginPage() {
 
     if (!isEmailValid || !isPasswordValid) return;
 
-    console.log("Logging in:", { email, password });
-
     try {
       setAuthError("");
       const userAuthData = await AuthService.authenticate(email, password);
       const customerData = await signIn(email, password);
+      TokenService.setLogin("true");
       navigate("/");
       console.log("User logged in:", userAuthData);
       console.log("User data:", customerData);
