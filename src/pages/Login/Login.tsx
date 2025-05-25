@@ -1,157 +1,313 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import {
+  validateEmailFormat,
+  validatePasswordStrength,
+  validateName,
+  validateDateOfBirth,
+  validateStreet,
+  validateCity,
+  validatePostalCode,
+  validateCountry,
+} from "../../utils/validation";
+import { FaLock, FaEnvelope, FaEye, FaEyeSlash, FaUser, FaCalendar, FaMapMarkerAlt } from "react-icons/fa";
 import Button from "../../components/common/button/button";
 import InputField from "../../components/common/inputField/inputField";
-import Link from "../../components/common/link/link";
 import Paragraph from "../../components/common/paragraph/paragraph";
 import { H2 } from "../../components/common/headings/H2";
-import "./Login.scss";
-import { FaLock, FaEnvelope } from "react-icons/fa";
-import { AuthService } from "../../services/AuthService";
-import { signIn } from "../../services/customerService/customerService";
-import { useNavigate } from "react-router-dom";
-import { TokenService } from "../../services/TokenService";
+import "./Registration.scss";
 
-export default function LoginPage() {
-  const isLoggedIn = TokenService.getAccessToken();
-
+export default function RegistrationPage() {
   const navigate = useNavigate();
-  useEffect(() => {
-    if (isLoggedIn) {
-      navigate("/");
-    }
-  }, [isLoggedIn, navigate]);
 
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [dob, setDob] = useState("");
+  const [street, setStreet] = useState("");
+  const [city, setCity] = useState("");
+  const [postalCode, setPostalCode] = useState("");
+  const [country, setCountry] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
+  const [confirmPasswordError, setConfirmPasswordError] = useState("");
+  const [firstNameError, setFirstNameError] = useState("");
+  const [lastNameError, setLastNameError] = useState("");
+  const [dobError, setDobError] = useState("");
+  const [streetError, setStreetError] = useState("");
+  const [cityError, setCityError] = useState("");
+  const [postalCodeError, setPostalCodeError] = useState("");
+  const countryOptions = [
+    { value: "", label: "Select a country" },
+    { value: "AT", label: "Austria" },
+    { value: "BE", label: "Belgium" },
+    { value: "BG", label: "Bulgaria" },
+    { value: "HR", label: "Croatia" },
+    { value: "CY", label: "Cyprus" },
+    { value: "CZ", label: "Czech Republic" },
+    { value: "DK", label: "Denmark" },
+    { value: "EE", label: "Estonia" },
+    { value: "FI", label: "Finland" },
+    { value: "FR", label: "France" },
+    { value: "DE", label: "Germany" },
+    { value: "GR", label: "Greece" },
+    { value: "HU", label: "Hungary" },
+    { value: "IE", label: "Ireland" },
+    { value: "IT", label: "Italy" },
+    { value: "LV", label: "Latvia" },
+    { value: "LT", label: "Lithuania" },
+    { value: "LU", label: "Luxembourg" },
+    { value: "MT", label: "Malta" },
+    { value: "NL", label: "Netherlands" },
+    { value: "PL", label: "Poland" },
+    { value: "PT", label: "Portugal" },
+    { value: "RO", label: "Romania" },
+    { value: "SK", label: "Slovakia" },
+    { value: "SI", label: "Slovenia" },
+    { value: "ES", label: "Spain" },
+    { value: "SE", label: "Sweden" },
+  ];
 
-  const [showPassword, setShowPassword] = useState(false);
+  const [countryError, setCountryError] = useState("");
 
-  const [authError, setAuthError] = useState("");
-
-  const handleEmailChange = (value: string) => {
-    setEmail(value);
-    if (emailError) validateEmail(value);
-  };
-
-  const handlePasswordChange = (value: string) => {
-    setPassword(value);
-    if (passwordError) validatePassword(value);
-  };
-
-  const toggleShowPassword = (e: React.MouseEvent<HTMLAnchorElement>) => {
+  const toggleShowPassword = (e: React.MouseEvent<HTMLSpanElement>) => {
     e.preventDefault();
     setShowPassword((prev) => !prev);
   };
 
-  const handleLogin = async () => {
-    const isEmailValid = validateEmail(email);
-    const isPasswordValid = validatePassword(password);
-
-    if (!isEmailValid || !isPasswordValid) return;
-    console.log("Logging in:", { email, password });
-
-    try {
-      setAuthError("");
-      const userAuthData = await AuthService.authenticate(email, password);
-      const customerData = await signIn(email, password);
-      navigate("/");
-      console.log("User logged in:", userAuthData);
-      console.log("User data:", customerData);
-    } catch {
-      setAuthError("Wrong email or password. Pls try again");
-    }
-  };
-
   const validateEmail = (value: string) => {
-    const isValid = /\S+@\S+\.\S+/.test(value);
+    const isValid = validateEmailFormat(value);
     setEmailError(isValid ? "" : "Please enter a valid email.");
     return isValid;
   };
 
   const validatePassword = (value: string) => {
-    const isValidLength = value.length >= 8;
-    const hasUpperCase = /[A-Z]/.test(value);
-    const hasDigit = /[0-9]/.test(value);
-    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(value);
-    const hasOnlyValidChars = /^[A-Za-z0-9!@#$%^&*(),.?":{}|<>]+$/.test(value);
+    const error = validatePasswordStrength(value);
+    setPasswordError(error || "");
+    return !error;
+  };
 
-    if (!isValidLength) {
-      setPasswordError("Password must be at least 8 characters.");
-      return false;
-    }
-    if (!hasUpperCase) {
-      setPasswordError("Password must include at least one uppercase letter.");
-      return false;
-    }
-    if (!hasDigit) {
-      setPasswordError("Password must include at least one digit.");
-      return false;
-    }
-    if (!hasSpecialChar) {
-      setPasswordError("Password must include at least one special character.");
-      return false;
-    }
-    if (!hasOnlyValidChars) {
-      setPasswordError("Password contains invalid characters.");
-      return false;
-    }
+  const validateConfirmPassword = (value: string) => {
+    const isValid = value === password;
+    setConfirmPasswordError(isValid ? "" : "Passwords do not match.");
+    return isValid;
+  };
 
-    setPasswordError("");
-    return true;
+  const handleRegister = () => {
+    const isEmailValid = validateEmail(email);
+    const isPasswordValid = validatePassword(password);
+    const isConfirmValid = validateConfirmPassword(confirmPassword);
+    const firstNameValid = !validateName(firstName, "First name");
+    setFirstNameError(validateName(firstName, "First name") || "");
+    const lastNameValid = !validateName(lastName, "Last name");
+    setLastNameError(validateName(lastName, "Last name") || "");
+    const dobValid = !validateDateOfBirth(dob);
+    setDobError(validateDateOfBirth(dob) || "");
+    const streetValid = !validateStreet(street);
+    setStreetError(validateStreet(street) || "");
+    const cityValid = !validateCity(city);
+    setCityError(validateCity(city) || "");
+    const postalValid = !validatePostalCode(postalCode);
+    setPostalCodeError(validatePostalCode(postalCode) || "");
+    const countryValid = !validateCountry(country);
+    setCountryError(validateCountry(country) || "");
+
+    if (
+      isEmailValid &&
+      isPasswordValid &&
+      isConfirmValid &&
+      firstNameValid &&
+      lastNameValid &&
+      dobValid &&
+      streetValid &&
+      cityValid &&
+      postalValid &&
+      countryValid
+    ) {
+      console.log("Registering:", { firstName, lastName, email, password, dob, street, city, postalCode, country });
+    }
   };
 
   return (
-    <div className="login-wrapper">
-      <H2 text="Login" />
+    <div className="registration-wrapper">
+      <H2 text="Sign up" />
 
       <div className="field-group">
-        <Paragraph text="Enter your email address." />
+        <Paragraph text="First name" />
+        <InputField
+          value={firstName}
+          onChange={(v) => {
+            setFirstName(v);
+            if (firstNameError) setFirstNameError(validateName(v, "First name") || "");
+          }}
+          isValid={!firstNameError}
+          placeholder="John"
+          icon={<FaUser />}
+        />
+        {firstNameError && <Paragraph text={firstNameError} isError />}
+      </div>
+
+      <div className="field-group">
+        <Paragraph text="Last name" />
+        <InputField
+          value={lastName}
+          onChange={(v) => {
+            setLastName(v);
+            if (lastNameError) setLastNameError(validateName(v, "Last name") || "");
+          }}
+          isValid={!lastNameError}
+          placeholder="Doe"
+          icon={<FaUser />}
+        />
+        {lastNameError && <Paragraph text={lastNameError} isError />}
+      </div>
+
+      <div className="field-group">
+        <Paragraph text="Email address" />
         <InputField
           value={email}
-          onChange={handleEmailChange}
+          onChange={(v) => {
+            setEmail(v);
+            if (emailError) validateEmail(v);
+          }}
           isValid={!emailError}
           placeholder="you@example.com"
           icon={<FaEnvelope />}
         />
-        {emailError && <Paragraph text={emailError} isError className="email-error-msg" />}
+        {emailError && <Paragraph text={emailError} isError />}
       </div>
 
       <div className="field-group">
-        <div className="password-label">
-          <Paragraph text="Enter your password." />
-          <Link text={showPassword ? "Hide password" : "Show password"} href="#" onClick={toggleShowPassword} />
-        </div>
+        <Paragraph text="Password" />
         <InputField
           value={password}
-          onChange={handlePasswordChange}
+          onChange={(v) => {
+            setPassword(v);
+            if (passwordError) validatePassword(v);
+          }}
           isValid={!passwordError}
           placeholder="Enter your password"
           type={showPassword ? "text" : "password"}
           icon={<FaLock />}
+          rightIcon={
+            <span onClick={toggleShowPassword} style={{ cursor: "pointer" }}>
+              {showPassword ? <FaEyeSlash /> : <FaEye />}
+            </span>
+          }
         />
-        {passwordError && <Paragraph text={passwordError} isError className="email-error-msg" />}
+        {passwordError && <Paragraph text={passwordError} isError />}
       </div>
 
-      <Button
-        className="login-btn"
-        text="Log in"
-        onClick={handleLogin}
-        // disabled={!email || !password || !!emailError || !!passwordError}
-      />
-      {authError && <Paragraph text={authError} isError className="auth-error-msg" />}
+      <div className="field-group">
+        <Paragraph text="Confirm password" />
+        <InputField
+          value={confirmPassword}
+          onChange={(v) => {
+            setConfirmPassword(v);
+            if (confirmPasswordError) validateConfirmPassword(v);
+          }}
+          isValid={!confirmPasswordError}
+          placeholder="Re-enter your password"
+          type={showPassword ? "text" : "password"}
+          icon={<FaLock />}
+          rightIcon={
+            <span onClick={toggleShowPassword} style={{ cursor: "pointer" }}>
+              {showPassword ? <FaEyeSlash /> : <FaEye />}
+            </span>
+          }
+        />
+        {confirmPasswordError && <Paragraph text={confirmPasswordError} isError />}
+      </div>
 
-      <Link
-        text="Don't have an account? Register"
-        href="/register"
-        onClick={(e) => {
-          e.preventDefault();
-          navigate("/register");
-        }}
-        className="registration-link"
-      />
+      <div className="field-group">
+        <Paragraph text="Date of birth" />
+        <InputField
+          value={dob}
+          onChange={(v) => {
+            setDob(v);
+            if (dobError) setDobError(validateDateOfBirth(v) || "");
+          }}
+          isValid={!dobError}
+          placeholder="YYYY-MM-DD"
+          type="date"
+          icon={<FaCalendar />}
+        />
+        {dobError && <Paragraph text={dobError} isError />}
+      </div>
+
+      <div className="field-group">
+        <Paragraph text="Street" />
+        <InputField
+          value={street}
+          onChange={(v) => {
+            setStreet(v);
+            if (streetError) setStreetError(validateStreet(v) || "");
+          }}
+          isValid={!streetError}
+          placeholder="Enter street address"
+          icon={<FaMapMarkerAlt />}
+        />
+        {streetError && <Paragraph text={streetError} isError />}
+      </div>
+
+      <div className="field-group">
+        <Paragraph text="City" />
+        <InputField
+          value={city}
+          onChange={(v) => {
+            setCity(v);
+            if (cityError) setCityError(validateCity(v) || "");
+          }}
+          isValid={!cityError}
+          placeholder="Brussels"
+          icon={<FaMapMarkerAlt />}
+        />
+        {cityError && <Paragraph text={cityError} isError />}
+      </div>
+
+      <div className="field-group">
+        <Paragraph text="Postal code" />
+        <InputField
+          value={postalCode}
+          onChange={(v) => {
+            setPostalCode(v);
+            if (postalCodeError) setPostalCodeError(validatePostalCode(v) || "");
+          }}
+          isValid={!postalCodeError}
+          placeholder="Enter postal code (4–5 digits)"
+          icon={<FaMapMarkerAlt />}
+        />
+        {postalCodeError && <Paragraph text={postalCodeError} isError />}
+      </div>
+
+      <div className="field-group">
+        <Paragraph text="Country" />
+        <select
+          value={country}
+          onChange={(e) => {
+            setCountry(e.target.value);
+            if (countryError) setCountryError(validateCountry(e.target.value) || "");
+          }}
+          className={`input ${!countryError ? "" : "input--error"}`}
+        >
+          {countryOptions.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+        {countryError && <Paragraph text={countryError} isError />}
+      </div>
+
+      <Button className="register-btn" text="Sign up" onClick={handleRegister} />
+
+      <p className="login-link" onClick={() => navigate("/login")}>
+        Already have an account? <span>Log in</span>
+      </p>
     </div>
   );
 }
