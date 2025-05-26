@@ -23,8 +23,16 @@ export async function signUp(
   firstName: string,
   lastName: string,
   dateOfBirth: string,
-  address: Address[]
+  address: Address[],
+  isDefaultAdress: boolean = false
 ) {
+  let defaultShippingAddress: number | null = null;
+  let defaultBillingAddress: number | null = null;
+  if (isDefaultAdress) {
+    defaultShippingAddress = 0;
+    defaultBillingAddress = 0;
+  }
+  console.log(defaultShippingAddress, defaultBillingAddress);
   const response = await apiClient.post<{ customer: CustomerResponse; cart: CartResponse }>(
     `${API_URL}/${PROJECT_KEY}/customers`,
     {
@@ -34,6 +42,8 @@ export async function signUp(
       lastName,
       dateOfBirth,
       addresses: address,
+      defaultShippingAddress,
+      defaultBillingAddress,
     }
   );
 

@@ -53,6 +53,8 @@ export default function RegistrationPage() {
   const [streetError, setStreetError] = useState("");
   const [cityError, setCityError] = useState("");
   const [postalCodeError, setPostalCodeError] = useState("");
+  const [isDefaultAdress, setAsDefaultAdress] = useState(false);
+
   const countryOptions = [
     { value: "", label: "Select a country" },
     { value: "AT", label: "Austria" },
@@ -142,16 +144,26 @@ export default function RegistrationPage() {
     ) {
       try {
         setAuthError("");
+
         await AuthService.anonymousAuthenticate();
-        await signUp(email, password, firstName, lastName, dob, [
-          {
-            street,
-            city,
-            postalCode,
-            country,
-          },
-        ]);
+        await signUp(
+          email,
+          password,
+          firstName,
+          lastName,
+          dob,
+          [
+            {
+              street,
+              city,
+              postalCode,
+              country,
+            },
+          ],
+          isDefaultAdress
+        );
         TokenService.setLogin("true");
+        setAsDefaultAdress(false);
         navigate("/");
       } catch {
         setAuthError("Sign up failed. Pls try again");
@@ -329,7 +341,16 @@ export default function RegistrationPage() {
         </select>
         {countryError && <Paragraph text={countryError} isError />}
       </div>
-
+      <div className="field-group-def-adress">
+        <Paragraph text="Set adress as default billing and shipping adress:" />
+        <InputField
+          value="check"
+          type="checkbox"
+          onChange={() => {
+            setAsDefaultAdress(!isDefaultAdress);
+          }}
+        ></InputField>
+      </div>
       <Button className="register-btn" text="Sign up" onClick={handleRegister} />
       {authError && <Paragraph text={authError} isError className="auth-error-msg" />}
 
