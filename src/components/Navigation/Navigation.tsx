@@ -1,13 +1,18 @@
-//import { Link } from "react-router-dom";
-import "./Navigation.scss";
 import Link from "../common/link/link";
+import Button from "../common/button/button";
 import { useNavigate } from "react-router-dom";
+import { TokenService } from "../../services/TokenService";
 
-function Nav() {
+interface NavProps {
+  isAuthenticated: boolean;
+  className?: string;
+}
+
+function Nav({ isAuthenticated = false, className = "" }: NavProps) {
   const navigate = useNavigate();
 
   return (
-    <nav className="nav">
+    <nav className={className}>
       <Link
         className="nav-link"
         text="Home"
@@ -35,6 +40,23 @@ function Nav() {
           navigate("/about");
         }}
       />
+
+      <Button
+        className="auth-link btn-medium"
+        text={isAuthenticated ? "Log out" : "Log in"}
+        onClick={() => {
+          if (isAuthenticated) {
+            TokenService.clearTokens();
+          }
+          navigate("/login");
+        }}
+      />
+
+      {isAuthenticated ? (
+        <Button className="auth-link btn-medium" text="Profile" onClick={() => navigate("/profile")} />
+      ) : (
+        <Button className="auth-link btn-medium" text="Sign up" onClick={() => navigate("/sign-up")} />
+      )}
     </nav>
   );
 }

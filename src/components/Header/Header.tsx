@@ -1,6 +1,5 @@
-import Nav from "../Navigation/Navigation";
 import Link from "../common/link/link";
-import Button from "../common/button/button";
+import Nav from "../Navigation/Navigation";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { TokenService } from "../../services/TokenService";
@@ -36,6 +35,7 @@ function Header() {
           navigate("/");
         }}
       />
+      <Nav className="nav" isAuthenticated={isAuthenticated} />
 
       <div
         className="burger-menu"
@@ -44,28 +44,7 @@ function Header() {
       >
         {menuOpen ? "×" : "☰"}
       </div>
-
-      <Nav />
-
-      <div className="auth-links-container">
-        <Button
-          className="auth-link btn-medium"
-          text={isAuthenticated ? "Log out" : "Log in"}
-          onClick={() => {
-            if (isAuthenticated) {
-              TokenService.clearTokens();
-            }
-            navigate("/login");
-          }}
-        />
-
-        {isAuthenticated ? (
-          <Button className="auth-link btn-medium" text="Profile" onClick={() => navigate("/profile")} />
-        ) : (
-          <Button className="auth-link btn-medium" text="Sign up" onClick={() => navigate("/sign-up")} />
-        )}
-      </div>
-      {menuOpen && <div className="overlay" onClick={() => setMenuOpen(false)} />}
+      {menuOpen && <Nav className="ham-menu" isAuthenticated={isAuthenticated} />}
     </header>
   );
 }

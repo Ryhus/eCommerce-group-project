@@ -8,6 +8,21 @@
   z-index: 100;
   height: auto;
 }
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.ham-menu {
+  display: none;
+}
+
+.btn {
+  width: 18rem;
+}
+
 .burger-menu {
   display: none;
   font-size: 28px;
@@ -24,65 +39,30 @@
   line-height: normal;
 }
 
-.auth-links-container {
-  display: flex;
-  gap: 10px;
-  justify-content: flex-end;
-}
-
-@media only screen and (max-width: 916px) {
+@media only screen and (max-width: 768px) {
   .header {
-    padding: 8px 16px;
-
     .burger-menu {
       display: block;
     }
 
-    nav,
-    .auth-links-container {
+    nav {
       display: none;
+    }
+    .ham-menu {
+      top: 60px;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #fff;
+      position: fixed;
       width: 100%;
-      text-align: center;
-      z-index: 1001;
-    }
-
-    &.menu-open {
+      display: flex;
       flex-direction: column;
-      align-items: stretch;
-
-      .home-logo {
-        margin: 0 auto 8px;
-      }
-
-      .burger-menu {
-        position: absolute;
-        top: 8px;
-        right: 16px;
-        z-index: 1001;
-      }
-
-      nav,
-      .auth-links-container {
-        display: block;
-        background-color: #fff;
-        padding: 8px 0;
-      }
-
-      nav a,
-      .auth-links-container .auth-link {
-        display: block;
-        margin: 4px 0;
-      }
+      justify-content: center;
+      align-items: center;
+      transition: transform 0.3s ease;
+      z-index: 100;
+      gap: 8px;
     }
-  }
-
-  .overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #fff;
-    z-index: 500;
   }
 }
