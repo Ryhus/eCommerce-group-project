@@ -39,6 +39,10 @@
   line-height: normal;
 }
 
+.no-scroll {
+  overflow: hidden;
+}
+
 @media only screen and (max-width: 768px) {
   .header {
     .burger-menu {
@@ -56,6 +60,7 @@
       background-color: #fff;
       position: fixed;
       width: 100%;
+
       display: flex;
       flex-direction: column;
       justify-content: center;
