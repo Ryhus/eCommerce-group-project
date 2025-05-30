@@ -1,5 +1,5 @@
-import type { Product } from "./types";
-import { apiClient } from "../apiClient";
+import type { Product } from "./types.js";
+import { apiClient } from "../apiClient.js";
 
 const PROJECT_KEY = import.meta.env.VITE_CTP_PROJECT_KEY;
 
@@ -26,8 +26,8 @@ export async function fetchProducts(): Promise<Product[]> {
       id: item.id,
       name: item.name.en,
       imgUrls: item.masterVariant.images.map((img) => img.url),
-      currentPrice: (currentPriceiInCents / 100).toFixed(2),
-      oldPrice: (oldPriceiInCents / 100).toFixed(2),
+      currentPrice: currentPriceiInCents,
+      oldPrice: oldPriceiInCents,
     };
   });
 }

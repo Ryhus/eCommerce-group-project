@@ -3,8 +3,8 @@ import "./Catalog.scss";
 import { H3 } from "../../components/common/headings/H3";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import type { Product } from "../../services/productServise/types";
-import { fetchProducts } from "../../services/productServise/productService";
+import type { Product } from "../../services/productService/types.js";
+import { fetchProducts } from "../../services/productService/productService.js";
 
 /*--- Mock products to be deleted after connecting to api---*/
 
@@ -75,6 +75,8 @@ export default function CatalogPage() {
         <div className="product-list">
           {products.map((item) => (
             <ProductCard
+              key={item.id}
+              id={item.id}
               name={item.name}
               currentPrice={item.currentPrice}
               oldPrice={item.oldPrice}

@@ -2,6 +2,6 @@ export interface Product {
   id: string;
   name: string;
   imgUrls: string[];
-  currentPrice: string;
-  oldPrice: string;
+  currentPrice: number; //in centes
+  oldPrice: number; //in centes
 }
