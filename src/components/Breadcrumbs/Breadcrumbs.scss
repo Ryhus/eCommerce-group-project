@@ -1,0 +1,20 @@
+.breadcrumbs {
+	font-family: "Roboto", sans-serif;
+  	font-size: 16px;
+	
+  
+	a {
+	  color: #000;
+	  text-decoration: none;
+	  cursor: pointer;
+  
+	  &:hover {
+		text-decoration: underline;
+	  }
+	}
+  
+	.breadcrumb-separatour {
+	  margin: 0 0.5rem;
+	  color: #000;
+	}
+  }
