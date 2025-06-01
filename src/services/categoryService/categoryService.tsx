@@ -1,32 +1,9 @@
-// src/services/categoryService.ts
 import { apiClient } from "../apiClient";
 import type { Category } from "./types";
 
 const PROJECT_KEY = import.meta.env.VITE_CTP_PROJECT_KEY;
 
-// Fetch parent category up to 20 levels
-// GET /<PROJECT_KEY>/categories?where=parent is not defined&limit=20
-export async function fetchTopLevelCategories(): Promise<Category[]> {
-  const response = await apiClient.get<{
-    results: Array<{
-      id: string;
-      name: { en: string };
-      slug: { en: string };
-      parent?: { id: string };
-    }>;
-  }>(`/${PROJECT_KEY}/categories`, {
-    params: { where: "parent is not defined", limit: 20 },
-  });
-
-  return response.data.results.map((cat) => ({
-    id: cat.id,
-    name: cat.name.en,
-    slug: cat.slug.en,
-    parentId: cat.parent?.id ?? null,
-  }));
-}
-
-//fetch category by slag. A Slug is the unique identifying part of a web address, typically at the end of the URL
+//fetch category by slag.
 // GET /<PROJECT_KEY>/categories?where=<whereClause>&limit=1
 export async function fetchCategoryBySlug(slug: string, parentId?: string | null): Promise<Category | null> {
   const whereClause = parentId ? `slug(en="${slug}") and parent(id="${parentId}")` : `slug(en="${slug}")`;
@@ -53,10 +30,10 @@ export async function fetchCategoryBySlug(slug: string, parentId?: string | null
   };
 }
 
-//Fetch child categories by parent.id == parentId
+//Fetch child categories by parentId, if parentId is null fetch catalog root children
 // GET /<PROJECT_KEY>/categories?where=<parent(id="${parentId}")>&limit=20
-export async function fetchChildCategories(parentId: string): Promise<Category[]> {
-  const whereClause = `parent(id="${parentId}")`;
+export async function fetchChildCategories(parentId: string | null): Promise<Category[]> {
+  const whereClause = parentId ? `parent(id="${parentId}")` : `parent is not defined`;
 
   const response = await apiClient.get<{
     results: Array<{

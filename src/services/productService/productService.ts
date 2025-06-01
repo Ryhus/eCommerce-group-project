@@ -28,7 +28,7 @@ export async function fetchProducts(): Promise<Product[]> {
     return {
       id: item.id,
       name: item.name.en,
-      slug: "", //fix
+      slug: "",
       imgUrls: item.masterVariant.images.map((img) => img.url),
       currentPrice: currentPriceiInCents,
       oldPrice: oldPriceiInCents,

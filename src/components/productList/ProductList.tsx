@@ -26,7 +26,7 @@ const ProductList: React.FC<ProductListProps> = ({ products, className = "" }) =
           imgUrl={item.imgUrls[0] || ""}
           currentPrice={Number(item.currentPrice)}
           oldPrice={Number(item.oldPrice)}
-          onClick={() => navigate(`/product/${item.id}`)}
+          onClick={() => navigate(`/product/${item.id}`)} //change to product slug for seo-frienfly link address
         />
       ))}
     </div>
