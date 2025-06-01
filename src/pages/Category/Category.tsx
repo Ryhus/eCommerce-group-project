@@ -8,10 +8,12 @@ import Paragraph from "../../components/common/paragraph/paragraph";
 import Link from "../../components/common/link/link";
 import NotFoundPage from "../NotFound/NotFound";
 import ProductList from "../../components/productList/ProductList";
+import Sorting from "../../components/Sorting/Sorting";
 
 import type { Product } from "../../services/productService/types";
 import type { Category } from "../../services/categoryService/types";
 import type { Crumb } from "../../components/Breadcrumbs/Breadcrumbs";
+import type { SortOption } from "../../components/Sorting/Sorting";
 
 import { fetchProductsByCategory, fetchProducts } from "../../services/productService/productService";
 import { fetchCategoryBySlug, fetchChildCategories } from "../../services/categoryService/categoryService";
@@ -30,6 +32,7 @@ export default function CategoryPage() {
 
   const [products, setProducts] = useState<Product[]>([]);
   const [currentCategory, setCurrentCategory] = useState<Category | null>(null);
+  const [currentSort, setCurrentSort] = useState<SortOption>("default");
 
   const rawPath = location.pathname.replace(/^\/catalog\/?/, "");
   const segments = rawPath === "" ? [] : rawPath.split("/");
@@ -69,11 +72,29 @@ export default function CategoryPage() {
         const cats = await fetchChildCategories(parentId);
         setCategoriesToShow(cats);
 
+        let sortParam: string | undefined = undefined;
+        switch (currentSort) {
+          case "price asc":
+            sortParam = "price asc";
+            break;
+          case "price desc":
+            sortParam = "price desc";
+            break;
+          case "name asc":
+            sortParam = "name.en asc";
+            break;
+          case "name desc":
+            sortParam = "name.en desc";
+            break;
+          default:
+            sortParam = undefined;
+        }
+
         if (parentId === null) {
-          const allProds = await fetchProducts();
+          const allProds = await fetchProducts(sortParam);
           setProducts(allProds);
         } else {
-          const prods = await fetchProductsByCategory(parentId);
+          const prods = await fetchProductsByCategory(parentId, sortParam);
           setProducts(prods);
         }
         setLoading(false);
@@ -90,7 +111,7 @@ export default function CategoryPage() {
       }
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [location.pathname]);
+  }, [location.pathname, currentSort]);
 
   if (error) {
     return <NotFoundPage />;
@@ -131,12 +152,10 @@ export default function CategoryPage() {
         <div className="category-content-colomn">
           <div className="category-title-sort">
             <H3 text={title} />
-            <Link
-              text="Sort: most relevant"
-              href=""
-              onClick={() => {
-                /* placeholder for actual sort logic */
-                navigate("#");
+            <Sorting
+              currentSort={currentSort}
+              onSortChange={(newSort) => {
+                setCurrentSort(newSort);
               }}
             />
           </div>
