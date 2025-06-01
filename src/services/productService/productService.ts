@@ -6,7 +6,11 @@ const PROJECT_KEY = import.meta.env.VITE_CTP_PROJECT_KEY;
 //Fetch ALL products
 // GET /<PROJECT_KEY>/product-projections/search"
 
-export async function fetchProducts(): Promise<Product[]> {
+export async function fetchProducts(sort: string | undefined): Promise<Product[]> {
+  const params: Record<string, string | number> = {};
+  if (sort) {
+    params.sort = sort;
+  }
   const response = await apiClient.get<{
     results: Array<{
       id: string;
@@ -19,7 +23,9 @@ export async function fetchProducts(): Promise<Product[]> {
         }>;
       };
     }>;
-  }>(`/${PROJECT_KEY}/product-projections/search`);
+  }>(`/${PROJECT_KEY}/product-projections/search`, {
+    params,
+  });
   return response.data.results.map((item) => {
     const currentPriceiInCents =
       item.masterVariant.prices[0].discounted?.value.centAmount ?? item.masterVariant.prices[0].value.centAmount;
@@ -39,7 +45,11 @@ export async function fetchProducts(): Promise<Product[]> {
 //Fetch products by category ID
 // GET /<PROJECT_KEY>/product-projections/search?filter.categories.id:"<categoryId>"
 
-export async function fetchProductsByCategory(categoryId: string): Promise<Product[]> {
+export async function fetchProductsByCategory(categoryId: string, sort: string | undefined): Promise<Product[]> {
+  // const params: Record<string, string | number> = {};
+  // if (sort) {
+  // 	params.sort = sort;
+  //   }
   const response = await apiClient.get<{
     results: Array<{
       id: string;
@@ -54,7 +64,7 @@ export async function fetchProductsByCategory(categoryId: string): Promise<Produ
       };
     }>;
   }>(`/${PROJECT_KEY}/product-projections/search`, {
-    params: { filter: `categories.id:"${categoryId}"`, limit: 50 },
+    params: { filter: `categories.id:"${categoryId}"`, sort: sort, limit: 50 },
   });
 
   return response.data.results.map((item) => {
