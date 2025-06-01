@@ -14,11 +14,7 @@ import type { Category } from "../../services/categoryService/types";
 import type { Crumb } from "../../components/Breadcrumbs/Breadcrumbs";
 
 import { fetchProductsByCategory, fetchProducts } from "../../services/productService/productService";
-import {
-  //   fetchTopLevelCategories,
-  fetchCategoryBySlug,
-  fetchChildCategories,
-} from "../../services/categoryService/categoryService";
+import { fetchCategoryBySlug, fetchChildCategories } from "../../services/categoryService/categoryService";
 import "./Category.scss";
 
 export default function CategoryPage() {
@@ -30,8 +26,6 @@ export default function CategoryPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  //   const [topCategories, setTopCategories] = useState<Category[]>([]); //tbc maybe i don't need
-  //   const [childCategories, setChildCategories] = useState<Category[]>([]);
   const [categoriesToShow, setCategoriesToShow] = useState<Category[]>([]);
 
   const [products, setProducts] = useState<Product[]>([]);
@@ -107,49 +101,54 @@ export default function CategoryPage() {
   }
 
   const isRoot = segments.length === 0;
-  const title = isRoot ? "All Categories" : (currentCategory?.name ?? "Loading Category…");
+  const title = isRoot ? "All products" : (currentCategory?.name ?? "Loading Category…");
   const baseCatalogPath = segments.length > 0 ? "/catalog/" + segments.join("/") : "/catalog/";
 
   return (
     <div className="category-page">
       <Breadcrumbs crumbs={breadcrumbs} />
       <div className="category-content">
-        <H3 text={title} />
-        <Link
-          text="Sort: most relevant"
-          href=""
-          onClick={() => {
-            /* placeholder for actual sort logic */
-            navigate("#");
-          }}
-        />
+        <div className="category-subcats-filter">
+          {categoriesToShow.length > 0 && (
+            <div className="category-list">
+              {categoriesToShow.map((cat) => {
+                const nextURL = isRoot ? `/catalog/${cat.slug}` : `${baseCatalogPath}/${cat.slug}`;
 
-        {categoriesToShow.length > 0 && (
-          <div className="category-list">
-            {categoriesToShow.map((cat) => {
-              const nextURL = isRoot ? `/catalog/${cat.slug}` : `${baseCatalogPath}/${cat.slug}`;
-
-              return (
-                <Link
-                  key={cat.id}
-                  text={cat.name}
-                  className="category-link"
-                  href=""
-                  onClick={() => navigate(nextURL)}
-                />
-              );
-            })}
+                return (
+                  <Link
+                    key={cat.id}
+                    text={cat.name}
+                    className="category-link"
+                    href=""
+                    onClick={() => navigate(nextURL)}
+                  />
+                );
+              })}
+            </div>
+          )}
+          <div className="filters"> filter component placeholder</div>
+        </div>
+        <div className="category-content-colomn">
+          <div className="category-title-sort">
+            <H3 text={title} />
+            <Link
+              text="Sort: most relevant"
+              href=""
+              onClick={() => {
+                /* placeholder for actual sort logic */
+                navigate("#");
+              }}
+            />
           </div>
-        )}
-        <div className="filters"> filter component placeholder</div>
-        {products.length === 0 ? (
-          <Paragraph
-            className="no-products"
-            text={isRoot ? "No products available." : "No products in this category yet."}
-          />
-        ) : (
-          <ProductList products={products} className="category-products" />
-        )}
+          {products.length === 0 ? (
+            <Paragraph
+              className="no-products"
+              text={isRoot ? "No products available." : "No products in this category yet."}
+            />
+          ) : (
+            <ProductList products={products} className="category-products" />
+          )}
+        </div>
       </div>
     </div>
   );
