@@ -5,7 +5,7 @@ import type { Category } from "./types";
 const PROJECT_KEY = import.meta.env.VITE_CTP_PROJECT_KEY;
 
 // Fetch parent category up to 20 levels
-// GET /<PROJECT_KEY>/categories?where=parent is null&limit=20
+// GET /<PROJECT_KEY>/categories?where=parent is not defined&limit=20
 export async function fetchTopLevelCategories(): Promise<Category[]> {
   const response = await apiClient.get<{
     results: Array<{
@@ -51,4 +51,28 @@ export async function fetchCategoryBySlug(slug: string, parentId?: string | null
     slug: c.slug.en,
     parentId: c.parent?.id ?? null,
   };
+}
+
+//Fetch child categories by parent.id == parentId
+// GET /<PROJECT_KEY>/categories?where=<parent(id="${parentId}")>&limit=20
+export async function fetchChildCategories(parentId: string): Promise<Category[]> {
+  const whereClause = `parent(id="${parentId}")`;
+
+  const response = await apiClient.get<{
+    results: Array<{
+      id: string;
+      name: { en: string };
+      slug: { en: string };
+      parent?: { id: string };
+    }>;
+  }>(`/${PROJECT_KEY}/categories`, {
+    params: { where: whereClause, limit: 20 },
+  });
+
+  return response.data.results.map((cat) => ({
+    id: cat.id,
+    name: cat.name.en,
+    slug: cat.slug.en,
+    parentId: cat.parent?.id ?? null,
+  }));
 }
