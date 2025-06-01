@@ -46,10 +46,12 @@ export async function fetchChildCategories(parentId: string | null): Promise<Cat
     params: { where: whereClause, limit: 20 },
   });
 
-  return response.data.results.map((cat) => ({
+  const mapped = response.data.results.map((cat) => ({
     id: cat.id,
-    name: cat.name.en,
-    slug: cat.slug.en,
+    name: cat.name?.en ?? "",
+    slug: cat.slug?.en ?? "",
     parentId: cat.parent?.id ?? null,
   }));
+
+  return mapped.filter((c) => c.name.trim().length > 0 && c.slug.trim().length > 0);
 }
