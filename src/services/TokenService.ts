@@ -5,6 +5,7 @@ export const TokenService = {
   setAccessToken: (token: string) => localStorage.setItem("accessToken", token),
   setLogin: (logeIn: string = "true") => localStorage.setItem("loginState", logeIn),
   removeAccessToken: () => localStorage.removeItem("accessToken"),
+  setCustomerId: (customerId: string) => localStorage.setItem("customerId", customerId),
 
   getRefreshToken: (): string | null => localStorage.getItem("refreshToken"),
   setRefreshToken: (token: string) => localStorage.setItem("refreshToken", token),
@@ -13,9 +14,12 @@ export const TokenService = {
   getLogin: (): string | null => localStorage.getItem("loginState"),
   removeLogin: () => localStorage.removeItem("loginState"),
 
+  getCustomerId: (): string | null => localStorage.getItem("customerId"),
+
   clearTokens: () => {
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
     localStorage.removeItem("loginState");
+    localStorage.removeItem("customerId");
   },
 };

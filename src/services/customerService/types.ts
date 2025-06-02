@@ -1,5 +1,6 @@
 export interface Address {
-  street: string;
+  id?: string;
+  streetName: string;
   city: string;
   postalCode: string;
   country: string;
@@ -17,6 +18,17 @@ export interface CustomerResponse {
   authenticationMode: "Password" | "ExternalAuth";
   createdAt: Date;
   lastModifiedAt: Date;
+  dateOfBirth: Date;
+  firstName?: string | null;
+  lastName?: string | null;
+  middleName?: string | null;
+  title?: string | null;
+
+  defaultShippingAddressId?: string | null;
+  defaultBillingAddressId?: string | null;
+  shippingAddressIds?: string[] | null;
+  billingAddressIds?: string[] | null;
+  salutation?: string | null;
 }
 
 export interface SignUpRequest {

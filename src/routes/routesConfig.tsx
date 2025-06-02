@@ -7,6 +7,9 @@ import NotFoundPage from "../pages/NotFound/NotFound";
 import UserPage from "../pages/User/User";
 import CatalogPage from "../pages/Catalog/Catalog";
 import AboutPage from "../pages/About/About";
+import { getCustomer } from "../services/customerService/customerService";
+
+import { TokenService } from "../services/TokenService";
 
 const router = createBrowserRouter(
   [
@@ -17,7 +20,16 @@ const router = createBrowserRouter(
         { index: true, Component: HomePage },
         { path: "login", Component: LoginPage },
         { path: "sign-up", Component: RegistrationPage },
-        { path: "profile", Component: UserPage },
+        {
+          path: "profile",
+          loader: async () => {
+            const customerId = TokenService.getCustomerId();
+            const customerData = await getCustomer(customerId);
+            return customerData;
+          },
+          errorElement: <LoginPage />,
+          Component: UserPage,
+        },
         { path: "catalog", Component: CatalogPage },
         { path: "about", Component: AboutPage },
       ],

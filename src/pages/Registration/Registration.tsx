@@ -154,7 +154,7 @@ export default function RegistrationPage() {
           dob,
           [
             {
-              street,
+              streetName: street,
               city,
               postalCode,
               country,
@@ -162,7 +162,6 @@ export default function RegistrationPage() {
           ],
           isDefaultAdress
         );
-        TokenService.setLogin("true");
         setAsDefaultAdress(false);
         navigate("/");
       } catch {
