@@ -7,6 +7,7 @@ import NotFoundPage from "../pages/NotFound/NotFound";
 import UserPage from "../pages/User/User";
 import CatalogPage from "../pages/Catalog/Catalog";
 import AboutPage from "../pages/About/About";
+import { ProfileFallBack } from "../pages/Fallback/ProfileFallBack";
 import { getCustomer } from "../services/customerService/customerService";
 
 import { TokenService } from "../services/TokenService";
@@ -27,7 +28,7 @@ const router = createBrowserRouter(
             const customerData = await getCustomer(customerId);
             return customerData;
           },
-          errorElement: <LoginPage />,
+          errorElement: <ProfileFallBack />,
           Component: UserPage,
         },
         { path: "catalog", Component: CatalogPage },

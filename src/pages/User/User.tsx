@@ -1,5 +1,5 @@
-import { UserInfo } from "../../components/UserInfo/UserInfo";
 import { useLoaderData } from "react-router-dom";
+import { UserInfo } from "../../components/UserInfo/UserInfo";
 import type { CustomerResponse } from "../../services/customerService/types";
 
 export default function UserPage() {
