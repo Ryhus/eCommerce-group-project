@@ -23,6 +23,7 @@ const ProductList: React.FC<ProductListProps> = ({ products, className = "" }) =
           key={item.id}
           id={item.id}
           name={item.name}
+          description={item.description}
           imgUrl={item.imgUrls[0] || ""}
           currentPrice={Number(item.currentPrice)}
           oldPrice={Number(item.oldPrice)}

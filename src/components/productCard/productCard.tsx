@@ -5,6 +5,7 @@ import "./productCard.scss";
 type ProductCardProps = {
   id: string;
   name: string;
+  description?: string;
   onClick: () => void;
   imgUrl: string;
   currentPrice: number; //in centes
@@ -16,6 +17,7 @@ type ProductCardProps = {
 const ProductCard: React.FC<ProductCardProps> = ({
   id,
   name,
+  description = "",
   onClick,
   imgUrl,
   currentPrice,
@@ -27,6 +29,10 @@ const ProductCard: React.FC<ProductCardProps> = ({
   if (oldPrice > currentPrice) {
     discount = Math.round(((oldPrice - currentPrice) / oldPrice) * 100);
   }
+  let shortDescription = description;
+  if (description && description.length > 50) {
+    shortDescription = description.slice(0, 47).concat("...");
+  }
   return (
     <div className={`product-card ${className}`} id={id} onClick={onClick}>
       <div className="product-card__img-wrapper">
@@ -34,6 +40,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
       </div>
       <div className="product-card__info">
         <Paragraph text={name} className="product-card__name" />
+        {description && <Paragraph text={shortDescription} className="product-card__description" />}
         <div className="product-card__prices">
           <Paragraph text={`${(currentPrice / 100).toFixed(2)}€`} className="product-card__current-price" />
           {oldPrice > currentPrice && discount && (

@@ -18,6 +18,7 @@ import type { SortOption } from "../../components/Sorting/Sorting";
 import { fetchProductsByCategory, fetchProducts } from "../../services/productService/productService";
 import { fetchCategoryBySlug, fetchChildCategories } from "../../services/categoryService/categoryService";
 import "./Category.scss";
+import { IoMdOptions, IoMdClose } from "react-icons/io";
 
 export default function CategoryPage() {
   const location = useLocation();
@@ -33,6 +34,7 @@ export default function CategoryPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [currentCategory, setCurrentCategory] = useState<Category | null>(null);
   const [currentSort, setCurrentSort] = useState<SortOption>("default");
+  const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
 
   const rawPath = location.pathname.replace(/^\/catalog\/?/, "");
   const segments = rawPath === "" ? [] : rawPath.split("/");
@@ -125,30 +127,38 @@ export default function CategoryPage() {
   const title = isRoot ? "All products" : (currentCategory?.name ?? "Loading Category…");
   const baseCatalogPath = segments.length > 0 ? "/catalog/" + segments.join("/") : "/catalog/";
 
+  const sidebarContent = (
+    <>
+      {categoriesToShow.length > 0 && (
+        <div className="category-list">
+          {categoriesToShow.map((cat) => {
+            const nextURL = isRoot ? `/catalog/${cat.slug}` : `${baseCatalogPath}/${cat.slug}`;
+            return (
+              <Link
+                key={cat.id}
+                text={cat.name}
+                className="category-link"
+                href=""
+                onClick={() => {
+                  setIsMobileFilterOpen(false);
+                  navigate(nextURL);
+                }}
+              />
+            );
+          })}
+        </div>
+      )}
+      <div className="filters">
+        {/* Replace with your real Filters component */}
+        <strong>Filters (placeholder)</strong>
+      </div>
+    </>
+  );
   return (
     <div className="category-page">
       <Breadcrumbs crumbs={breadcrumbs} />
       <div className="category-content">
-        <div className="category-subcats-filter">
-          {categoriesToShow.length > 0 && (
-            <div className="category-list">
-              {categoriesToShow.map((cat) => {
-                const nextURL = isRoot ? `/catalog/${cat.slug}` : `${baseCatalogPath}/${cat.slug}`;
-
-                return (
-                  <Link
-                    key={cat.id}
-                    text={cat.name}
-                    className="category-link"
-                    href=""
-                    onClick={() => navigate(nextURL)}
-                  />
-                );
-              })}
-            </div>
-          )}
-          <div className="filters"> filter component placeholder</div>
-        </div>
+        <div className="category-subcats-filter">{sidebarContent}</div>
         <div className="category-content-colomn">
           <div className="category-title-sort">
             <H3 text={title} />
@@ -158,6 +168,13 @@ export default function CategoryPage() {
                 setCurrentSort(newSort);
               }}
             />
+            <button
+              className="mobile-filter-toggle"
+              onClick={() => setIsMobileFilterOpen(true)}
+              aria-label="Open Filters"
+            >
+              <IoMdOptions size={24} />
+            </button>
           </div>
           {products.length === 0 ? (
             <Paragraph
@@ -169,6 +186,14 @@ export default function CategoryPage() {
           )}
         </div>
       </div>
+      {isMobileFilterOpen && (
+        <div className="mobile-filter-overlay">
+          <button className="close-overlay" onClick={() => setIsMobileFilterOpen(false)} aria-label="Close Filters">
+            <IoMdClose size={28} />
+          </button>
+          <div className="category-subcats-filter-inner">{sidebarContent}</div>
+        </div>
+      )}
     </div>
   );
 }
