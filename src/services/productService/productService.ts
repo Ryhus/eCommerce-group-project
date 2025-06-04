@@ -1,0 +1,84 @@
+import type { Product } from "./types.js";
+import { apiClient } from "../apiClient.js";
+
+const PROJECT_KEY = import.meta.env.VITE_CTP_PROJECT_KEY;
+
+//Fetch ALL products
+// GET /<PROJECT_KEY>/product-projections/search"
+
+export async function fetchProducts(sort: string | undefined): Promise<Product[]> {
+  const params: Record<string, string | number> = {};
+  if (sort) {
+    params.sort = sort;
+  }
+  const response = await apiClient.get<{
+    results: Array<{
+      id: string;
+      name: { en: string };
+      description: { en: string };
+      masterVariant: {
+        images: { url: string }[];
+        prices: Array<{
+          value: { centAmount: number };
+          discounted?: { value: { centAmount: number } };
+        }>;
+      };
+    }>;
+  }>(`/${PROJECT_KEY}/product-projections/search`, {
+    params,
+  });
+  return response.data.results.map((item) => {
+    const currentPriceiInCents =
+      item.masterVariant.prices[0].discounted?.value.centAmount ?? item.masterVariant.prices[0].value.centAmount;
+    const oldPriceiInCents = item.masterVariant.prices[0].value.centAmount;
+
+    return {
+      id: item.id,
+      name: item.name.en,
+      slug: "",
+      description: item.description.en,
+      imgUrls: item.masterVariant.images.map((img) => img.url),
+      currentPrice: currentPriceiInCents,
+      oldPrice: oldPriceiInCents,
+    };
+  });
+}
+
+//Fetch products by category ID
+// GET /<PROJECT_KEY>/product-projections/search?filter.categories.id:"<categoryId>"
+
+export async function fetchProductsByCategory(categoryId: string, sort: string | undefined): Promise<Product[]> {
+  const response = await apiClient.get<{
+    results: Array<{
+      id: string;
+      name: { en: string };
+      description: { en: string };
+      slug: { en: string };
+      masterVariant: {
+        images: { url: string }[];
+        prices: Array<{
+          value: { centAmount: number; currencyCode: string };
+          discounted?: { value: { centAmount: number } };
+        }>;
+      };
+    }>;
+  }>(`/${PROJECT_KEY}/product-projections/search`, {
+    params: { filter: `categories.id:"${categoryId}"`, sort: sort, limit: 50 },
+  });
+
+  return response.data.results.map((item) => {
+    const currentPriceiInCents =
+      item.masterVariant.prices[0].discounted?.value.centAmount ?? item.masterVariant.prices[0].value.centAmount;
+    const oldPriceiInCents = item.masterVariant.prices[0].value.centAmount;
+
+    return {
+      id: item.id,
+      name: item.name.en,
+      description: item.description.en,
+      slug: item.slug.en,
+      imgUrls: item.masterVariant.images.map((img) => img.url),
+      currentPrice: currentPriceiInCents,
+      oldPrice: oldPriceiInCents,
+    };
+  });
+}
