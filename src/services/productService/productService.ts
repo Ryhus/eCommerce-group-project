@@ -74,33 +74,41 @@ export async function fetchProductByKey(productKey: string): Promise<Product | n
 export async function fetchProductById(productId: string): Promise<Product | null> {
   try {
     const response = await apiClient.get<{
-      id: string;
-      name: { en: string };
-      slug: { en: string };
-      description?: { en?: string };
-      masterVariant: {
-        images: { url: string }[];
-        prices: Array<{
-          value: { centAmount: number };
-          discounted?: { value: { centAmount: number } };
-        }>;
+      masterData: {
+        current: {
+          id: string;
+          name: { en: string };
+          slug: { en: string };
+          description?: { en?: string };
+          masterVariant: {
+            images?: { url: string }[];
+            prices?: {
+              value: { centAmount: number };
+              discounted?: { value: { centAmount: number } };
+            }[];
+          };
+        };
       };
     }>(`/${PROJECT_KEY}/products/${productId}`);
 
-    const item = response.data;
+    const item = response.data.masterData.current;
 
-    const currentPriceiInCents =
+    if (!item.masterVariant?.prices || item.masterVariant.prices.length === 0) {
+      throw new Error("No price info found");
+    }
+
+    const currentPriceInCents =
       item.masterVariant.prices[0].discounted?.value.centAmount ?? item.masterVariant.prices[0].value.centAmount;
-    const oldPriceiInCents = item.masterVariant.prices[0].value.centAmount;
+    const oldPriceInCents = item.masterVariant.prices[0].value.centAmount;
 
     return {
-      id: item.id,
+      id: productId,
       name: item.name.en,
       slug: item.slug.en ?? "",
       description: item.description?.en ?? "",
-      imgUrls: item.masterVariant.images.map((img) => img.url),
-      currentPrice: currentPriceiInCents,
-      oldPrice: oldPriceiInCents,
+      imgUrls: (item.masterVariant.images ?? []).map((img: { url: string }) => img.url),
+      currentPrice: currentPriceInCents,
+      oldPrice: oldPriceInCents,
     };
   } catch (error) {
     console.error(`Error fetching product with ID ${productId}:`, error);

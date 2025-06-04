@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { fetchProductByKey } from "../../services/productService/productService";
+import { useParams } from "react-router-dom";
+import { fetchProductById } from "../../services/productService/productService";
 import type { Product } from "../../services/productService/types";
 import Button from "../../components/common/button/button";
-// import Paragraph from "../../components/common/paragraph/paragraph";
 import "./Product.scss";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination } from "swiper/modules";
@@ -13,16 +13,16 @@ import "swiper/css/pagination";
 export default function ProductPage() {
   const [product, setProduct] = useState<Product | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const productKey = "yoga-mat-00";
+  const { id } = useParams<{ id: string }>();
 
   useEffect(() => {
-    fetchProductByKey(productKey)
+    fetchProductById(id!)
       .then((data) => {
         if (data) setProduct(data);
         else setError("Product not found.");
       })
       .catch((err) => setError(err.message));
-  }, [productKey]);
+  }, [id]);
 
   if (error) return <div>{error}</div>;
   if (!product) return <div>Loading product...</div>;
@@ -30,7 +30,6 @@ export default function ProductPage() {
   return (
     <div className="product-page">
       <div className="product-container">
-        {/* Left: Image Gallery */}
         <div className="product-page__slider">
           {product.imgUrls.length > 1 ? (
             <Swiper
@@ -52,7 +51,6 @@ export default function ProductPage() {
           )}
         </div>
 
-        {/* Right: Product Details */}
         <div className="product-details">
           <h1>{product.name}</h1>
           <p>{product.description ?? "No description available."}</p>
