@@ -5,6 +5,7 @@ type InputFieldProps = {
   value: string; // The input's value
   onChange: (newValue: string) => void; // Function to call when text changes
   placeholder?: string; // Optional placeholder text
+  name?: string;
   disabled?: boolean; // Disable interaction
   isValid?: boolean; // Mark input as invalid
   wrapperClassName?: string;
@@ -18,6 +19,7 @@ const InputField: React.FC<InputFieldProps> = ({
   value,
   onChange,
   placeholder = "",
+  name = "",
   disabled = false, // Default to enabled
   isValid = true, // Default to valid
   wrapperClassName = "",
@@ -39,6 +41,7 @@ const InputField: React.FC<InputFieldProps> = ({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
+        name={name}
         disabled={disabled}
         aria-invalid={!isValid}
       />

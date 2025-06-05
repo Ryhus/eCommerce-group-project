@@ -1,5 +1,5 @@
 import { apiClient } from "../apiClient";
-import type { CustomerResponse, CartResponse, Address } from "./types";
+import type { CustomerResponse, CartResponse, Address, CustomerChangePassword } from "./types";
 import { TokenService } from "../TokenService";
 
 const API_URL = import.meta.env.VITE_CTP_API_URL;
@@ -57,6 +57,53 @@ export async function signUp(
 
 export async function getCustomer(clientId: string | null) {
   const response = await apiClient.get<CustomerResponse>(`${API_URL}/${PROJECT_KEY}/customers/${clientId}`);
+  const customer = response.data;
+  TokenService.setCustomerVersion(customer.version.toString());
+  return customer;
+}
+
+export async function updateCustomer(
+  clientId: string | null,
+  customerVersion: string | null,
+  firstName: string,
+  lastName: string,
+  email: string,
+  dateOfBirth: string
+) {
+  const payload = {
+    version: Number(customerVersion),
+    actions: [
+      { action: "setFirstName", firstName: firstName },
+      {
+        action: "setLastName",
+        lastName: lastName,
+      },
+      {
+        action: "changeEmail",
+        email: email,
+      },
+      {
+        action: "setDateOfBirth",
+        dateOfBirth: dateOfBirth,
+      },
+    ],
+  };
+
+  const response = await apiClient.post<CustomerResponse>(`${API_URL}/${PROJECT_KEY}/customers/${clientId}`, payload);
+
+  const customer = response.data;
+  return customer;
+}
+
+export async function changePassword({ id, version, currentPassword, newPassword }: CustomerChangePassword) {
+  const payload = {
+    id,
+    version,
+    currentPassword,
+    newPassword,
+  };
+  const response = await apiClient.post<CustomerResponse>(`${API_URL}/${PROJECT_KEY}/customers/password`, payload);
+
   const customer = response.data;
   return customer;
 }

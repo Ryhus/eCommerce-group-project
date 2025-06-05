@@ -43,3 +43,10 @@ export interface SignUpRequest {
   defaultShippingAddress?: number;
   defaultBillingAddress?: number;
 }
+
+export interface CustomerChangePassword {
+  id: string;
+  version: number;
+  currentPassword: string;
+  newPassword: string;
+}

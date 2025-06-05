@@ -8,9 +8,8 @@ import UserPage from "../pages/User/User";
 import CatalogPage from "../pages/Catalog/Catalog";
 import AboutPage from "../pages/About/About";
 import { ProfileFallBack } from "../pages/Fallback/ProfileFallBack";
-import { getCustomer } from "../services/customerService/customerService";
-
-import { TokenService } from "../services/TokenService";
+import { loadCutomerData } from "./DataHandlers/Profile/ProfileLoaders";
+import { actionCustomerData } from "./DataHandlers/Profile/ProfileActions";
 
 const router = createBrowserRouter(
   [
@@ -23,13 +22,10 @@ const router = createBrowserRouter(
         { path: "sign-up", Component: RegistrationPage },
         {
           path: "profile",
-          loader: async () => {
-            const customerId = TokenService.getCustomerId();
-            const customerData = await getCustomer(customerId);
-            return customerData;
-          },
-          errorElement: <ProfileFallBack />,
+          loader: loadCutomerData,
+          action: actionCustomerData,
           Component: UserPage,
+          errorElement: <ProfileFallBack />,
         },
         { path: "catalog", Component: CatalogPage },
         { path: "about", Component: AboutPage },
