@@ -13,6 +13,8 @@ import "swiper/css/pagination";
 export default function ProductPage() {
   const [product, setProduct] = useState<Product | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
   const { id } = useParams<{ id: string }>();
 
   useEffect(() => {
@@ -27,6 +29,11 @@ export default function ProductPage() {
   if (error) return <div>{error}</div>;
   if (!product) return <div>Loading product...</div>;
 
+  const hasDiscount = product.oldPrice > product.currentPrice;
+  const discountPercentage = hasDiscount
+    ? Math.round(((product.oldPrice - product.currentPrice) / product.oldPrice) * 100)
+    : 0;
+
   return (
     <div className="product-page">
       <div className="product-container">
@@ -38,16 +45,31 @@ export default function ProductPage() {
               slidesPerView={1}
               navigation
               pagination={{ clickable: true }}
-              loop={product.imgUrls.length > 1}
+              loop={true}
             >
               {product.imgUrls.map((url, index) => (
                 <SwiperSlide key={index}>
-                  <img src={url} alt={`${product.name} ${index + 1}`} className="slider-image" />
+                  <img
+                    src={url}
+                    alt={`${product.name} ${index + 1}`}
+                    className="slider-image"
+                    onClick={() => {
+                      setActiveImageIndex(index);
+                      setIsModalOpen(true);
+                    }}
+                  />
                 </SwiperSlide>
               ))}
             </Swiper>
           ) : (
-            <img src={product.imgUrls[0]} alt={product.name} />
+            <img
+              src={product.imgUrls[0]}
+              alt={product.name}
+              onClick={() => {
+                setActiveImageIndex(0);
+                setIsModalOpen(true);
+              }}
+            />
           )}
         </div>
 
@@ -55,9 +77,12 @@ export default function ProductPage() {
           <h1>{product.name}</h1>
           <p>{product.description ?? "No description available."}</p>
           <div className="price">
-            {(product.currentPrice / 100).toFixed(2)} €
-            {product.oldPrice !== product.currentPrice && (
-              <span className="old-price">{(product.oldPrice / 100).toFixed(2)} €</span>
+            <span className="current-price">{(product.currentPrice / 100).toFixed(2)}€</span>
+            {hasDiscount && (
+              <>
+                <span className="old-price">{(product.oldPrice / 100).toFixed(2)}€</span>
+                <span className="discount-badge">-{discountPercentage}%</span>
+              </>
             )}
           </div>
           <div className="add-to-cart">
@@ -65,6 +90,30 @@ export default function ProductPage() {
           </div>
         </div>
       </div>
+
+      {isModalOpen && (
+        <div className="modal-overlay" onClick={() => setIsModalOpen(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <button className="modal-close" onClick={() => setIsModalOpen(false)}>
+              ✕
+            </button>
+            <Swiper
+              modules={[Navigation, Pagination]}
+              navigation
+              pagination={{ clickable: true }}
+              initialSlide={activeImageIndex}
+              loop={true}
+              className="modal-slider"
+            >
+              {product.imgUrls.map((url, index) => (
+                <SwiperSlide key={index}>
+                  <img src={url} alt={`Enlarged ${index + 1}`} className="modal-image" />
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
