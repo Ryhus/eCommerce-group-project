@@ -45,8 +45,8 @@ export interface SignUpRequest {
 }
 
 export interface CustomerChangePassword {
-  id: string;
-  version: number;
-  currentPassword: string;
-  newPassword: string;
+  id: string | null;
+  version: string | null;
+  currentPassword: string | null;
+  newPassword: string | null;
 }

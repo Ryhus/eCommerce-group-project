@@ -3,11 +3,17 @@ import Button from "../common/button/button";
 import { H2 } from "../common/headings/H2";
 import { H3 } from "../common/headings/H3";
 import { HiPencilAlt, HiOutlineLocationMarker, HiOutlineKey } from "react-icons/hi";
+import { FaEyeSlash, FaEye } from "react-icons/fa";
 import Paragraph from "../common/paragraph/paragraph";
 import type { Address } from "../../services/customerService/types";
-import { Form } from "react-router-dom";
+import { Form, useActionData } from "react-router-dom";
 import InputField from "../common/inputField/inputField";
-import { validateName, validateEmailFormat, validateDateOfBirth } from "../../utils/validation";
+import {
+  validateName,
+  validateEmailFormat,
+  validateDateOfBirth,
+  validatePasswordStrength,
+} from "../../utils/validation";
 import "./UserInfo.scss";
 
 interface UserInfoProps {
@@ -30,23 +36,42 @@ export function UserInfo({
   adresses,
   shippingAddressIds = [],
 }: UserInfoProps) {
+  const actionData = useActionData<{ message: string; statusCode: number }>();
+  const serverError = actionData?.message;
+
+  //   console.log(serverError, typeof serverError);
+  //   console.log(actionData.message === "The given current password does not match.");
+
   const [isEditMode, setEditMode] = useState(false);
   const [isChangePassword, setChangePassword] = useState(false);
+  const [isEditBillingAddress, setEditBillingAddressMode] = useState(false);
+  //   const [isEditShippingAddress, setEditShippingAddressMode] = useState(false);
+
   const [changedFirstName, setFirstName] = useState(firstName || "");
   const [changedLastName, setLastName] = useState(lastName || "");
   const [changedEmail, setEmail] = useState(email);
   const [dob, setDob] = useState(dateOfBirth.toString());
-  //   const [changedPassword, setChangedPassword] = useState("");
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
 
   const [firstNameError, setFirstNameError] = useState("");
   const [lastNameError, setLastNameError] = useState("");
   const [emailError, setEmailError] = useState("");
   const [dobError, setDobError] = useState("");
+  const [showCurrentPasswordError, setCurrentPasswordError] = useState(false);
+  const [passwordError, setPasswordError] = useState("");
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const billingAddresses = adresses?.map((address) => (
     <li className="user-address" key={address.id}>
       {<HiOutlineLocationMarker />}
       {`${address.streetName}, ${address.postalCode}, ${address.city}, ${address.country}`}
+      <Button
+        className="edit-address"
+        text="edit"
+        onClick={() => setEditBillingAddressMode(!isEditBillingAddress)}
+      ></Button>
     </li>
   ));
 
@@ -56,16 +81,26 @@ export function UserInfo({
         <li className="user-address" key={address.id}>
           {<HiOutlineLocationMarker />}
           {`${address.streetName}, ${address.postalCode}, ${address.city}, ${address.country}`}
+          <Button className="edit-address" text="edit"></Button>
         </li>
       );
     }
   });
+
+  const hideEditbuttons = function () {
+    if (isChangePassword || isEditMode) return "hidden";
+    return "edit-profile-btns-container";
+  };
 
   const validateEmail = (value: string) => {
     const error = validateEmailFormat(value);
     setEmailError(error || "");
     return !error;
   };
+  //   const toggleShowPassword = (e: React.MouseEvent<HTMLSpanElement>) => {
+  //     e.preventDefault();
+  //     setShowPassword((prev) => !prev);
+  //   };
 
   //return all form states to initial ones
   const clearAllFormStates = function () {
@@ -77,6 +112,13 @@ export function UserInfo({
     setLastNameError("");
     setEmailError("");
     setDobError("");
+  };
+
+  const clearPasswordFromstates = function () {
+    setNewPassword("");
+    setPasswordError("");
+    setCurrentPassword("");
+    setCurrentPasswordError(false);
   };
 
   // client side validation function
@@ -94,6 +136,14 @@ export function UserInfo({
     return false;
   };
 
+  const validatePassword = (value: string) => {
+    const error = validatePasswordStrength(value);
+    setPasswordError(error || "");
+    return !error;
+  };
+
+  //   if (serverError === "The given current password does not match.") setCurrentPasswordError(serverError);
+
   return (
     <div className="user-profile-container">
       <div className="user-info-container">
@@ -101,7 +151,7 @@ export function UserInfo({
           <H2 text={`${firstName} ${lastName}`} className="user-names"></H2>
           <Paragraph text={email} className="user-email"></Paragraph>
           <Paragraph text={dateOfBirth.toString()} className="user-email"></Paragraph>
-          <div className={isEditMode ? "hidden" : "edit-profile-btns-container"}>
+          <div className={hideEditbuttons()}>
             <Button
               text="Edit profile"
               icon={<HiPencilAlt />}
@@ -120,29 +170,54 @@ export function UserInfo({
         </div>
         {isChangePassword && (
           <Form className="personal-info-form" method="post">
+            <input type="hidden" name="actionType" value="changePassword" />
             <div className="field-group">
               <InputField
-                name="firstName"
-                value={changedFirstName ? changedFirstName : ""}
+                name="currentPassword"
+                placeholder="Current password"
+                value={currentPassword}
                 onChange={(v) => {
-                  setFirstName(v);
-                  setFirstNameError(validateName(v, "First name") || "");
+                  setCurrentPassword(v);
                 }}
-                isValid={!firstNameError}
+                type={showCurrentPassword ? "text" : "password"}
+                rightIcon={
+                  <span
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setShowCurrentPassword((prev) => !prev);
+                    }}
+                    style={{ cursor: "pointer" }}
+                  >
+                    {showCurrentPassword ? <FaEyeSlash /> : <FaEye />}
+                  </span>
+                }
               ></InputField>
-              {firstNameError && <Paragraph text={firstNameError} isError />}
+              {serverError && showCurrentPasswordError && <Paragraph text={serverError} isError />}
             </div>
             <div className="field-group">
               <InputField
-                name="lastName"
-                value={changedLastName ? changedLastName : ""}
+                name="newPassword"
+                placeholder="New Password"
+                value={newPassword}
+                isValid={!passwordError}
                 onChange={(v) => {
-                  setLastName(v);
-                  setLastNameError(validateName(v, "Last name") || "");
+                  setNewPassword(v);
+                  if (passwordError) validatePassword(v);
                 }}
-                isValid={!lastNameError}
+                type={showPassword ? "text" : "password"}
+                rightIcon={
+                  <span
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setShowPassword((prev) => !prev);
+                    }}
+                    style={{ cursor: "pointer" }}
+                  >
+                    {showPassword ? <FaEyeSlash /> : <FaEye />}
+                  </span>
+                }
               ></InputField>
-              {lastNameError && <Paragraph text={lastNameError} isError />}
+              {passwordError && <Paragraph text={passwordError} isError />}
             </div>
             <Button
               type="submit"
@@ -150,12 +225,12 @@ export function UserInfo({
               variant="light"
               className="confirm-btn"
               onClick={(e) => {
-                const isValidFrom = validateAllInputs();
-                if (!isValidFrom) {
+                const isValidForm = validatePassword(newPassword);
+                if (!isValidForm) {
                   e.preventDefault();
                   return;
                 }
-                setTimeout(() => setEditMode(!isEditMode), 10);
+                setCurrentPasswordError(true);
               }}
             ></Button>
             <Button
@@ -164,7 +239,7 @@ export function UserInfo({
               variant="light"
               className="cancel-btn"
               onClick={() => {
-                // clearAllFormStates();
+                clearPasswordFromstates();
                 setChangePassword(!isChangePassword);
               }}
             ></Button>
@@ -172,6 +247,7 @@ export function UserInfo({
         )}
         {isEditMode && (
           <Form className="personal-info-form" method="post">
+            <input type="hidden" name="actionType" value="changePersonal" />
             <div className="field-group">
               <InputField
                 name="firstName"
@@ -230,8 +306,8 @@ export function UserInfo({
               variant="light"
               className="confirm-btn"
               onClick={(e) => {
-                const isValidFrom = validateAllInputs();
-                if (!isValidFrom) {
+                const isValidForm = validateAllInputs();
+                if (!isValidForm) {
                   e.preventDefault();
                   return;
                 }
@@ -250,12 +326,12 @@ export function UserInfo({
             ></Button>
           </Form>
         )}
-
         <div className="profile-addresses-container">
           {billingAddresses && (
             <div className="address-container-profile">
               <H3 text="Billing addresses:" className="address-heading"></H3>
-              <ul className="user-adresses-list">{billingAddresses}</ul>
+              {!isEditBillingAddress && <ul className="user-adresses-list">{billingAddresses}</ul>}
+              <Button className="add-address-btn" variant="light" text="add new address"></Button>
             </div>
           )}
 
@@ -263,6 +339,7 @@ export function UserInfo({
             <div className="address-container-profile">
               <H3 text="Shipping addresses:" className="address-heading"></H3>
               <ul className="user-adresses-list">{shippingAddresses}</ul>
+              <Button className="add-address-btn" variant="light" text="add new address"></Button>
             </div>
           )}
         </div>

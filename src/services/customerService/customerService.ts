@@ -98,7 +98,7 @@ export async function updateCustomer(
 export async function changePassword({ id, version, currentPassword, newPassword }: CustomerChangePassword) {
   const payload = {
     id,
-    version,
+    version: Number(version),
     currentPassword,
     newPassword,
   };

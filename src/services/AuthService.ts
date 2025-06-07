@@ -43,7 +43,7 @@ export const AuthService = {
       TokenService.setRefreshToken(refresh_token);
 
       return response.data;
-    } catch (error: unknown) {
+    } catch (error) {
       serverErrorHandler(error);
     }
   },
