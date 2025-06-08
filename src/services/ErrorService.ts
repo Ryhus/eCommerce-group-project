@@ -1,5 +1,4 @@
 import axios from "axios";
-
 export interface ErrorResponse {
   statusCode: number;
   message: string;

@@ -9,7 +9,14 @@ import NotFoundPage from "../pages/NotFound/NotFound";
 import UserPage from "../pages/User/User";
 import CategoryPage from "../pages/Category/Category";
 import AboutPage from "../pages/About/About";
+import { ProfileFallBack } from "../pages/Fallback/ProfileFallBack";
+import { loadCutomerData } from "./DataHandlers/Profile/ProfileLoaders";
+import { actionCustomerData } from "./DataHandlers/Profile/ProfileActions";
+import { ProfileFallBack } from "../pages/Fallback/ProfileFallBack";
+import { loadCutomerData } from "./DataHandlers/Profile/ProfileLoaders";
+import { actionCustomerData } from "./DataHandlers/Profile/ProfileActions";
 import ProductPage from "../pages/Product/Product";
+
 
 const router = createBrowserRouter(
   [
@@ -20,8 +27,13 @@ const router = createBrowserRouter(
         { index: true, Component: HomePage },
         { path: "login", Component: LoginPage },
         { path: "sign-up", Component: RegistrationPage },
-        { path: "profile", Component: UserPage },
-        { path: "about", Component: AboutPage },
+        {
+          path: "profile",
+          loader: loadCutomerData,
+          action: actionCustomerData,
+          Component: UserPage,
+          errorElement: <ProfileFallBack />,
+        },
         {
           path: "catalog/*",
           Component: CategoryPage,
@@ -32,6 +44,7 @@ const router = createBrowserRouter(
           },
         },
         { path: "product/:id", Component: ProductPage },
+        { path: "about", Component: AboutPage },
       ],
     },
     {
