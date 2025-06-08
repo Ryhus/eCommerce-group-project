@@ -3,7 +3,14 @@ import Button from "../common/button/button.js";
 import { H3 } from "../common/headings/H3.js";
 import { HiOutlineLocationMarker } from "react-icons/hi";
 import { AddressForm } from "./AddressFormProfile.js";
+import { updateCustomer } from "../../services/customerService/customerService.js";
+import { TokenService } from "../../services/TokenService.js";
+import { useNavigate } from "react-router-dom";
 import type { Address } from "../../services/customerService/types.js";
+
+interface AddressesProps {
+  adresses?: Address[] | null;
+}
 
 interface BillingAddressesProfileProps {
   adresses?: Address[] | null;
@@ -17,21 +24,115 @@ interface ShippingAddressesProfileProps {
   shippingAddressIds?: string[] | null;
 }
 
-export function BillingAddressesComponent({ adresses }: BillingAddressesProfileProps) {
+export function AddressesComponent({ adresses }: AddressesProps) {
   const [isChangeAddressMode, setChangeAddressMode] = useState(false);
   const [isAddAddressMode, setAddAddressMode] = useState(false);
+  const [addressId, setAddressId] = useState("");
 
-  const billingAddresses = adresses?.map((address) => (
+  const navigate = useNavigate();
+
+  const addresses = adresses?.map((address) => (
     <li className="user-address" key={address.id}>
       {<HiOutlineLocationMarker />}
       {`${address.streetName}, ${address.postalCode}, ${address.city}, ${address.country}`}
-      <Button className="edit-address" text="edit" onClick={() => setChangeAddressMode(!isChangeAddressMode)}></Button>
+      <Button
+        className="edit-address"
+        text="edit"
+        onClick={() => {
+          setChangeAddressMode(!isChangeAddressMode);
+          if (address.id) setAddressId(address.id);
+        }}
+      ></Button>
+      <Button
+        className="edit-address"
+        text="delete"
+        onClick={async () => {
+          if (address.id) {
+            const customerId = TokenService.getCustomerId();
+            const customerVersion = TokenService.getCustomerVersion();
+            await updateCustomer({ customerId, customerVersion, removeAddressId: address.id });
+            navigate("/profile");
+          }
+        }}
+      ></Button>
     </li>
   ));
 
   const chooseAddressFormType = function () {
     if (isChangeAddressMode) {
-      return "changeBillingAddress";
+      return "changeAddress";
+    } else {
+      return "addAddress";
+    }
+  };
+
+  const clearFormModeStates = function () {
+    setChangeAddressMode(false);
+    setAddAddressMode(false);
+    setAddressId("");
+  };
+
+  return (
+    <div className="address-container-profile">
+      <H3 text="All addresses:" className="address-heading"></H3>
+      {isChangeAddressMode || isAddAddressMode ? (
+        <AddressForm formType={chooseAddressFormType()} clearMode={clearFormModeStates} addressId={addressId} />
+      ) : (
+        <ul className="user-adresses-list">
+          {addresses}
+          <Button
+            className="add-address-btn"
+            variant="light"
+            text="add new address"
+            onClick={() => setAddAddressMode(!isChangeAddressMode)}
+          ></Button>
+        </ul>
+      )}
+    </div>
+  );
+}
+
+export function BillingAddressesComponent({ adresses, billingAddressIds }: BillingAddressesProfileProps) {
+  const [isChangeAddressMode, setChangeAddressMode] = useState(false);
+  const [isAddAddressMode, setAddAddressMode] = useState(false);
+  const [addressId, setAddressId] = useState("");
+
+  const navigate = useNavigate();
+  console.log(billingAddressIds);
+  const billingAddresses = adresses?.map((address) => {
+    if (address.id && billingAddressIds?.includes(address.id)) {
+      return (
+        <li className="user-address" key={address.id}>
+          {<HiOutlineLocationMarker />}
+          {`${address.streetName}, ${address.postalCode}, ${address.city}, ${address.country}`}
+          <Button
+            className="edit-address"
+            text="edit"
+            onClick={() => {
+              setChangeAddressMode(!isChangeAddressMode);
+              if (address.id) setAddressId(address.id);
+            }}
+          ></Button>
+          <Button
+            className="edit-address"
+            text="delete"
+            onClick={async () => {
+              if (address.id) {
+                const customerId = TokenService.getCustomerId();
+                const customerVersion = TokenService.getCustomerVersion();
+                await updateCustomer({ customerId, customerVersion, removeBillingAddressId: address.id });
+                navigate("/profile");
+              }
+            }}
+          ></Button>
+        </li>
+      );
+    }
+  });
+
+  const chooseAddressFormType = function () {
+    if (isChangeAddressMode) {
+      return "changeAddress";
     } else {
       return "addBillingAddress";
     }
@@ -40,13 +141,14 @@ export function BillingAddressesComponent({ adresses }: BillingAddressesProfileP
   const clearFormModeStates = function () {
     setChangeAddressMode(false);
     setAddAddressMode(false);
+    setAddressId("");
   };
 
   return (
     <div className="address-container-profile">
       <H3 text="Billing addresses:" className="address-heading"></H3>
-      {isChangeAddressMode && isAddAddressMode ? (
-        <AddressForm formType={chooseAddressFormType()} clearMode={clearFormModeStates} />
+      {isChangeAddressMode || isAddAddressMode ? (
+        <AddressForm formType={chooseAddressFormType()} clearMode={clearFormModeStates} addressId={addressId} />
       ) : (
         <ul className="user-adresses-list">
           {billingAddresses}
@@ -65,6 +167,9 @@ export function BillingAddressesComponent({ adresses }: BillingAddressesProfileP
 export function ShippingAddressesComponent({ adresses, shippingAddressIds }: ShippingAddressesProfileProps) {
   const [isChangeAddressMode, setChangeAddressMode] = useState(false);
   const [isAddAddressMode, setAddAddressMode] = useState(false);
+  const [addressId, setAddressId] = useState("");
+
+  const navigate = useNavigate();
 
   const shippingAddresses = adresses?.map((address) => {
     if (address.id && shippingAddressIds?.includes(address.id)) {
@@ -72,7 +177,26 @@ export function ShippingAddressesComponent({ adresses, shippingAddressIds }: Shi
         <li className="user-address" key={address.id}>
           {<HiOutlineLocationMarker />}
           {`${address.streetName}, ${address.postalCode}, ${address.city}, ${address.country}`}
-          <Button className="edit-address" text="edit"></Button>
+          <Button
+            className="edit-address"
+            text="edit"
+            onClick={() => {
+              setChangeAddressMode(!isChangeAddressMode);
+              if (address.id) setAddressId(address.id);
+            }}
+          ></Button>
+          <Button
+            className="edit-address"
+            text="delete"
+            onClick={async () => {
+              if (address.id) {
+                const customerId = TokenService.getCustomerId();
+                const customerVersion = TokenService.getCustomerVersion();
+                await updateCustomer({ customerId, customerVersion, removeShippingAddressId: address.id });
+                navigate("/profile");
+              }
+            }}
+          ></Button>
         </li>
       );
     }
@@ -80,7 +204,7 @@ export function ShippingAddressesComponent({ adresses, shippingAddressIds }: Shi
 
   const chooseAddressFormType = function () {
     if (isChangeAddressMode) {
-      return "changeShippingAddress";
+      return "changeAddress";
     } else {
       return "addShippingAddress";
     }
@@ -89,13 +213,14 @@ export function ShippingAddressesComponent({ adresses, shippingAddressIds }: Shi
   const clearFormModeStates = function () {
     setChangeAddressMode(false);
     setAddAddressMode(false);
+    setAddressId("");
   };
 
   return (
     <div className="address-container-profile">
       <H3 text="Shipping addresses:" className="address-heading"></H3>
-      {isChangeAddressMode && isAddAddressMode ? (
-        <AddressForm formType={chooseAddressFormType()} clearMode={clearFormModeStates} />
+      {isChangeAddressMode || isAddAddressMode ? (
+        <AddressForm formType={chooseAddressFormType()} clearMode={clearFormModeStates} addressId={addressId} />
       ) : (
         <ul className="user-adresses-list">
           {shippingAddresses}

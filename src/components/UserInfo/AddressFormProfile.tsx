@@ -1,16 +1,18 @@
 import { useState } from "react";
 import Paragraph from "../common/paragraph/paragraph.js";
 import InputField from "../common/inputField/inputField.js";
+import Button from "../common/button/button.js";
 import { Form } from "react-router-dom";
 import { FaMapMarkerAlt } from "react-icons/fa";
 import { validateStreet, validateCity, validatePostalCode, validateCountry } from "../../utils/validation.js";
 
 interface AddressFormProps {
   formType: string;
+  addressId: string;
   clearMode: () => void;
 }
 
-export function AddressForm({ formType }: AddressFormProps) {
+export function AddressForm({ formType, clearMode, addressId }: AddressFormProps) {
   const [street, setStreet] = useState("");
   const [city, setCity] = useState("");
   const [postalCode, setPostalCode] = useState("");
@@ -52,57 +54,85 @@ export function AddressForm({ formType }: AddressFormProps) {
     { value: "SE", label: "Sweden" },
   ];
 
+  const validateAllInputs = function () {
+    const streetValid = !validateStreet(street);
+    const cityValid = !validateCity(city);
+    const postalValid = !validatePostalCode(postalCode);
+    const countryValid = !validateCountry(country);
+
+    setStreetError(validateStreet(street) || "");
+    setCityError(validateCity(city) || "");
+    setPostalCodeError(validatePostalCode(postalCode) || "");
+    setCountryError(validateCountry(country) || "");
+
+    if (streetValid && cityValid && postalValid && countryValid) return true;
+    return false;
+  };
+
+  const clearAddressFormStates = function () {
+    setStreet("");
+    setCity("");
+    setCountry("");
+    setPostalCode("");
+    setStreetError("");
+    setCityError("");
+    setCountryError("");
+    setPostalCodeError("");
+    clearMode();
+  };
+
   return (
     <Form className="change-address-form" method="post">
       <input type="hidden" name="actionType" value={formType} />
+      <input type="hidden" name="addressId" value={addressId} />
       <div className="field-group">
-        <Paragraph text="Street" />
         <InputField
+          name="street"
           value={street}
           onChange={(v) => {
             setStreet(v);
             if (streetError) setStreetError(validateStreet(v) || "");
           }}
           isValid={!streetError}
-          placeholder="Enter street address"
+          placeholder="Street"
           icon={<FaMapMarkerAlt />}
         />
         {streetError && <Paragraph text={streetError} isError />}
       </div>
 
       <div className="field-group">
-        <Paragraph text="City" />
         <InputField
+          name="city"
           value={city}
           onChange={(v) => {
             setCity(v);
             if (cityError) setCityError(validateCity(v) || "");
           }}
           isValid={!cityError}
-          placeholder="Brussels"
+          placeholder="City"
           icon={<FaMapMarkerAlt />}
         />
         {cityError && <Paragraph text={cityError} isError />}
       </div>
 
       <div className="field-group">
-        <Paragraph text="Postal code" />
         <InputField
+          name="postalCode"
           value={postalCode}
           onChange={(v) => {
             setPostalCode(v);
             if (postalCodeError) setPostalCodeError(validatePostalCode(v) || "");
           }}
           isValid={!postalCodeError}
-          placeholder="Enter postal code (4–5 digits)"
+          placeholder="Postal code"
           icon={<FaMapMarkerAlt />}
         />
         {postalCodeError && <Paragraph text={postalCodeError} isError />}
       </div>
 
       <div className="field-group">
-        <Paragraph text="Country" />
         <select
+          name="country"
           value={country}
           onChange={(e) => {
             setCountry(e.target.value);
@@ -118,6 +148,29 @@ export function AddressForm({ formType }: AddressFormProps) {
         </select>
         {countryError && <Paragraph text={countryError} isError />}
       </div>
+      <Button
+        type="submit"
+        text="✅ Save"
+        variant="light"
+        className="confirm-btn"
+        onClick={(e) => {
+          const isValidForm = validateAllInputs();
+          if (!isValidForm) {
+            e.preventDefault();
+            return;
+          }
+          setTimeout(() => clearAddressFormStates(), 10);
+        }}
+      ></Button>
+      <Button
+        type="button"
+        text="❌ Cancel"
+        variant="light"
+        className="cancel-btn"
+        onClick={() => {
+          clearAddressFormStates();
+        }}
+      ></Button>
     </Form>
   );
 }

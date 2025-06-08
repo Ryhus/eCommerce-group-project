@@ -1,19 +1,22 @@
 import { useState } from "react";
 import Button from "../common/button/button";
 import { H2 } from "../common/headings/H2";
-import { H3 } from "../common/headings/H3";
-import { HiPencilAlt, HiOutlineLocationMarker, HiOutlineKey } from "react-icons/hi";
+
+import { HiPencilAlt, HiOutlineKey } from "react-icons/hi";
 import { FaEyeSlash, FaEye } from "react-icons/fa";
 import Paragraph from "../common/paragraph/paragraph";
 import type { Address } from "../../services/customerService/types";
 import { Form, useActionData } from "react-router-dom";
 import InputField from "../common/inputField/inputField";
+import { AddressesComponent, BillingAddressesComponent, ShippingAddressesComponent } from "./AddressesProfile";
+
 import {
   validateName,
   validateEmailFormat,
   validateDateOfBirth,
   validatePasswordStrength,
 } from "../../utils/validation";
+
 import "./UserInfo.scss";
 
 interface UserInfoProps {
@@ -35,18 +38,13 @@ export function UserInfo({
   dateOfBirth,
   adresses,
   shippingAddressIds = [],
+  billingAddressIds = [],
 }: UserInfoProps) {
   const actionData = useActionData<{ message: string; statusCode: number }>();
   const serverError = actionData?.message;
 
-  //   console.log(serverError, typeof serverError);
-  //   console.log(actionData.message === "The given current password does not match.");
-
   const [isEditMode, setEditMode] = useState(false);
   const [isChangePassword, setChangePassword] = useState(false);
-  const [isEditBillingAddress, setEditBillingAddressMode] = useState(false);
-  //   const [isEditShippingAddress, setEditShippingAddressMode] = useState(false);
-
   const [changedFirstName, setFirstName] = useState(firstName || "");
   const [changedLastName, setLastName] = useState(lastName || "");
   const [changedEmail, setEmail] = useState(email);
@@ -63,30 +61,6 @@ export function UserInfo({
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  const billingAddresses = adresses?.map((address) => (
-    <li className="user-address" key={address.id}>
-      {<HiOutlineLocationMarker />}
-      {`${address.streetName}, ${address.postalCode}, ${address.city}, ${address.country}`}
-      <Button
-        className="edit-address"
-        text="edit"
-        onClick={() => setEditBillingAddressMode(!isEditBillingAddress)}
-      ></Button>
-    </li>
-  ));
-
-  const shippingAddresses = adresses?.map((address) => {
-    if (address.id && shippingAddressIds?.includes(address.id)) {
-      return (
-        <li className="user-address" key={address.id}>
-          {<HiOutlineLocationMarker />}
-          {`${address.streetName}, ${address.postalCode}, ${address.city}, ${address.country}`}
-          <Button className="edit-address" text="edit"></Button>
-        </li>
-      );
-    }
-  });
-
   const hideEditbuttons = function () {
     if (isChangePassword || isEditMode) return "hidden";
     return "edit-profile-btns-container";
@@ -97,12 +71,7 @@ export function UserInfo({
     setEmailError(error || "");
     return !error;
   };
-  //   const toggleShowPassword = (e: React.MouseEvent<HTMLSpanElement>) => {
-  //     e.preventDefault();
-  //     setShowPassword((prev) => !prev);
-  //   };
 
-  //return all form states to initial ones
   const clearAllFormStates = function () {
     setFirstName(firstName || "");
     setLastName(lastName || "");
@@ -141,8 +110,6 @@ export function UserInfo({
     setPasswordError(error || "");
     return !error;
   };
-
-  //   if (serverError === "The given current password does not match.") setCurrentPasswordError(serverError);
 
   return (
     <div className="user-profile-container">
@@ -327,21 +294,9 @@ export function UserInfo({
           </Form>
         )}
         <div className="profile-addresses-container">
-          {billingAddresses && (
-            <div className="address-container-profile">
-              <H3 text="Billing addresses:" className="address-heading"></H3>
-              {!isEditBillingAddress && <ul className="user-adresses-list">{billingAddresses}</ul>}
-              <Button className="add-address-btn" variant="light" text="add new address"></Button>
-            </div>
-          )}
-
-          {shippingAddresses && (
-            <div className="address-container-profile">
-              <H3 text="Shipping addresses:" className="address-heading"></H3>
-              <ul className="user-adresses-list">{shippingAddresses}</ul>
-              <Button className="add-address-btn" variant="light" text="add new address"></Button>
-            </div>
-          )}
+          <AddressesComponent adresses={adresses} />
+          <BillingAddressesComponent adresses={adresses} billingAddressIds={billingAddressIds} />
+          <ShippingAddressesComponent adresses={adresses} shippingAddressIds={shippingAddressIds} />
         </div>
       </div>
     </div>

@@ -50,3 +50,20 @@ export interface CustomerChangePassword {
   currentPassword: string | null;
   newPassword: string | null;
 }
+
+export interface UpdateCustomerProps {
+  customerId: string | null;
+  customerVersion: string | null;
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  dateOfBirth?: string;
+  address?: Address;
+  changeAddressId?: string;
+  changedAddress?: Address;
+  removeAddressId?: string;
+  removeShippingAddressId?: string;
+  removeBillingAddressId?: string;
+  billingAddressId?: string;
+  shippingAddressId?: string;
+}

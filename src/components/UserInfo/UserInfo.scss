@@ -21,35 +21,6 @@
         font-size: 1.2rem;
       }
     }
-    .personal-info-form {
-      display: grid;
-      grid-template-columns: 0.5fr 0.5fr;
-      gap: 1rem 0.5rem;
-
-      p {
-        text-align: center;
-        font-size: 1.3rem;
-      }
-
-      input {
-        text-align: center;
-        background-color: aliceblue;
-      }
-      .confirm-btn,
-      .cancel-btn {
-        height: 4.5rem;
-        gap: 0.5rem;
-        font-size: 1.3rem;
-        cursor: pointer;
-      }
-
-      .confirm-btn {
-        justify-self: end;
-      }
-      .cancel-btn {
-        justify-self: start;
-      }
-    }
 
     .profile-addresses-container {
       display: flex;
@@ -72,10 +43,13 @@
           height: 3rem;
           width: 15rem;
           font-size: 1.3rem;
+          cursor: pointer;
         }
         .user-adresses-list {
           list-style-type: none;
           display: flex;
+          gap: 0.5rem;
+          align-items: center;
           flex-direction: column;
 
           .user-address {
@@ -95,6 +69,7 @@
               font-size: 1.3rem;
               border-radius: 0.5rem;
               padding: 0;
+              cursor: pointer;
             }
           }
         }
@@ -121,6 +96,37 @@
         width: 1.2em;
         height: 1.2em;
       }
+    }
+  }
+
+  .personal-info-form,
+  .change-address-form {
+    display: grid;
+    grid-template-columns: 0.5fr 0.5fr;
+    gap: 1rem 0.5rem;
+
+    p {
+      text-align: center;
+      font-size: 1.3rem;
+    }
+
+    input {
+      text-align: center;
+      background-color: aliceblue;
+    }
+    .confirm-btn,
+    .cancel-btn {
+      height: 4.5rem;
+      gap: 0.5rem;
+      font-size: 1.3rem;
+      cursor: pointer;
+    }
+
+    .confirm-btn {
+      justify-self: end;
+    }
+    .cancel-btn {
+      justify-self: start;
     }
   }
 

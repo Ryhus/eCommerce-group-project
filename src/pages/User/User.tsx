@@ -3,7 +3,8 @@ import { UserInfo } from "../../components/UserInfo/UserInfo";
 import type { CustomerResponse } from "../../services/customerService/types";
 
 export default function UserPage() {
-  const { firstName, lastName, email, dateOfBirth, addresses, shippingAddressIds } = useLoaderData<CustomerResponse>();
+  const { firstName, lastName, email, dateOfBirth, addresses, shippingAddressIds, billingAddressIds } =
+    useLoaderData<CustomerResponse>();
 
   return (
     <UserInfo
@@ -13,6 +14,7 @@ export default function UserPage() {
       dateOfBirth={dateOfBirth}
       adresses={addresses}
       shippingAddressIds={shippingAddressIds}
+      billingAddressIds={billingAddressIds}
     ></UserInfo>
   );
 }

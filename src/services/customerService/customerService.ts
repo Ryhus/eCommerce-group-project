@@ -1,5 +1,5 @@
 import { apiClient } from "../apiClient";
-import type { CustomerResponse, CartResponse, Address, CustomerChangePassword } from "./types";
+import type { CustomerResponse, CartResponse, Address, CustomerChangePassword, UpdateCustomerProps } from "./types";
 import { TokenService } from "../TokenService";
 
 const API_URL = import.meta.env.VITE_CTP_API_URL;
@@ -62,34 +62,56 @@ export async function getCustomer(clientId: string | null) {
   return customer;
 }
 
-export async function updateCustomer(
-  clientId: string | null,
-  customerVersion: string | null,
-  firstName: string,
-  lastName: string,
-  email: string,
-  dateOfBirth: string
-) {
+export async function updateCustomer({
+  customerId,
+  customerVersion,
+  firstName,
+  lastName,
+  email,
+  dateOfBirth,
+  address,
+  changeAddressId,
+  changedAddress,
+  billingAddressId,
+  shippingAddressId,
+  removeAddressId,
+  removeShippingAddressId,
+  removeBillingAddressId,
+}: UpdateCustomerProps) {
+  const actions = [
+    { action: "setFirstName", firstName },
+    {
+      action: "setLastName",
+      lastName,
+    },
+    {
+      action: "changeEmail",
+      email,
+    },
+    {
+      action: "setDateOfBirth",
+      dateOfBirth,
+    },
+    { action: "addAddress", address },
+    { action: "addShippingAddressId", addressId: shippingAddressId },
+    { action: "addBillingAddressId", addressId: billingAddressId },
+    { action: "changeAddress", addressId: changeAddressId, address: changedAddress },
+    { action: "removeAddress", addressId: removeAddressId },
+    { action: "removeShippingAddressId", addressId: removeShippingAddressId },
+    { action: "removeBillingAddressId", addressId: removeBillingAddressId },
+  ];
+
+  const filteredActions = actions.filter((action) => {
+    const [, value] = Object.entries(action)[1];
+    return value !== undefined && value !== null;
+  });
+
   const payload = {
     version: Number(customerVersion),
-    actions: [
-      { action: "setFirstName", firstName: firstName },
-      {
-        action: "setLastName",
-        lastName: lastName,
-      },
-      {
-        action: "changeEmail",
-        email: email,
-      },
-      {
-        action: "setDateOfBirth",
-        dateOfBirth: dateOfBirth,
-      },
-    ],
+    actions: filteredActions,
   };
 
-  const response = await apiClient.post<CustomerResponse>(`${API_URL}/${PROJECT_KEY}/customers/${clientId}`, payload);
+  const response = await apiClient.post<CustomerResponse>(`${API_URL}/${PROJECT_KEY}/customers/${customerId}`, payload);
 
   const customer = response.data;
   return customer;
