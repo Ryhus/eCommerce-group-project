@@ -180,7 +180,7 @@ export async function fetchProductsByCategory(categoryId: string, sort: string |
   }>(`/${PROJECT_KEY}/product-projections/search`, {
     params: {
       filter: `categories.id:"${categoryId}"`,
-      sort: sort || "",
+      ...(sort ? { sort } : {}),
       limit: "50",
     },
   });

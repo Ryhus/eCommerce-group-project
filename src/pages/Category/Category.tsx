@@ -139,7 +139,8 @@ export default function CategoryPage() {
                 text={cat.name}
                 className="category-link"
                 href=""
-                onClick={() => {
+                onClick={(e) => {
+                  e.preventDefault();
                   setIsMobileFilterOpen(false);
                   navigate(nextURL);
                 }}
