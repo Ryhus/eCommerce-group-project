@@ -77,6 +77,8 @@ export async function updateCustomer({
   removeAddressId,
   removeShippingAddressId,
   removeBillingAddressId,
+  defaultShippingAddressId,
+  defaultBillingAddressId,
 }: UpdateCustomerProps) {
   const actions = [
     { action: "setFirstName", firstName },
@@ -99,6 +101,8 @@ export async function updateCustomer({
     { action: "removeAddress", addressId: removeAddressId },
     { action: "removeShippingAddressId", addressId: removeShippingAddressId },
     { action: "removeBillingAddressId", addressId: removeBillingAddressId },
+    { action: "setDefaultShippingAddress", addressId: defaultShippingAddressId },
+    { action: "setDefaultBillingAddress", addressId: defaultBillingAddressId },
   ];
 
   const filteredActions = actions.filter((action) => {

@@ -66,4 +66,6 @@ export interface UpdateCustomerProps {
   removeBillingAddressId?: string;
   billingAddressId?: string;
   shippingAddressId?: string;
+  defaultShippingAddressId?: string;
+  defaultBillingAddressId?: string;
 }

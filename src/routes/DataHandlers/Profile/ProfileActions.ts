@@ -49,33 +49,60 @@ async function handleAddressDataForm({ customerId, customerVersion, formData }: 
   const city = formData.get("city") as string;
   const postalCode = formData.get("postalCode") as string;
   const country = formData.get("country") as string;
+  const isDefaultBillingAddress = formData.get("isDefaultBillingAddress") as string;
+  const isDefaultShippingAddress = formData.get("isDefaultShippingAddress") as string;
 
   const address = { streetName: street, city: city, postalCode: postalCode, country: country };
 
   try {
-    if (actionType === "changeAddress") {
+    if (
+      actionType === "changeAddress" ||
+      actionType === "changeBillingAddress" ||
+      actionType === "changeShippingAddress"
+    ) {
       const customerData = await updateCustomer({
         customerId,
         customerVersion,
         changeAddressId,
         changedAddress: address,
+        defaultBillingAddressId:
+          isDefaultBillingAddress === "default" &&
+          (actionType === "changeAddress" || actionType === "changeBillingAddress")
+            ? changeAddressId
+            : undefined,
+        defaultShippingAddressId:
+          isDefaultShippingAddress === "default" &&
+          (actionType === "changeAddress" || actionType === "changeShippingAddress")
+            ? changeAddressId
+            : undefined,
       });
       return customerData;
     }
 
-    const customerData = await updateCustomer({ customerId, customerVersion, address });
+    const customerData = await updateCustomer({
+      customerId,
+      customerVersion,
+      address,
+    });
     const { addresses, version } = customerData;
 
-    if (actionType === "addBillingAddress") {
-      const billingAddressId = addresses.at(-1)?.id;
+    const newAddressId = addresses.at(-1)?.id;
 
-      const data = await updateCustomer({ customerId, customerVersion: version.toString(), billingAddressId });
-      return data;
-    } else if (actionType === "addShippingAddress") {
-      const shippingAddressId = addresses.at(-1)?.id;
-      const data = await updateCustomer({ customerId, customerVersion: version.toString(), shippingAddressId });
-      return data;
-    }
+    const data = await updateCustomer({
+      customerId,
+      customerVersion: version.toString(),
+      billingAddressId: actionType === "addBillingAddress" ? newAddressId : undefined,
+      shippingAddressId: actionType === "addShippingAddress" ? newAddressId : undefined,
+      defaultBillingAddressId:
+        isDefaultBillingAddress === "default" && (actionType === "addAddress" || actionType === "addBillingAddress")
+          ? newAddressId
+          : undefined,
+      defaultShippingAddressId:
+        isDefaultShippingAddress === "default" && (actionType === "addAddress" || actionType === "addShippingAddress")
+          ? newAddressId
+          : undefined,
+    });
+    return data;
   } catch (error) {
     return error;
   }
@@ -92,9 +119,7 @@ export async function actionCustomerData({ request }: ActionFunctionArgs) {
     return handlePersonalDataForm({ customerId, customerVersion, formData });
   } else if (actionType === "changePassword") {
     return handlePasswordDataForm({ customerId, customerVersion, formData });
-  } else if (actionType === "changeAddress") {
-    return handleAddressDataForm({ customerId, customerVersion, formData });
-  } else if (actionType === "addBillingAddress" || actionType === "addShippingAddress" || actionType === "addAddress") {
+  } else {
     return handleAddressDataForm({ customerId, customerVersion, formData });
   }
 }

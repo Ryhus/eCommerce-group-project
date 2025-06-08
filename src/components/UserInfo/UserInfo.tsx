@@ -1,7 +1,6 @@
 import { useState } from "react";
 import Button from "../common/button/button";
 import { H2 } from "../common/headings/H2";
-
 import { HiPencilAlt, HiOutlineKey } from "react-icons/hi";
 import { FaEyeSlash, FaEye } from "react-icons/fa";
 import Paragraph from "../common/paragraph/paragraph";
@@ -25,8 +24,8 @@ interface UserInfoProps {
   firstName?: string | null;
   lastName?: string | null;
   adresses?: Address[] | null;
-  defaultShippingAddress?: string | null;
-  defaultBillingAddress?: string | null;
+  defaultShippingAddressId?: string | null;
+  defaultBillingAddressId?: string | null;
   shippingAddressIds?: string[] | null;
   billingAddressIds?: string[] | null;
 }
@@ -39,6 +38,8 @@ export function UserInfo({
   adresses,
   shippingAddressIds = [],
   billingAddressIds = [],
+  defaultShippingAddressId,
+  defaultBillingAddressId,
 }: UserInfoProps) {
   const actionData = useActionData<{ message: string; statusCode: number }>();
   const serverError = actionData?.message;
@@ -51,7 +52,6 @@ export function UserInfo({
   const [dob, setDob] = useState(dateOfBirth.toString());
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
-
   const [firstNameError, setFirstNameError] = useState("");
   const [lastNameError, setLastNameError] = useState("");
   const [emailError, setEmailError] = useState("");
@@ -278,6 +278,7 @@ export function UserInfo({
                   e.preventDefault();
                   return;
                 }
+
                 setTimeout(() => setEditMode(!isEditMode), 10);
               }}
             ></Button>
@@ -295,8 +296,16 @@ export function UserInfo({
         )}
         <div className="profile-addresses-container">
           <AddressesComponent adresses={adresses} />
-          <BillingAddressesComponent adresses={adresses} billingAddressIds={billingAddressIds} />
-          <ShippingAddressesComponent adresses={adresses} shippingAddressIds={shippingAddressIds} />
+          <BillingAddressesComponent
+            adresses={adresses}
+            billingAddressIds={billingAddressIds}
+            defaultBillingAddressId={defaultBillingAddressId}
+          />
+          <ShippingAddressesComponent
+            adresses={adresses}
+            shippingAddressIds={shippingAddressIds}
+            defaultShippingAddressId={defaultShippingAddressId}
+          />
         </div>
       </div>
     </div>

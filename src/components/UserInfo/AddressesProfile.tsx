@@ -14,13 +14,13 @@ interface AddressesProps {
 
 interface BillingAddressesProfileProps {
   adresses?: Address[] | null;
-  defaultBillingAddress?: string | null;
+  defaultBillingAddressId?: string | null;
   billingAddressIds?: string[] | null;
 }
 
 interface ShippingAddressesProfileProps {
   adresses?: Address[] | null;
-  defaultShippingAddress?: string | null;
+  defaultShippingAddressId?: string | null;
   shippingAddressIds?: string[] | null;
 }
 
@@ -35,26 +35,28 @@ export function AddressesComponent({ adresses }: AddressesProps) {
     <li className="user-address" key={address.id}>
       {<HiOutlineLocationMarker />}
       {`${address.streetName}, ${address.postalCode}, ${address.city}, ${address.country}`}
-      <Button
-        className="edit-address"
-        text="edit"
-        onClick={() => {
-          setChangeAddressMode(!isChangeAddressMode);
-          if (address.id) setAddressId(address.id);
-        }}
-      ></Button>
-      <Button
-        className="edit-address"
-        text="delete"
-        onClick={async () => {
-          if (address.id) {
-            const customerId = TokenService.getCustomerId();
-            const customerVersion = TokenService.getCustomerVersion();
-            await updateCustomer({ customerId, customerVersion, removeAddressId: address.id });
-            navigate("/profile");
-          }
-        }}
-      ></Button>
+      <div className="edit-buttons">
+        <Button
+          className="edit-address"
+          text="edit"
+          onClick={() => {
+            setChangeAddressMode(!isChangeAddressMode);
+            if (address.id) setAddressId(address.id);
+          }}
+        ></Button>
+        <Button
+          className="edit-address"
+          text="delete"
+          onClick={async () => {
+            if (address.id) {
+              const customerId = TokenService.getCustomerId();
+              const customerVersion = TokenService.getCustomerVersion();
+              await updateCustomer({ customerId, customerVersion, removeAddressId: address.id });
+              navigate("/profile");
+            }
+          }}
+        ></Button>
+      </div>
     </li>
   ));
 
@@ -92,39 +94,47 @@ export function AddressesComponent({ adresses }: AddressesProps) {
   );
 }
 
-export function BillingAddressesComponent({ adresses, billingAddressIds }: BillingAddressesProfileProps) {
+export function BillingAddressesComponent({
+  adresses,
+  billingAddressIds,
+  defaultBillingAddressId,
+}: BillingAddressesProfileProps) {
   const [isChangeAddressMode, setChangeAddressMode] = useState(false);
   const [isAddAddressMode, setAddAddressMode] = useState(false);
   const [addressId, setAddressId] = useState("");
 
   const navigate = useNavigate();
-  console.log(billingAddressIds);
   const billingAddresses = adresses?.map((address) => {
     if (address.id && billingAddressIds?.includes(address.id)) {
       return (
-        <li className="user-address" key={address.id}>
+        <li
+          className={address.id === defaultBillingAddressId ? "user-address default-add" : "user-address"}
+          key={address.id}
+        >
           {<HiOutlineLocationMarker />}
           {`${address.streetName}, ${address.postalCode}, ${address.city}, ${address.country}`}
-          <Button
-            className="edit-address"
-            text="edit"
-            onClick={() => {
-              setChangeAddressMode(!isChangeAddressMode);
-              if (address.id) setAddressId(address.id);
-            }}
-          ></Button>
-          <Button
-            className="edit-address"
-            text="delete"
-            onClick={async () => {
-              if (address.id) {
-                const customerId = TokenService.getCustomerId();
-                const customerVersion = TokenService.getCustomerVersion();
-                await updateCustomer({ customerId, customerVersion, removeBillingAddressId: address.id });
-                navigate("/profile");
-              }
-            }}
-          ></Button>
+          <div className="edit-buttons">
+            <Button
+              className="edit-address"
+              text="edit"
+              onClick={() => {
+                setChangeAddressMode(!isChangeAddressMode);
+                if (address.id) setAddressId(address.id);
+              }}
+            ></Button>
+            <Button
+              className="edit-address"
+              text="delete"
+              onClick={async () => {
+                if (address.id) {
+                  const customerId = TokenService.getCustomerId();
+                  const customerVersion = TokenService.getCustomerVersion();
+                  await updateCustomer({ customerId, customerVersion, removeBillingAddressId: address.id });
+                  navigate("/profile");
+                }
+              }}
+            ></Button>
+          </div>
         </li>
       );
     }
@@ -132,7 +142,7 @@ export function BillingAddressesComponent({ adresses, billingAddressIds }: Billi
 
   const chooseAddressFormType = function () {
     if (isChangeAddressMode) {
-      return "changeAddress";
+      return "changeBillingAddress";
     } else {
       return "addBillingAddress";
     }
@@ -164,7 +174,11 @@ export function BillingAddressesComponent({ adresses, billingAddressIds }: Billi
   );
 }
 
-export function ShippingAddressesComponent({ adresses, shippingAddressIds }: ShippingAddressesProfileProps) {
+export function ShippingAddressesComponent({
+  adresses,
+  shippingAddressIds,
+  defaultShippingAddressId,
+}: ShippingAddressesProfileProps) {
   const [isChangeAddressMode, setChangeAddressMode] = useState(false);
   const [isAddAddressMode, setAddAddressMode] = useState(false);
   const [addressId, setAddressId] = useState("");
@@ -174,29 +188,34 @@ export function ShippingAddressesComponent({ adresses, shippingAddressIds }: Shi
   const shippingAddresses = adresses?.map((address) => {
     if (address.id && shippingAddressIds?.includes(address.id)) {
       return (
-        <li className="user-address" key={address.id}>
+        <li
+          className={address.id === defaultShippingAddressId ? "user-address default-add" : "user-address"}
+          key={address.id}
+        >
           {<HiOutlineLocationMarker />}
           {`${address.streetName}, ${address.postalCode}, ${address.city}, ${address.country}`}
-          <Button
-            className="edit-address"
-            text="edit"
-            onClick={() => {
-              setChangeAddressMode(!isChangeAddressMode);
-              if (address.id) setAddressId(address.id);
-            }}
-          ></Button>
-          <Button
-            className="edit-address"
-            text="delete"
-            onClick={async () => {
-              if (address.id) {
-                const customerId = TokenService.getCustomerId();
-                const customerVersion = TokenService.getCustomerVersion();
-                await updateCustomer({ customerId, customerVersion, removeShippingAddressId: address.id });
-                navigate("/profile");
-              }
-            }}
-          ></Button>
+          <div className="edit-buttons">
+            <Button
+              className="edit-address"
+              text="edit"
+              onClick={() => {
+                setChangeAddressMode(!isChangeAddressMode);
+                if (address.id) setAddressId(address.id);
+              }}
+            ></Button>
+            <Button
+              className="edit-address"
+              text="delete"
+              onClick={async () => {
+                if (address.id) {
+                  const customerId = TokenService.getCustomerId();
+                  const customerVersion = TokenService.getCustomerVersion();
+                  await updateCustomer({ customerId, customerVersion, removeShippingAddressId: address.id });
+                  navigate("/profile");
+                }
+              }}
+            ></Button>
+          </div>
         </li>
       );
     }
@@ -204,7 +223,7 @@ export function ShippingAddressesComponent({ adresses, shippingAddressIds }: Shi
 
   const chooseAddressFormType = function () {
     if (isChangeAddressMode) {
-      return "changeAddress";
+      return "changeShippingAddress";
     } else {
       return "addShippingAddress";
     }

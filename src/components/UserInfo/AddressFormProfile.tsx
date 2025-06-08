@@ -17,6 +17,8 @@ export function AddressForm({ formType, clearMode, addressId }: AddressFormProps
   const [city, setCity] = useState("");
   const [postalCode, setPostalCode] = useState("");
   const [country, setCountry] = useState("");
+  const [isDefaultBillingAdrdess, setAsDefaultBillingAdress] = useState(false);
+  const [isDefaultShippingAddress, setAsDefaultShippingAddress] = useState(false);
 
   const [streetError, setStreetError] = useState("");
   const [cityError, setCityError] = useState("");
@@ -80,7 +82,8 @@ export function AddressForm({ formType, clearMode, addressId }: AddressFormProps
     setPostalCodeError("");
     clearMode();
   };
-
+  const billingFormsArray = ["addBillingAddress", "changeBillingAddress", "addAddress", "changeAddress"];
+  const shippingFormsArray = ["addShippingAddress", "changeShippingAddress", "addAddress", "changeAddress"];
   return (
     <Form className="change-address-form" method="post">
       <input type="hidden" name="actionType" value={formType} />
@@ -147,6 +150,35 @@ export function AddressForm({ formType, clearMode, addressId }: AddressFormProps
           ))}
         </select>
         {countryError && <Paragraph text={countryError} isError />}
+      </div>
+
+      <div className="field-group set-default-address">
+        {billingFormsArray.includes(formType) && (
+          <div className="default-billing-address">
+            <InputField
+              name="isDefaultBillingAddress"
+              value={isDefaultBillingAdrdess ? "default" : ""}
+              type="checkbox"
+              onChange={() => {
+                setAsDefaultBillingAdress(!isDefaultBillingAdrdess);
+              }}
+            ></InputField>
+            <Paragraph text="Set as default billing address" />
+          </div>
+        )}
+        {shippingFormsArray.includes(formType) && (
+          <div className="default-shipping-address">
+            <InputField
+              name="isDefaultShippingAddress"
+              value={isDefaultShippingAddress ? "default" : ""}
+              type="checkbox"
+              onChange={() => {
+                setAsDefaultShippingAddress(!isDefaultShippingAddress);
+              }}
+            ></InputField>
+            <Paragraph text="Set as default shipping address" />
+          </div>
+        )}
       </div>
       <Button
         type="submit"

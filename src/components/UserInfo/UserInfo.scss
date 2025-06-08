@@ -27,7 +27,7 @@
       flex-direction: row;
       justify-content: center;
       gap: 1.5rem;
-
+      flex-wrap: wrap;
       .address-container-profile {
         display: flex;
         flex-direction: column;
@@ -52,6 +52,12 @@
           align-items: center;
           flex-direction: column;
 
+          .edit-buttons {
+            display: flex;
+            flex-direction: row;
+            gap: 0.3rem;
+            justify-self: center;
+          }
           .user-address {
             display: flex;
             gap: 0.5rem;
@@ -71,6 +77,9 @@
               padding: 0;
               cursor: pointer;
             }
+          }
+          .default-add {
+            color: red;
           }
         }
       }
@@ -120,30 +129,32 @@
       gap: 0.5rem;
       font-size: 1.3rem;
       cursor: pointer;
+      align-self: center;
     }
-
     .confirm-btn {
-      justify-self: end;
-    }
-    .cancel-btn {
-      justify-self: start;
+      place-self: end;
     }
   }
 
   .hidden {
     display: none;
   }
+  .change-address-form {
+    display: flex;
+    flex-direction: column;
+    .set-default-address {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      .default-shipping-address,
+      .default-billing-address {
+        display: flex;
+        gap: 0.5rem;
+      }
+    }
+    .confirm-btn,
+    .cancel-btn {
+      align-self: center;
+    }
+  }
 }
-
-// @media only screen and (max-width: 768px) {
-//   .user-profile-container {
-//     .right-buttons {
-//       display: none;
-//     }
-
-//     .top-buttons {
-//       margin-top: 1rem;
-//       display: flex;
-//     }
-//   }
-// }
