@@ -1,4 +1,6 @@
 import { createBrowserRouter } from "react-router-dom";
+import { TokenService } from "../services/TokenService";
+import { AuthService } from "../services/AuthService";
 import MainLayout from "../layouts/MainLayout";
 import HomePage from "../pages/Home/Home";
 import LoginPage from "../pages/Login/Login";
@@ -20,7 +22,15 @@ const router = createBrowserRouter(
         { path: "sign-up", Component: RegistrationPage },
         { path: "profile", Component: UserPage },
         { path: "about", Component: AboutPage },
-        { path: "catalog/*", Component: CategoryPage },
+        {
+          path: "catalog/*",
+          Component: CategoryPage,
+          loader: async () => {
+            if (!TokenService.getAccessToken()) {
+              await AuthService.anonymousAuthenticate();
+            }
+          },
+        },
         { path: "product/:id", Component: ProductPage },
       ],
     },

@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { TokenService } from "../../services/TokenService";
-import { AuthService } from "../../services/AuthService";
 import axios from "axios";
 
 import Breadcrumbs from "../../components/Breadcrumbs/Breadcrumbs";
@@ -40,14 +38,6 @@ export default function CategoryPage() {
 
   const rawPath = location.pathname.replace(/^\/catalog\/?/, "");
   const segments = rawPath === "" ? [] : rawPath.split("/");
-
-  if (!TokenService.getAccessToken()) {
-    const anonymousClient = async function () {
-      await AuthService.anonymousAuthenticate();
-    };
-
-    anonymousClient();
-  }
 
   useEffect(() => {
     setLoading(true);
