@@ -1,2 +1,2 @@
-declare const router: import("react-router").DataRouter;
+declare const router: import("@remix-run/router").Router;
 export default router;

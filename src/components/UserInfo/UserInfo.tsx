@@ -41,7 +41,7 @@ export function UserInfo({
   defaultShippingAddressId,
   defaultBillingAddressId,
 }: UserInfoProps) {
-  const actionData = useActionData<{ message: string; statusCode: number }>();
+  const actionData = useActionData() as { message: string; statusCode: number } | undefined;
   const serverError = actionData?.message;
 
   const [isEditMode, setEditMode] = useState(false);

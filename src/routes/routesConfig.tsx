@@ -12,11 +12,7 @@ import AboutPage from "../pages/About/About";
 import { ProfileFallBack } from "../pages/Fallback/ProfileFallBack";
 import { loadCutomerData } from "./DataHandlers/Profile/ProfileLoaders";
 import { actionCustomerData } from "./DataHandlers/Profile/ProfileActions";
-import { ProfileFallBack } from "../pages/Fallback/ProfileFallBack";
-import { loadCutomerData } from "./DataHandlers/Profile/ProfileLoaders";
-import { actionCustomerData } from "./DataHandlers/Profile/ProfileActions";
 import ProductPage from "../pages/Product/Product";
-
 
 const router = createBrowserRouter(
   [
@@ -41,6 +37,7 @@ const router = createBrowserRouter(
             if (!TokenService.getAccessToken()) {
               await AuthService.anonymousAuthenticate();
             }
+            return null;
           },
         },
         { path: "product/:id", Component: ProductPage },

@@ -3,6 +3,8 @@ import { UserInfo } from "../../components/UserInfo/UserInfo";
 import type { CustomerResponse } from "../../services/customerService/types";
 
 export default function UserPage() {
+  const customer = useLoaderData() as CustomerResponse;
+
   const {
     firstName,
     lastName,
@@ -13,7 +15,7 @@ export default function UserPage() {
     billingAddressIds,
     defaultBillingAddressId,
     defaultShippingAddressId,
-  } = useLoaderData<CustomerResponse>();
+  } = customer;
 
   return (
     <UserInfo
