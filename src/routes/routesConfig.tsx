@@ -21,7 +21,7 @@ const router = createBrowserRouter(
         { path: "profile", Component: UserPage },
         { path: "about", Component: AboutPage },
         { path: "catalog/*", Component: CategoryPage },
-        { path: "product/*", Component: ProductPage },
+        { path: "product/:id", Component: ProductPage },
       ],
     },
     {
