@@ -13,6 +13,7 @@ import { ProfileFallBack } from "../pages/Fallback/ProfileFallBack";
 import { loadCutomerData } from "./DataHandlers/Profile/ProfileLoaders";
 import { actionCustomerData } from "./DataHandlers/Profile/ProfileActions";
 import ProductPage from "../pages/Product/Product";
+import BasketPage from "../pages/Basket/Basket";
 
 const router = createBrowserRouter(
   [
@@ -42,6 +43,7 @@ const router = createBrowserRouter(
         },
         { path: "product/:id", Component: ProductPage },
         { path: "about", Component: AboutPage },
+        { path: "basket", Component: BasketPage },
       ],
     },
     {
