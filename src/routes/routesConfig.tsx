@@ -1,6 +1,4 @@
 import { createBrowserRouter } from "react-router-dom";
-import { TokenService } from "../services/TokenService";
-import { AuthService } from "../services/AuthService";
 import MainLayout from "../layouts/MainLayout";
 import HomePage from "../pages/Home/Home";
 import LoginPage from "../pages/Login/Login";
@@ -14,7 +12,8 @@ import { loadCutomerData } from "./DataHandlers/Profile/ProfileLoaders";
 import { actionCustomerData } from "./DataHandlers/Profile/ProfileActions";
 import ProductPage from "../pages/Product/Product";
 import BasketPage from "../pages/Basket/Basket";
-
+import { loadCatalogData } from "./DataHandlers/Catalog/CatalogLoaders";
+// import { loadBasketData } from "./DataHandlers/Basket/BasketLoaders";
 const router = createBrowserRouter(
   [
     {
@@ -34,16 +33,15 @@ const router = createBrowserRouter(
         {
           path: "catalog/*",
           Component: CategoryPage,
-          loader: async () => {
-            if (!TokenService.getAccessToken()) {
-              await AuthService.anonymousAuthenticate();
-            }
-            return null;
-          },
+          loader: loadCatalogData,
         },
         { path: "product/:id", Component: ProductPage },
         { path: "about", Component: AboutPage },
-        { path: "basket", Component: BasketPage },
+        {
+          path: "basket",
+          Component: BasketPage,
+          // loader: loadBasketData
+        },
       ],
     },
     {
