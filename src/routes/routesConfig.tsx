@@ -12,12 +12,13 @@ import { loadCutomerData } from "./DataHandlers/Profile/ProfileLoaders";
 import { actionCustomerData } from "./DataHandlers/Profile/ProfileActions";
 import ProductPage from "../pages/Product/Product";
 import BasketPage from "../pages/Basket/Basket";
-import { loadCatalogData } from "./DataHandlers/Catalog/CatalogLoaders";
-// import { loadBasketData } from "./DataHandlers/Basket/BasketLoaders";
+import { loadMainData } from "./DataHandlers/MainLayout/MainLayoutLoaders";
+
 const router = createBrowserRouter(
   [
     {
       path: "/",
+      loader: loadMainData,
       Component: MainLayout,
       children: [
         { index: true, Component: HomePage },
@@ -33,7 +34,6 @@ const router = createBrowserRouter(
         {
           path: "catalog/*",
           Component: CategoryPage,
-          loader: loadCatalogData,
         },
         { path: "product/:id", Component: ProductPage },
         { path: "about", Component: AboutPage },

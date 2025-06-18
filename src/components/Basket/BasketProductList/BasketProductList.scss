@@ -1,0 +1,16 @@
+.basket-list-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 20px 24px;
+  gap: 24px;
+  margin-left: 40px;
+  width: 715px;
+
+  border: 1px solid rgba(46, 42, 42, 0.1);
+  border-radius: 20px;
+}
+
+.list-underline {
+  width: 100%;
+}

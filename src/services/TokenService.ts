@@ -1,22 +1,27 @@
 // TokenService is an Object with set of functions to manage tokens in the storage
 
 export const TokenService = {
-  getAccessToken: (): string | null => localStorage.getItem("accessToken"),
   setAccessToken: (token: string) => localStorage.setItem("accessToken", token),
-  setLogin: (logeIn: string = "true") => localStorage.setItem("loginState", logeIn),
+  getAccessToken: (): string | null => localStorage.getItem("accessToken"),
   removeAccessToken: () => localStorage.removeItem("accessToken"),
-  setCustomerId: (customerId: string) => localStorage.setItem("customerId", customerId),
-  setCustomerVersion: (customerVersion: string) => localStorage.setItem("customerVersion", customerVersion),
 
-  getRefreshToken: (): string | null => localStorage.getItem("refreshToken"),
-  setRefreshToken: (token: string) => localStorage.setItem("refreshToken", token),
-  removeRefreshToken: () => localStorage.removeItem("refreshToken"),
-
+  setLogin: (logeIn: string = "true") => localStorage.setItem("loginState", logeIn),
   getLogin: (): string | null => localStorage.getItem("loginState"),
   removeLogin: () => localStorage.removeItem("loginState"),
 
+  setCustomerVersion: (customerVersion: string) => localStorage.setItem("customerVersion", customerVersion),
+  setCustomerId: (customerId: string) => localStorage.setItem("customerId", customerId),
   getCustomerId: (): string | null => localStorage.getItem("customerId"),
   getCustomerVersion: (): string | null => localStorage.getItem("customerVersion"),
+
+  setCartId: (cartId: string) => localStorage.setItem("cartId", cartId),
+  setCartVersion: (cartVersion: string) => localStorage.setItem("cartVersion", cartVersion),
+  getCartId: (): string | null => localStorage.getItem("cartId"),
+  getCartVersion: (): string | null => localStorage.getItem("cartVersion"),
+
+  setRefreshToken: (token: string) => localStorage.setItem("refreshToken", token),
+  getRefreshToken: (): string | null => localStorage.getItem("refreshToken"),
+  removeRefreshToken: () => localStorage.removeItem("refreshToken"),
 
   clearTokens: () => {
     localStorage.removeItem("accessToken");
@@ -24,5 +29,7 @@ export const TokenService = {
     localStorage.removeItem("loginState");
     localStorage.removeItem("customerId");
     localStorage.removeItem("customerVersion");
+    localStorage.removeItem("cartId");
+    localStorage.removeItem("cartVersion");
   },
 };

@@ -1,0 +1,113 @@
+.basket-pr-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 0px;
+  gap: 16px;
+  width: 667px;
+  height: 124px;
+
+  .pr-img-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 124px;
+    height: 124px;
+    background: #f0eeed;
+    border-radius: 9px;
+
+    img {
+      width: 80%;
+      height: 80%;
+    }
+  }
+  .pr-info-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0px;
+    gap: 16px;
+
+    width: 527px;
+    height: 124px;
+
+    .pr-text-container {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: 0px;
+      gap: 4px;
+
+      margin: 0 auto;
+      width: 215px;
+      height: 118px;
+
+      .basket-pr-price {
+        color: #000000;
+        font-size: 2.4rem;
+        font-weight: 700;
+        line-height: 100%;
+      }
+      .pr-description-container {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 2px;
+        width: 215px;
+        height: 61px;
+
+        .basket-pr-name {
+          color: #000000;
+          font-size: 2rem;
+          font-weight: 700;
+          line-height: 100%;
+        }
+      }
+    }
+    .pr-actions-container {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: flex-end;
+
+      width: 225px;
+      height: 124px;
+
+      .delete-pr-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 24px;
+        height: 24px;
+
+        svg {
+          width: 18px;
+          height: 19px;
+          color: #ff3333;
+        }
+      }
+
+      .pr-quantity-btns {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        padding: 12px 20px;
+        gap: 20px;
+
+        width: 128px;
+        height: 44px;
+
+        background: #f0f0f0;
+        border-radius: 62px;
+
+        .basket-add-btn,
+        .basket-remove-btn {
+          cursor: pointer;
+        }
+      }
+    }
+  }
+}
