@@ -10,6 +10,7 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import { useCart } from "../../components/context/CartContext";
+import Message from "../../components/common/message/Message";
 
 export default function ProductPage() {
   const [product, setProduct] = useState<Product | null>(null);
@@ -18,7 +19,7 @@ export default function ProductPage() {
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const { id } = useParams<{ id: string }>();
   const [productInCart, setProductInCart] = useState(false);
-
+  const [showMessage, setShowMessage] = useState(false);
   const { cart, addToCart, removeFromCart } = useCart();
 
   useEffect(() => {
@@ -112,12 +113,16 @@ export default function ProductPage() {
               onClick={() => {
                 if (id) {
                   removeFromCart(id);
+                  setShowMessage(true);
                 }
                 return cart;
               }}
             />
           </div>
         </div>
+        {showMessage && (
+          <Message text="Product has been removed from the cart." onClose={() => setShowMessage(false)} />
+        )}
       </div>
 
       {isModalOpen && (
