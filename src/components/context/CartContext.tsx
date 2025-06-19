@@ -6,7 +6,7 @@ import type { CartResponse } from "../../services/cartService/types";
 interface CartContextType {
   cart: CartResponse | null;
   addToCart?: (productId: string) => Promise<void>;
-  removeFromCart?: (productId: string) => Promise<void>;
+  removeFromCart?: (productId: string, quantity?: number) => Promise<void>;
 }
 
 const CartContext = createContext<CartContextType | null>(null);
@@ -29,7 +29,6 @@ export function CartDataProvider({ children }: CartProviderProps) {
   }, []);
 
   const addToCart = async (productId: string) => {
-    console.log(cart);
     if (!cart) throw new Error("Cart not initialized");
     const cartId = TokenService.getCartId() as string;
     const updatedCart = await updateCart(cartId, cart.version.toString(), {
@@ -39,15 +38,16 @@ export function CartDataProvider({ children }: CartProviderProps) {
     setCart(updatedCart);
   };
 
-  const removeFromCart = async (productId: string) => {
-    console.log(cart);
+  const removeFromCart = async (productId: string, quantity?: number) => {
     if (!cart) throw new Error("Cart not initialized");
     const cartId = TokenService.getCartId() as string;
     const itemToRemove = cart.lineItems.find((item) => item.productId === productId);
     if (itemToRemove) {
+      const removeQuantity = quantity ? quantity : itemToRemove.quantity;
       const updatedCart = await updateCart(cartId, cart.version.toString(), {
         action: "removeLineItem",
         lineItemId: itemToRemove.id,
+        quantity: removeQuantity,
       });
       setCart(updatedCart);
     }

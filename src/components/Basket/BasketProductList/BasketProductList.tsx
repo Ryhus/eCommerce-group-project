@@ -4,11 +4,13 @@ import "./BasketProductList.scss";
 
 export function BasketProductList() {
   const { cart } = useCart();
+
   const products = cart?.lineItems;
 
   const basketCards = products?.map((item) => {
     const {
       id: itemId,
+      productId,
       quantity,
 
       name: { en: productName },
@@ -27,6 +29,7 @@ export function BasketProductList() {
         quantity={quantity}
         imgUrl={firstImg.url}
         totalPrice={`€${totalPriceEuro.toFixed(fractionDigits)}`}
+        productId={productId}
       />
     );
   });
