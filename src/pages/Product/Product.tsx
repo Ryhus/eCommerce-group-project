@@ -100,7 +100,7 @@ export default function ProductPage() {
               disabled={productInCart}
               text="Add to Cart"
               onClick={() => {
-                if (id && addToCart) {
+                if (id) {
                   addToCart(id);
                 }
                 return cart;
@@ -110,7 +110,7 @@ export default function ProductPage() {
               disabled={!productInCart}
               text="Remove"
               onClick={() => {
-                if (id && removeFromCart) {
+                if (id) {
                   removeFromCart(id);
                 }
                 return cart;

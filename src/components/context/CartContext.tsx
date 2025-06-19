@@ -5,8 +5,9 @@ import type { CartResponse } from "../../services/cartService/types";
 
 interface CartContextType {
   cart: CartResponse | null;
-  addToCart?: (productId: string) => Promise<void>;
-  removeFromCart?: (productId: string, quantity?: number) => Promise<void>;
+  addToCart: (productId: string) => Promise<void>;
+  removeFromCart: (productId: string, quantity?: number) => Promise<void>;
+  calculateTotalQuantity: () => number;
 }
 
 const CartContext = createContext<CartContextType | null>(null);
@@ -53,7 +54,21 @@ export function CartDataProvider({ children }: CartProviderProps) {
     }
   };
 
-  return <CartContext value={{ cart, addToCart, removeFromCart }}>{children}</CartContext>;
+  const calculateTotalQuantity = () => {
+    if (!cart) throw new Error("Cart not initialized");
+    const { lineItems } = cart;
+
+    let totalCartQuantity = 0;
+    lineItems.forEach((lineItem) => {
+      const { quantity } = lineItem;
+      if (quantity) {
+        totalCartQuantity += quantity;
+      }
+    });
+    return totalCartQuantity;
+  };
+
+  return <CartContext value={{ cart, addToCart, removeFromCart, calculateTotalQuantity }}>{children}</CartContext>;
 }
 
 export const useCart = (): CartContextType => {

@@ -40,7 +40,7 @@ export function BasketProductCard({
           <div className="delete-pr-btn">
             <PiTrashFill
               onClick={() => {
-                if (productId && removeFromCart) removeFromCart(productId);
+                if (productId) removeFromCart(productId);
               }}
             />
           </div>
@@ -48,14 +48,14 @@ export function BasketProductCard({
             <FaMinus
               className="basket-add-btn"
               onClick={() => {
-                if (productId && removeFromCart) removeFromCart(productId, 1);
+                if (productId) removeFromCart(productId, 1);
               }}
             />
             <Paragraph text={quantity ? quantity.toString() : "N/A"} />
             <FaPlus
               className="basket-remove-btn"
               onClick={() => {
-                if (productId && addToCart) addToCart(productId);
+                if (productId) addToCart(productId);
               }}
             />
           </div>
