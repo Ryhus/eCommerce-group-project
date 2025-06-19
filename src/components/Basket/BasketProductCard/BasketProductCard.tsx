@@ -12,6 +12,8 @@ interface BasketProductCardProps {
   quantity?: number;
   imgUrl?: string;
   totalPrice?: string;
+  discountedProductPrice?: string;
+  productPrice?: string;
 }
 
 export function BasketProductCard({
@@ -21,6 +23,7 @@ export function BasketProductCard({
   quantity,
   imgUrl,
   totalPrice,
+  productPrice,
 }: BasketProductCardProps) {
   const { addToCart, removeFromCart } = useCart();
 
@@ -34,7 +37,8 @@ export function BasketProductCard({
           <div className="pr-description-container">
             <Paragraph className="basket-pr-name" text={productName ? productName : ""}></Paragraph>
           </div>
-          <Paragraph className="basket-pr-price" text={totalPrice ? totalPrice.toString() : "N/A"}></Paragraph>
+          <Paragraph className="basket-item-price" text={productPrice ? productPrice : "N/A"}></Paragraph>
+          <Paragraph className="basket-pr-price" text={totalPrice ? totalPrice : "N/A"}></Paragraph>
         </div>
         <div className="pr-actions-container">
           <div className="delete-pr-btn">

@@ -46,12 +46,24 @@ interface LineItemVariant {
   id: number;
   sku: string;
 }
-interface LineItemTotalPrice {
-  centAmount: number;
+
+interface LineItemPriceValue {
+  type: string;
   currencyCode: "EUR" | "USD";
+  centAmount: number;
   fractionDigits: number;
-  type: "centPrecision";
 }
+
+interface LineItemPrice {
+  discounted: {
+    discount: { id: string; typeId: string };
+    id: string;
+    key: string;
+    value: LineItemPriceValue;
+  };
+  value: LineItemPriceValue;
+}
+
 export interface LineItem {
   id: string;
   productId: string;
@@ -61,7 +73,8 @@ export interface LineItem {
   addedAt?: Date;
   name: { en: string };
   variant: LineItemVariant;
-  totalPrice: LineItemTotalPrice;
+  totalPrice: LineItemPriceValue;
+  price: LineItemPrice;
 }
 
 export type UpdateCartActions = Array<
@@ -95,24 +108,3 @@ export interface CartResponse {
   createdAt: Date;
   lastModifiedAt: Date;
 }
-
-// export interface CartUpdateProps {
-//   cartId: string;
-//   cartVersion: string;
-//   actions: Array<
-//     | setKeyAction
-//     | setCustomerIdAction
-//     | setCustomerEmailAction
-//     | setCustomerGroupAction
-//     | SetAnonymousIDAction
-//     | AddLineItemAction
-//     | RemoveLineItemAction
-//   >;
-//   setKeyAction?: setKeyAction;
-//   setCustomerIdAction?: setCustomerIdAction;
-//   setEmailAction?: setCustomerEmailAction;
-//   setCustomerGroupAction?: setCustomerGroupAction;
-//   setAnonymousIdAction?: SetAnonymousIDAction;
-//   addLineItemAction?: AddLineItemAction;
-//   removeLineItemAction?: RemoveLineItemAction;
-// }

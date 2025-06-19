@@ -6,7 +6,7 @@ export function BasketProductList() {
   const { cart } = useCart();
 
   const products = cart?.lineItems;
-
+  console.log(cart);
   const basketCards = products?.map((item) => {
     const {
       id: itemId,
@@ -14,22 +14,32 @@ export function BasketProductList() {
       quantity,
 
       name: { en: productName },
-      totalPrice: { centAmount, fractionDigits },
+      price: {
+        discounted: {
+          value: { centAmount: discountedItemCentPrice, fractionDigits: discountedFraction },
+        },
+        value: { centAmount: itemCentPrice, fractionDigits: itemFraction },
+      },
+      totalPrice: { centAmount: totalCentPrice, fractionDigits },
       variant: {
         images: [firstImg],
       },
     } = item;
+    const itemPrice = itemCentPrice / 100;
+    const discountedItemPrice = discountedItemCentPrice / 100;
+    const totalPriceEuro = totalCentPrice / 100;
 
-    const totalPriceEuro = centAmount / 100;
-
+    const currentPrice = discountedItemPrice ? discountedItemPrice : itemPrice;
+    const curretFraction = discountedFraction ? discountedFraction : itemFraction;
     return (
       <BasketProductCard
         key={itemId}
         productName={productName}
         quantity={quantity}
         imgUrl={firstImg.url}
-        totalPrice={`€${totalPriceEuro.toFixed(fractionDigits)}`}
         productId={productId}
+        productPrice={`Price: €${currentPrice.toFixed(curretFraction)}`}
+        totalPrice={`Total: €${totalPriceEuro.toFixed(fractionDigits)}`}
       />
     );
   });
