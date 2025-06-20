@@ -1,6 +1,7 @@
 import React from "react";
 import Paragraph from "../common/paragraph/paragraph";
 import "./productCard.scss";
+import Button from "../common/button/button";
 
 type ProductCardProps = {
   id: string;
@@ -12,6 +13,7 @@ type ProductCardProps = {
   oldPrice: number; //in centes
   altText?: string;
   className?: string;
+  isInCart?: boolean;
 };
 
 const ProductCard: React.FC<ProductCardProps> = ({
@@ -24,6 +26,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
   oldPrice,
   altText = name,
   className = "",
+  isInCart = false,
 }) => {
   let discount: number = 0;
   if (oldPrice > currentPrice) {
@@ -51,6 +54,11 @@ const ProductCard: React.FC<ProductCardProps> = ({
           )}
         </div>
       </div>
+      <Button
+        text={isInCart ? "In Cart" : "Add to Cart"}
+        disabled={isInCart}
+        className="btn-medium product-card__add-to-cart"
+      />
     </div>
   );
 };
