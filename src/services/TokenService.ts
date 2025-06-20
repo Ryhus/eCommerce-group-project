@@ -5,6 +5,10 @@ export const TokenService = {
   getAccessToken: (): string | null => localStorage.getItem("accessToken"),
   removeAccessToken: () => localStorage.removeItem("accessToken"),
 
+  setAnonSessionId: (anonymousId: string) => localStorage.setItem("anonymousId", anonymousId),
+  getAnonSessionId: (): string | null => localStorage.getItem("anonymousId"),
+  removeAnonSessionId: () => localStorage.removeItem("anonymousId"),
+
   setLogin: (logeIn: string = "true") => localStorage.setItem("loginState", logeIn),
   getLogin: (): string | null => localStorage.getItem("loginState"),
   removeLogin: () => localStorage.removeItem("loginState"),
@@ -16,6 +20,8 @@ export const TokenService = {
 
   setCartId: (cartId: string) => localStorage.setItem("cartId", cartId),
   setCartVersion: (cartVersion: string) => localStorage.setItem("cartVersion", cartVersion),
+  removeCartId: () => localStorage.removeItem("cartId"),
+
   getCartId: (): string | null => localStorage.getItem("cartId"),
   getCartVersion: (): string | null => localStorage.getItem("cartVersion"),
 

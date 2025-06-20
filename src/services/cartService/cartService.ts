@@ -29,3 +29,12 @@ export async function updateCart(cartId: string, cartVersion: string, ...actions
   TokenService.setCartVersion(cartData.version.toString());
   return cartData;
 }
+
+export async function deleteCart(cartId: string, version: number) {
+  const response = await apiClient.delete<CartResponse>(
+    `${API_URL}/${PROJECT_KEY}/carts/${cartId}/?version=${version}`
+  );
+  const cartData = response.data;
+
+  return cartData;
+}

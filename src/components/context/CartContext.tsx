@@ -1,5 +1,5 @@
 import { createContext, useState, useEffect, useContext } from "react";
-import { getCart, updateCart } from "../../services/cartService/cartService";
+import { getCart, updateCart, deleteCart, createCart } from "../../services/cartService/cartService";
 import { TokenService } from "../../services/TokenService";
 import type { CartResponse } from "../../services/cartService/types";
 
@@ -9,6 +9,7 @@ interface CartContextType {
   removeFromCart: (productId: string, quantity?: number) => Promise<void>;
   calculateTotalQuantity: () => number;
   applyPromoCode: (promoCode: string) => Promise<void>;
+  clearCart: () => Promise<void>;
 }
 
 const CartContext = createContext<CartContextType | null>(null);
@@ -79,8 +80,22 @@ export function CartDataProvider({ children }: CartProviderProps) {
     setCart(updatedCart);
   };
 
+  const clearCart = async () => {
+    if (!cart) throw new Error("Cart not initialized");
+    const cartId = TokenService.getCartId() as string;
+    await deleteCart(cartId, cart.version);
+
+    const logedIn = TokenService.getLogin();
+    const anonId = TokenService.getAnonSessionId();
+    const anonymousId = logedIn ? undefined : anonId;
+
+    const clearedCart = await createCart({ currency: "EUR", anonymousId: anonymousId });
+    TokenService.setCartId(clearedCart.id);
+    setCart(clearedCart);
+  };
+
   return (
-    <CartContext value={{ cart, addToCart, removeFromCart, calculateTotalQuantity, applyPromoCode }}>
+    <CartContext value={{ cart, addToCart, removeFromCart, calculateTotalQuantity, applyPromoCode, clearCart }}>
       {children}
     </CartContext>
   );

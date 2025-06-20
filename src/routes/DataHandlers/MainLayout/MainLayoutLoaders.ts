@@ -4,13 +4,13 @@ import { createCart } from "../../../services/cartService/cartService";
 
 export async function loadMainData() {
   if (!TokenService.getAccessToken()) {
-    const anonymousSessionData = await AuthService.anonymousAuthenticate(); // create an anonymous session
-    const anonymousId = anonymousSessionData?.scope.split(" ").at(-1)?.split(":").at(-1); // get an anonymous session id
-    // create cart for the anonymous session
+    const anonymousSessionData = await AuthService.anonymousAuthenticate();
+    const anonymousId = anonymousSessionData?.scope.split(" ").at(-1)?.split(":").at(-1) as string;
+    TokenService.setAnonSessionId(anonymousId);
+
     const anonymousCartData = await createCart({ currency: "EUR", anonymousId: anonymousId });
-    const { id, version } = anonymousCartData;
+    const { id } = anonymousCartData;
     TokenService.setCartId(id);
-    TokenService.setCartVersion(version.toString());
     return anonymousCartData;
   }
   return null;

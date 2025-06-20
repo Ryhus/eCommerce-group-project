@@ -1,12 +1,22 @@
+import { useState, useEffect } from "react";
+import Link from "../../common/link/link";
 import { BasketProductCard } from "../BasketProductCard/BasketProductCard";
+import { useNavigate } from "react-router-dom";
 import { useCart } from "../../context/CartContext";
 import "./BasketProductList.scss";
 
 export function BasketProductList() {
   const { cart } = useCart();
+  const [productInCart, setProductInCart] = useState(false);
 
   const products = cart?.lineItems;
-  console.log(cart);
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (products) {
+      setProductInCart(products.length > 0);
+    }
+  }, [products]);
+
   const basketCards = products?.map((item) => {
     const {
       id: itemId,
@@ -31,6 +41,7 @@ export function BasketProductList() {
 
     const currentPrice = discountedItemPrice ? discountedItemPrice : itemPrice;
     const curretFraction = discountedFraction ? discountedFraction : itemFraction;
+
     return (
       <BasketProductCard
         key={itemId}
@@ -43,5 +54,22 @@ export function BasketProductList() {
       />
     );
   });
-  return <div className="basket-list-container">{basketCards}</div>;
+
+  return (
+    <div className="basket-list-container">
+      {productInCart ? (
+        basketCards
+      ) : (
+        <Link
+          className="cart-to-catalog-link"
+          text="Empty cart? Click on me and buy our products 🥎"
+          onClick={(e) => {
+            e.preventDefault();
+            navigate("/catalog");
+          }}
+          href={"/catalog"}
+        />
+      )}
+    </div>
+  );
 }

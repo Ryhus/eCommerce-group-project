@@ -10,11 +10,10 @@ import "./OrderPromoCodeStyles.scss";
 export default function () {
   const [promoCode, setPromococde] = useState("");
 
-  const { cart, applyPromoCode } = useCart();
+  const { applyPromoCode } = useCart();
 
   const handleSubmit = () => {
     applyPromoCode(promoCode);
-    console.log(cart);
   };
 
   const handleCodechange = (value: string) => {
@@ -25,6 +24,7 @@ export default function () {
     <Form className="order-promo-form" onSubmit={handleSubmit}>
       <InputField
         value={promoCode}
+        placeholder="Add promo code"
         icon={<MdOutlineDiscount />}
         inputClassName="promo-input"
         onChange={handleCodechange}

@@ -4,7 +4,8 @@
   align-items: center;
   padding: 0px;
   gap: 16px;
-  width: 667px;
+  width: 100%;
+  max-width: 667px;
   height: 124px;
 
   .pr-img-container {
@@ -12,13 +13,15 @@
     align-items: center;
     justify-content: center;
     width: 124px;
+
     height: 124px;
+
     background: #f0eeed;
     border-radius: 9px;
 
     img {
-      width: 80%;
-      height: 80%;
+      width: 120px;
+      height: 120px;
     }
   }
   .pr-info-container {
@@ -28,9 +31,7 @@
     align-items: center;
     padding: 0px;
     gap: 16px;
-
-    width: 527px;
-    height: 124px;
+    width: 100%;
 
     .pr-text-container {
       display: flex;
@@ -41,12 +42,18 @@
       gap: 4px;
 
       margin: 0 auto;
-      width: 215px;
+
+      width: 100%;
       height: 118px;
+
+      .basket-item-price {
+        font-size: clamp(1rem, 2vw, 1.5rem);
+      }
 
       .basket-pr-price {
         color: #000000;
-        font-size: 2.4rem;
+
+        font-size: clamp(1rem, 2vw, 2.4rem);
         font-weight: 700;
         line-height: 100%;
       }
@@ -55,12 +62,14 @@
         flex-direction: column;
         align-items: flex-start;
         gap: 2px;
-        width: 215px;
+        width: 100%;
+
         height: 61px;
 
         .basket-pr-name {
           color: #000000;
-          font-size: 2rem;
+
+          font-size: clamp(1rem, 2vw, 2rem);
           font-weight: 700;
           line-height: 100%;
         }
@@ -71,8 +80,7 @@
       flex-direction: column;
       justify-content: space-between;
       align-items: flex-end;
-
-      width: 225px;
+      width: 100%;
       height: 124px;
 
       .delete-pr-btn {
@@ -82,7 +90,7 @@
         width: 24px;
         height: 24px;
         cursor: pointer;
-
+        user-select: none;
         svg {
           width: 18px;
           height: 19px;
@@ -107,6 +115,7 @@
         .basket-add-btn,
         .basket-remove-btn {
           cursor: pointer;
+          user-select: none;
         }
       }
     }

@@ -4,8 +4,10 @@
   align-items: flex-start;
   padding: 20px 24px;
   gap: 24px;
-  width: 505px;
-  height: 458px;
+  width: 100%;
+  max-width: 505px;
+  height: 360px;
+  margin-right: 0.6rem;
   border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: 20px;
 
@@ -51,17 +53,5 @@
     gap: 12px;
     width: 457px;
     height: 48px;
-  }
-  .order-checkout {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    padding: 16px 54px;
-    gap: 12px;
-    width: 457px;
-    height: 60px;
-    background: #000000;
-    border-radius: 62px;
   }
 }

@@ -97,7 +97,7 @@ export interface CartDraft {
   currency: "EUR" | "USD" | "RU";
   key?: string;
   customerId?: string;
-  anonymousId?: string;
+  anonymousId?: string | null;
 }
 
 export interface CartResponse {
