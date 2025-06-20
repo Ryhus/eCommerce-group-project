@@ -8,6 +8,7 @@ interface CartContextType {
   addToCart: (productId: string) => Promise<void>;
   removeFromCart: (productId: string, quantity?: number) => Promise<void>;
   calculateTotalQuantity: () => number;
+  applyPromoCode: (promoCode: string) => Promise<void>;
 }
 
 const CartContext = createContext<CartContextType | null>(null);
@@ -68,7 +69,21 @@ export function CartDataProvider({ children }: CartProviderProps) {
     return totalCartQuantity;
   };
 
-  return <CartContext value={{ cart, addToCart, removeFromCart, calculateTotalQuantity }}>{children}</CartContext>;
+  const applyPromoCode = async (promoCode: string) => {
+    if (!cart) throw new Error("Cart not initialized");
+    const cartId = TokenService.getCartId() as string;
+    const updatedCart = await updateCart(cartId, cart.version.toString(), {
+      action: "addDiscountCode",
+      code: promoCode,
+    });
+    setCart(updatedCart);
+  };
+
+  return (
+    <CartContext value={{ cart, addToCart, removeFromCart, calculateTotalQuantity, applyPromoCode }}>
+      {children}
+    </CartContext>
+  );
 }
 
 export const useCart = (): CartContextType => {

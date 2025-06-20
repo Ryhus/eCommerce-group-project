@@ -40,14 +40,17 @@ interface RemoveLineItemAction {
   quantity?: number;
   lastModifiedAt?: Date;
 }
-
+interface AddDiscountCode {
+  action: "addDiscountCode";
+  code: string;
+}
 interface LineItemVariant {
   images: { dimensions: { w: number; h: number }; url: string }[];
   id: number;
   sku: string;
 }
 
-interface LineItemPriceValue {
+interface PriceValue {
   type: string;
   currencyCode: "EUR" | "USD";
   centAmount: number;
@@ -59,9 +62,9 @@ interface LineItemPrice {
     discount: { id: string; typeId: string };
     id: string;
     key: string;
-    value: LineItemPriceValue;
+    value: PriceValue;
   };
-  value: LineItemPriceValue;
+  value: PriceValue;
 }
 
 export interface LineItem {
@@ -73,10 +76,12 @@ export interface LineItem {
   addedAt?: Date;
   name: { en: string };
   variant: LineItemVariant;
-  totalPrice: LineItemPriceValue;
+  totalPrice: PriceValue;
   price: LineItemPrice;
 }
-
+interface DiscountOnTotalPrice {
+  discountedAmount: PriceValue;
+}
 export type UpdateCartActions = Array<
   | setKeyAction
   | setCustomerIdAction
@@ -85,6 +90,7 @@ export type UpdateCartActions = Array<
   | SetAnonymousIDAction
   | AddLineItemAction
   | RemoveLineItemAction
+  | AddDiscountCode
 >;
 
 export interface CartDraft {
@@ -107,4 +113,6 @@ export interface CartResponse {
   origin: "Customer" | "Merchant" | "Quote";
   createdAt: Date;
   lastModifiedAt: Date;
+  totalPrice: PriceValue;
+  discountOnTotalPrice?: DiscountOnTotalPrice;
 }
