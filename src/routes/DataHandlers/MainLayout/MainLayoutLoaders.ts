@@ -3,7 +3,7 @@ import { AuthService } from "../../../services/AuthService";
 import { createCart } from "../../../services/cartService/cartService";
 
 export async function loadMainData() {
-  if (!TokenService.getAccessToken()) {
+  if (!TokenService.getAccessToken() || !TokenService.getCartId()) {
     const anonymousSessionData = await AuthService.anonymousAuthenticate();
     const anonymousId = anonymousSessionData?.scope.split(" ").at(-1)?.split(":").at(-1) as string;
     TokenService.setAnonSessionId(anonymousId);

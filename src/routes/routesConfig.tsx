@@ -40,7 +40,6 @@ const router = createBrowserRouter(
         {
           path: "basket",
           Component: BasketPage,
-          // loader: loadBasketData
         },
       ],
     },
