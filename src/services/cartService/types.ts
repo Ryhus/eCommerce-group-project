@@ -102,6 +102,7 @@ export interface CartDraft {
 
 export interface CartResponse {
   id: string;
+  anonymousId: string;
   version: number;
   lineItems: LineItem[];
   taxMode: "Platform" | "External" | "ExternalAmount" | "Disabled";

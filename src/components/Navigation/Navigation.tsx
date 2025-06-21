@@ -3,6 +3,8 @@ import Button from "../common/button/button";
 import { FaShoppingCart } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { TokenService } from "../../services/TokenService";
+import { AuthService } from "../../services/AuthService";
+import { createCart } from "../../services/cartService/cartService";
 import { useCart } from "../context/CartContext";
 
 interface NavProps {
@@ -13,7 +15,7 @@ interface NavProps {
 function Nav({ isAuthenticated = false, className = "" }: NavProps) {
   const navigate = useNavigate();
   const { cart, calculateTotalQuantity } = useCart();
-
+  const { setNewCart } = useCart();
   return (
     <nav className={className}>
       <Link
@@ -59,9 +61,16 @@ function Nav({ isAuthenticated = false, className = "" }: NavProps) {
       <Button
         className="auth-link btn-medium"
         text={isAuthenticated ? "Log out" : "Log in"}
-        onClick={() => {
+        onClick={async () => {
           if (isAuthenticated) {
             TokenService.clearTokens();
+            const anonymousSessionData = await AuthService.anonymousAuthenticate();
+            const anonymousId = anonymousSessionData?.scope.split(" ").at(-1)?.split(":").at(-1) as string;
+            TokenService.setAnonSessionId(anonymousId);
+            const anonymousCartData = await createCart({ currency: "EUR", anonymousId: anonymousId });
+            const { id } = anonymousCartData;
+            TokenService.setCartId(id);
+            setNewCart(anonymousCartData);
           }
           navigate("/login");
         }}

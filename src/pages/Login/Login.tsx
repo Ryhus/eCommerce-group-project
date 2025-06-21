@@ -10,6 +10,7 @@ import { validateEmailFormat, validatePasswordStrength } from "../../utils/valid
 import { AuthService } from "../../services/AuthService";
 import { signIn } from "../../services/customerService/customerService";
 import { TokenService } from "../../services/TokenService";
+import { useCart } from "../../components/context/CartContext";
 import "./Login.scss";
 
 export default function LoginPage() {
@@ -22,6 +23,7 @@ export default function LoginPage() {
     }
   }, [isLoggedIn, navigate]);
 
+  const { setNewCart } = useCart();
   const [authError, setAuthError] = useState("");
 
   const [email, setEmail] = useState("");
@@ -56,7 +58,10 @@ export default function LoginPage() {
     try {
       setAuthError("");
       await AuthService.authenticate(email, password);
-      await signIn(email, password);
+      const anonymousCartId = TokenService.getCartId();
+
+      const loginData = await signIn(email, password, anonymousCartId ? { id: anonymousCartId } : undefined);
+      setNewCart(loginData.cart);
       TokenService.setLogin("true");
       navigate("/");
     } catch {
