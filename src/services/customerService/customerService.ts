@@ -1,22 +1,42 @@
 import { apiClient } from "../apiClient";
-import type { CustomerResponse, CartResponse, Address, CustomerChangePassword, UpdateCustomerProps } from "./types";
+import type { CustomerResponse, Address, CustomerChangePassword, UpdateCustomerProps } from "./types";
+import type { CartResponse } from "../cartService/types";
 import { TokenService } from "../TokenService";
 
 const API_URL = import.meta.env.VITE_CTP_API_URL;
 const PROJECT_KEY = import.meta.env.VITE_CTP_PROJECT_KEY;
 
-export async function signIn(email: string, password: string) {
+export async function signIn(email: string, password: string, anonymousCart?: { id: string | null }) {
   const response = await apiClient.post<{ customer: CustomerResponse; cart: CartResponse }>(
     `${API_URL}/${PROJECT_KEY}/login`,
     {
       email,
       password,
+      anonymousCart,
     }
   );
 
   const { customer, cart } = response.data;
   TokenService.setLogin("true");
   TokenService.setCustomerId(customer.id);
+  TokenService.setCartId(cart.id);
+  return { customer, cart };
+}
+
+export async function signInMe(email: string, password: string, anonymousCart?: { id: string }) {
+  const response = await apiClient.post<{ customer: CustomerResponse; cart: CartResponse }>(
+    `${API_URL}/${PROJECT_KEY}/me/login`,
+    {
+      email,
+      password,
+      anonymousCart,
+    }
+  );
+
+  const { customer, cart } = response.data;
+  TokenService.setLogin("true");
+  TokenService.setCustomerId(customer.id);
+  TokenService.setCartId(cart.id);
   return { customer, cart };
 }
 
@@ -27,7 +47,8 @@ export async function signUp(
   lastName: string,
   dateOfBirth: string,
   address: Address[],
-  isDefaultAdress: boolean = false
+  isDefaultAdress: boolean = false,
+  anonymousCart?: { id: string | null }
 ) {
   let defaultShippingAddress: number | null = null;
   let defaultBillingAddress: number | null = null;
@@ -46,12 +67,14 @@ export async function signUp(
       addresses: address,
       defaultShippingAddress,
       defaultBillingAddress,
+      anonymousCart,
     }
   );
 
   const { customer, cart } = response.data;
   TokenService.setLogin("true");
   TokenService.setCustomerId(customer.id);
+  TokenService.setCartId(cart.id);
   return { customer, cart };
 }
 

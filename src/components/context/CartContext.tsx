@@ -10,6 +10,7 @@ interface CartContextType {
   calculateTotalQuantity: () => number;
   applyPromoCode: (promoCode: string) => Promise<void>;
   clearCart: () => Promise<void>;
+  setNewCart: (cart: CartResponse | null) => void;
 }
 
 const CartContext = createContext<CartContextType | null>(null);
@@ -20,6 +21,10 @@ interface CartProviderProps {
 
 export function CartDataProvider({ children }: CartProviderProps) {
   const [cart, setCart] = useState<CartResponse | null>(null);
+
+  const setNewCart = function (cart: CartResponse | null) {
+    setCart(cart);
+  };
 
   const fetchCart = async () => {
     const cartId = TokenService.getCartId() as string;
@@ -85,17 +90,24 @@ export function CartDataProvider({ children }: CartProviderProps) {
     const cartId = TokenService.getCartId() as string;
     await deleteCart(cartId, cart.version);
 
-    const logedIn = TokenService.getLogin();
     const anonId = TokenService.getAnonSessionId();
-    const anonymousId = logedIn ? undefined : anonId;
+    const customerId = TokenService.getCustomerId();
 
-    const clearedCart = await createCart({ currency: "EUR", anonymousId: anonymousId });
-    TokenService.setCartId(clearedCart.id);
-    setCart(clearedCart);
+    if (customerId) {
+      const clearedCart = await createCart({ currency: "EUR", customerId: customerId });
+      TokenService.setCartId(clearedCart.id);
+      setCart(clearedCart);
+    } else {
+      const clearedCart = await createCart({ currency: "EUR", anonymousId: anonId });
+      TokenService.setCartId(clearedCart.id);
+      setCart(clearedCart);
+    }
   };
 
   return (
-    <CartContext value={{ cart, addToCart, removeFromCart, calculateTotalQuantity, applyPromoCode, clearCart }}>
+    <CartContext
+      value={{ cart, addToCart, removeFromCart, calculateTotalQuantity, applyPromoCode, clearCart, setNewCart }}
+    >
       {children}
     </CartContext>
   );

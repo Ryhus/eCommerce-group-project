@@ -35,7 +35,7 @@ export const TokenService = {
     localStorage.removeItem("loginState");
     localStorage.removeItem("customerId");
     localStorage.removeItem("customerVersion");
+    localStorage.removeItem("anonymousId");
     localStorage.removeItem("cartId");
-    localStorage.removeItem("cartVersion");
   },
 };

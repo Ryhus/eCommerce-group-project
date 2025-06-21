@@ -16,9 +16,9 @@ import InputField from "../../components/common/inputField/inputField";
 import Paragraph from "../../components/common/paragraph/paragraph";
 import Link from "../../components/common/link/link";
 import { H2 } from "../../components/common/headings/H2";
-import { AuthService } from "../../services/AuthService";
 import { signUp } from "../../services/customerService/customerService";
 import { TokenService } from "../../services/TokenService";
+import { useCart } from "../../components/context/CartContext";
 import "./Registration.scss";
 
 export default function RegistrationPage() {
@@ -29,7 +29,7 @@ export default function RegistrationPage() {
       navigate("/");
     }
   }, [isLoggedIn, navigate]);
-
+  const { setNewCart } = useCart();
   const [authError, setAuthError] = useState("");
 
   const [firstName, setFirstName] = useState("");
@@ -144,9 +144,8 @@ export default function RegistrationPage() {
     ) {
       try {
         setAuthError("");
-
-        await AuthService.anonymousAuthenticate();
-        await signUp(
+        const anonymousCartId = TokenService.getCartId();
+        const customer = await signUp(
           email,
           password,
           firstName,
@@ -160,8 +159,10 @@ export default function RegistrationPage() {
               country,
             },
           ],
-          isDefaultAdress
+          isDefaultAdress,
+          anonymousCartId ? { id: anonymousCartId } : undefined
         );
+        setNewCart(customer.cart);
         setAsDefaultAdress(false);
         navigate("/");
       } catch {
