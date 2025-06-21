@@ -9,6 +9,8 @@ import { Navigation, Pagination } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
+import { useCart } from "../../components/context/CartContext";
+import Message from "../../components/common/message/Message";
 
 export default function ProductPage() {
   const [product, setProduct] = useState<Product | null>(null);
@@ -16,6 +18,9 @@ export default function ProductPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const { id } = useParams<{ id: string }>();
+  const [productInCart, setProductInCart] = useState(false);
+  const [showMessage, setShowMessage] = useState(false);
+  const { cart, addToCart, removeFromCart } = useCart();
 
   useEffect(() => {
     fetchProductById(id!)
@@ -25,6 +30,12 @@ export default function ProductPage() {
       })
       .catch((err) => setError(err.message));
   }, [id]);
+
+  useEffect(() => {
+    if (cart && id) {
+      setProductInCart(cart.lineItems.some((item) => item.productId === id));
+    }
+  }, [cart, id]);
 
   if (error) return <div>{error}</div>;
   if (!product) return <div>Loading product...</div>;
@@ -86,9 +97,32 @@ export default function ProductPage() {
             )}
           </div>
           <div className="add-to-cart">
-            <Button text="Add to Cart" />
+            <Button
+              disabled={productInCart}
+              text="Add to Cart"
+              onClick={() => {
+                if (id) {
+                  addToCart(id);
+                }
+                return cart;
+              }}
+            />
+            <Button
+              disabled={!productInCart}
+              text="Remove"
+              onClick={() => {
+                if (id) {
+                  removeFromCart(id);
+                  setShowMessage(true);
+                }
+                return cart;
+              }}
+            />
           </div>
         </div>
+        {showMessage && (
+          <Message text="Product has been removed from the cart." onClose={() => setShowMessage(false)} />
+        )}
       </div>
 
       {isModalOpen && (

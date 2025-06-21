@@ -1,7 +1,9 @@
 import Link from "../common/link/link";
 import Button from "../common/button/button";
+import { FaShoppingCart } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { TokenService } from "../../services/TokenService";
+import { useCart } from "../context/CartContext";
 
 interface NavProps {
   isAuthenticated: boolean;
@@ -10,6 +12,7 @@ interface NavProps {
 
 function Nav({ isAuthenticated = false, className = "" }: NavProps) {
   const navigate = useNavigate();
+  const { cart, calculateTotalQuantity } = useCart();
 
   return (
     <nav className={className}>
@@ -31,6 +34,7 @@ function Nav({ isAuthenticated = false, className = "" }: NavProps) {
           navigate("/catalog");
         }}
       />
+
       <Link
         className="nav-link"
         text="About"
@@ -38,6 +42,17 @@ function Nav({ isAuthenticated = false, className = "" }: NavProps) {
         onClick={(e) => {
           e.preventDefault();
           navigate("/about");
+        }}
+      />
+
+      <Link
+        className="nav-link nav-basket"
+        text={cart ? `|${calculateTotalQuantity()}` : "|0"}
+        icon={<FaShoppingCart />}
+        href="/basket"
+        onClick={(e) => {
+          e.preventDefault();
+          navigate("/basket");
         }}
       />
 
