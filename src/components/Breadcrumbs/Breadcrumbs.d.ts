@@ -1,11 +1,11 @@
 import React from "react";
 import "./Breadcrumbs.scss";
 export interface Crumb {
-    name: string;
-    path: string;
+  name: string;
+  path: string;
 }
 interface BreadcrumbsProps {
-    crumbs: Crumb[];
+  crumbs: Crumb[];
 }
 declare const Breadcrumbs: React.FC<BreadcrumbsProps>;
 export default Breadcrumbs;

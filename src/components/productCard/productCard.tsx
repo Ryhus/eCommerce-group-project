@@ -1,5 +1,8 @@
 import React from "react";
+import { useEffect, useState } from "react";
 import Paragraph from "../common/paragraph/paragraph";
+import Button from "../common/button/button";
+import { useCart } from "../../components/context/CartContext";
 import "./productCard.scss";
 
 type ProductCardProps = {
@@ -8,8 +11,8 @@ type ProductCardProps = {
   description?: string;
   onClick: () => void;
   imgUrl: string;
-  currentPrice: number; //in centes
-  oldPrice: number; //in centes
+  currentPrice: number; //in cents
+  oldPrice: number; //in cents
   altText?: string;
   className?: string;
 };
@@ -33,6 +36,16 @@ const ProductCard: React.FC<ProductCardProps> = ({
   if (description && description.length > 50) {
     shortDescription = description.slice(0, 47).concat("...");
   }
+
+  const [productInCart, setProductInCart] = useState(false);
+  const { cart, addToCart } = useCart();
+
+  useEffect(() => {
+    if (cart && id) {
+      setProductInCart(cart.lineItems.some((item) => item.productId === id));
+    }
+  }, [cart, id]);
+
   return (
     <div className={`product-card ${className}`} id={id} onClick={onClick}>
       <div className="product-card__img-wrapper">
@@ -51,6 +64,15 @@ const ProductCard: React.FC<ProductCardProps> = ({
           )}
         </div>
       </div>
+      <Button
+        text={productInCart ? "In Cart" : "Add to Cart"}
+        disabled={productInCart}
+        className="btn-medium product-card__add-to-cart"
+        onClick={(e) => {
+          e.stopPropagation();
+          if (!productInCart) addToCart(id);
+        }}
+      />
     </div>
   );
 };
