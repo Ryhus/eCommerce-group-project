@@ -1,0 +1,29 @@
+.footer {
+  color: #222;
+  padding: 10px;
+
+  &__content {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    gap: 10px;
+  }
+
+  &__logo {
+    width: 50px;
+    height: auto;
+    transition: transform 0.3s ease;
+
+    &:hover {
+      transform: scale(1.05);
+    }
+  }
+
+  &__logo-link {
+    display: inline-block;
+  }
+
+  &__year {
+    font-size: 1.5rem;
+  }
+}
