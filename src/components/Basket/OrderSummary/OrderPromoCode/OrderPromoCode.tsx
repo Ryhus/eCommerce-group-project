@@ -7,7 +7,7 @@ import { useCart } from "../../../context/CartContext";
 
 import "./OrderPromoCodeStyles.scss";
 
-export default function () {
+export default function OrderPromoCode() {
   const [promoCode, setPromococde] = useState("");
 
   const { applyPromoCode } = useCart();

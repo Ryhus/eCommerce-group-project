@@ -3,7 +3,7 @@ import { getCart, updateCart, deleteCart, createCart } from "../../services/cart
 import { TokenService } from "../../services/TokenService";
 import type { CartResponse } from "../../services/cartService/types";
 
-interface CartContextType {
+export interface CartContextType {
   cart: CartResponse | null;
   addToCart: (productId: string) => Promise<void>;
   removeFromCart: (productId: string, quantity?: number) => Promise<void>;

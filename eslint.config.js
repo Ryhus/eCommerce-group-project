@@ -23,7 +23,6 @@ export default tseslint.config({ ignores: ["dist"] }, {
     },
     rules: {
         ...reactHooks.configs.recommended.rules,
-        "react-refresh/only-export-components": ["warn", { allowConstantExport: true }],
         "prettier/prettier": "error",
         "@typescript-eslint/no-unused-vars": "error",
         "@typescript-eslint/no-explicit-any": "error",

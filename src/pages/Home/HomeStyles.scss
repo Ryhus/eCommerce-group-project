@@ -85,10 +85,25 @@
   .promo-table {
     width: 360px;
   }
+
   .promo-table td {
     font-size: 0.6rem;
   }
+
   .promo-table th {
     font-size: 0.6rem;
+  }
+}
+
+
+@media (min-width: 360px) {
+  .main-page-container {
+    margin-bottom: 250px;
+  }
+}
+
+@media (min-width: 668px) {
+  .main-page-container {
+    margin-bottom: 350px;
   }
 }

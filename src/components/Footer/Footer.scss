@@ -1,10 +1,10 @@
 .footer {
-  color: #222;
+  margin-top: 100px;
   padding: 10px;
 
   &__content {
     display: flex;
-    justify-content: space-evenly;
+    justify-content: space-around;
     align-items: center;
     gap: 10px;
   }
@@ -13,6 +13,10 @@
     width: 50px;
     height: auto;
     transition: transform 0.3s ease;
+    
+    &.rs {
+      width: 70px;
+    }
 
     &:hover {
       transform: scale(1.05);
