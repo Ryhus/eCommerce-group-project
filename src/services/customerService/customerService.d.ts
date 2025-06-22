@@ -1,7 +1,21 @@
-import type { CustomerResponse, CartResponse, Address, CustomerChangePassword, UpdateCustomerProps } from "./types";
+import type { CustomerResponse, Address, CustomerChangePassword, UpdateCustomerProps } from "./types";
+import type { CartResponse } from "../cartService/types";
 export declare function signIn(
   email: string,
-  password: string
+  password: string,
+  anonymousCart?: {
+    id: string | null;
+  }
+): Promise<{
+  customer: CustomerResponse;
+  cart: CartResponse;
+}>;
+export declare function signInMe(
+  email: string,
+  password: string,
+  anonymousCart?: {
+    id: string;
+  }
 ): Promise<{
   customer: CustomerResponse;
   cart: CartResponse;
@@ -13,7 +27,10 @@ export declare function signUp(
   lastName: string,
   dateOfBirth: string,
   address: Address[],
-  isDefaultAdress?: boolean
+  isDefaultAdress?: boolean,
+  anonymousCart?: {
+    id: string | null;
+  }
 ): Promise<{
   customer: CustomerResponse;
   cart: CartResponse;

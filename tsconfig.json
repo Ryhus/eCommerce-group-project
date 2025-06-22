@@ -7,7 +7,8 @@
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
     "isolatedModules": false,
-    "target": "ES2020"
+    "target": "ES2020",
+    "jsx": "react-jsx"
   },
   "references": [{ "path": "./tsconfig.app.json" }, { "path": "./tsconfig.node.json" }],
   "include": ["eslint.config.ts", "src"],

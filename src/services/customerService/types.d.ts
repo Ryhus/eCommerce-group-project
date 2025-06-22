@@ -5,6 +5,10 @@ export interface Address {
   postalCode: string;
   country: string;
 }
+export interface CartResponse {
+  id: string;
+  version: number;
+}
 export interface CustomerResponse {
   id: string;
   version: number;

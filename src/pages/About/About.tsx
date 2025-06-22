@@ -6,7 +6,7 @@ const team = [
     isLead: true,
     bio: "Our team lead and the driving force behind every decision. Kept the vision clear and spirits high.",
     github: "https://github.com/ryhus",
-    image: "public/photos/Ryhus.jpg",
+    image: "/photos/Ryhus.jpg",
     contributions:
       "Organized workflow, reviewed all pull requests, ensured code quality, and resolved complex logic challenges.",
   },
@@ -15,7 +15,7 @@ const team = [
     isLead: false,
     bio: "Always focused and consistent, Nataliia shaped much of the project’s UI logic and pixel-perfect layout.",
     github: "https://github.com/n-andr",
-    image: "public/photos/Nata.jpeg",
+    image: "/photos/Nata.jpeg",
     contributions: "Implemented page structure, routing logic, and ensured responsive design across views.",
   },
   {
@@ -23,7 +23,7 @@ const team = [
     isLead: false,
     bio: "Creative and detail-oriented. Olha added the finishing touches and kept accessibility and UX in focus.",
     github: "https://github.com/ola793",
-    image: "public/photos/Olya.jpg",
+    image: "/photos/Olya.jpg",
     contributions: "Finalized About Us page, styled components with SCSS, and worked on user flow improvements.",
   },
 ];
