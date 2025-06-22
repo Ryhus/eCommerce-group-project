@@ -1,7 +1,7 @@
 import Paragraph from "../../common/paragraph/paragraph";
 import { FaMinus, FaPlus } from "react-icons/fa";
 import { PiTrashFill } from "react-icons/pi";
-import { useCart } from "../../context/CartContext";
+import { useCart } from "../../context/useCart";
 
 import "./BasketProductCard.scss";
 

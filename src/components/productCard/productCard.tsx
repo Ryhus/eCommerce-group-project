@@ -2,7 +2,7 @@ import React from "react";
 import { useEffect, useState } from "react";
 import Paragraph from "../common/paragraph/paragraph";
 import Button from "../common/button/button";
-import { useCart } from "../../components/context/CartContext";
+import { useCart } from "../context/useCart";
 import "./productCard.scss";
 
 type ProductCardProps = {
@@ -36,6 +36,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
   if (description && description.length > 50) {
     shortDescription = description.slice(0, 47).concat("...");
   }
+  if (imgUrl === "") imgUrl = "";
 
   const [productInCart, setProductInCart] = useState(false);
   const { cart, addToCart } = useCart();

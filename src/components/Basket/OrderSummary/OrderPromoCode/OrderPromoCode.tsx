@@ -3,7 +3,7 @@ import { Form } from "react-router-dom";
 import InputField from "../../../common/inputField/inputField";
 import Button from "../../../common/button/button";
 import { MdOutlineDiscount } from "react-icons/md";
-import { useCart } from "../../../context/CartContext";
+import { useCart } from "../../../context/useCart";
 
 import "./OrderPromoCodeStyles.scss";
 

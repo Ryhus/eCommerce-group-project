@@ -18,7 +18,7 @@ import Link from "../../components/common/link/link";
 import { H2 } from "../../components/common/headings/H2";
 import { signUp } from "../../services/customerService/customerService";
 import { TokenService } from "../../services/TokenService";
-import { useCart } from "../../components/context/CartContext";
+import { useCart } from "../../components/context/useCart";
 import "./Registration.scss";
 
 export default function RegistrationPage() {

@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { TokenService } from "../../services/TokenService";
 import { AuthService } from "../../services/AuthService";
 import { createCart } from "../../services/cartService/cartService";
-import { useCart } from "../context/CartContext";
+import { useCart } from "../context/useCart";
 
 interface NavProps {
   isAuthenticated: boolean;
