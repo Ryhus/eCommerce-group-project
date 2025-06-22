@@ -2,7 +2,7 @@ import React from "react";
 import { useEffect, useState } from "react";
 import Paragraph from "../common/paragraph/paragraph";
 import Button from "../common/button/button";
-import { useCart } from "../../components/context/CartContext";
+import { useCart } from "../context/useCart";
 import "./productCard.scss";
 
 type ProductCardProps = {

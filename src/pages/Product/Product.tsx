@@ -9,7 +9,7 @@ import { Navigation, Pagination } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
-import { useCart } from "../../components/context/CartContext";
+import { useCart } from "../../components/context/useCart";
 import Message from "../../components/common/message/Message";
 
 export default function ProductPage() {

@@ -4,7 +4,7 @@ import OrderField from "./OrderField/OrderField";
 import OrderPromoCode from "./OrderPromoCode/OrderPromoCode";
 
 import "./OrderSummaryStyles.scss";
-import { useCart } from "../../context/CartContext";
+import { useCart } from "../../context/useCart";
 
 type priceType = "total" | "discount" | "subtotal";
 

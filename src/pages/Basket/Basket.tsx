@@ -1,5 +1,5 @@
 import { BasketProductList } from "../../components/Basket/BasketProductList/BasketProductList";
-import { useCart } from "../../components/context/CartContext";
+import { useCart } from "../../components/context/useCart";
 import OrderSummary from "../../components/Basket/OrderSummary/OrderSummary";
 import Button from "../../components/common/button/button";
 import "./BasketPageStyles.scss";
