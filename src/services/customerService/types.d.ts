@@ -5,7 +5,6 @@ export interface Address {
   postalCode: string;
   country: string;
 }
-
 export interface CustomerResponse {
   id: string;
   version: number;

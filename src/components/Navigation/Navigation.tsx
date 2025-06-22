@@ -49,7 +49,7 @@ function Nav({ isAuthenticated = false, className = "" }: NavProps) {
 
       <Link
         className="nav-link nav-basket"
-        text={cart ? `|${calculateTotalQuantity()}` : "|0"}
+        text={cart ? `(${calculateTotalQuantity()})` : "(0)"}
         icon={<FaShoppingCart />}
         href="/basket"
         onClick={(e) => {

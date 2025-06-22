@@ -1,9 +1,9 @@
 export interface ErrorResponse {
-    statusCode: number;
+  statusCode: number;
+  message: string;
+  errors: {
+    code: string;
     message: string;
-    errors: {
-        code: string;
-        message: string;
-    }[];
+  }[];
 }
 export declare function serverErrorHandler(error: unknown): void;
