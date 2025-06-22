@@ -17,33 +17,56 @@ import type { SortOption } from "../../components/Sorting/Sorting";
 
 import { fetchProductsByCategory, fetchProducts } from "../../services/productService/productService";
 import { fetchCategoryBySlug, fetchChildCategories } from "../../services/categoryService/categoryService";
+
 import "./Category.scss";
 import { IoMdOptions, IoMdClose } from "react-icons/io";
+
+const PAGE_SIZE = 20;
 
 export default function CategoryPage() {
   const location = useLocation();
   const navigate = useNavigate();
 
   const [breadcrumbs, setBreadcrumbs] = useState<Crumb[]>([]);
-
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const [categoriesToShow, setCategoriesToShow] = useState<Category[]>([]);
-
   const [products, setProducts] = useState<Product[]>([]);
+
   const [currentCategory, setCurrentCategory] = useState<Category | null>(null);
   const [currentSort, setCurrentSort] = useState<SortOption>("default");
+
+  const [offset, setOffset] = useState(0);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
 
   const rawPath = location.pathname.replace(/^\/catalog\/?/, "");
   const segments = rawPath === "" ? [] : rawPath.split("/");
 
-  useEffect(() => {
-    setLoading(true);
-    setError(null);
+  const getSortParam = (sortOption: SortOption): string | undefined => {
+    switch (sortOption) {
+      case "price asc":
+      case "price desc":
+        return sortOption;
+      case "name asc":
+        return "name.en asc";
+      case "name desc":
+        return "name.en desc";
+      default:
+        return undefined;
+    }
+  };
 
-    (async () => {
+  useEffect(() => {
+    let cancelled = false;
+
+    const loadInitial = async () => {
+      setLoading(true);
+      setError(null);
+
       try {
         let parentId: string | null = null;
         let lastCat: Category | null = null;
@@ -53,11 +76,7 @@ export default function CategoryPage() {
           for (let i = 0; i < segments.length; i++) {
             const slug = segments[i];
             const cat = await fetchCategoryBySlug(slug, parentId);
-            if (!cat) {
-              setError(`Category not found: "${slug}"`);
-              setLoading(false);
-              return;
-            }
+            if (!cat) throw new Error(`Category not found: "${slug}"`);
 
             const pathSoFar = "/catalog/" + segments.slice(0, i + 1).join("/");
             crumbsTemp.push({ name: cat.name, path: pathSoFar });
@@ -70,58 +89,77 @@ export default function CategoryPage() {
           setCurrentCategory(null);
         }
 
+        if (cancelled) return;
+
         setBreadcrumbs(crumbsTemp);
-        const cats = await fetchChildCategories(parentId);
-        setCategoriesToShow(cats);
+        setCategoriesToShow(await fetchChildCategories(parentId));
 
-        let sortParam: string | undefined = undefined;
-        switch (currentSort) {
-          case "price asc":
-            sortParam = "price asc";
-            break;
-          case "price desc":
-            sortParam = "price desc";
-            break;
-          case "name asc":
-            sortParam = "name.en asc";
-            break;
-          case "name desc":
-            sortParam = "name.en desc";
-            break;
-          default:
-            sortParam = undefined;
-        }
+        /* Initial product batch */
+        const sortParam = getSortParam(currentSort);
+        const firstProducts =
+          parentId === null
+            ? await fetchProducts(sortParam, 0, PAGE_SIZE)
+            : await fetchProductsByCategory(parentId, sortParam, 0, PAGE_SIZE);
 
-        if (parentId === null) {
-          const allProds = await fetchProducts(sortParam);
-          setProducts(allProds);
-        } else {
-          const prods = await fetchProductsByCategory(parentId, sortParam);
-          setProducts(prods);
-        }
-        setLoading(false);
-      } catch (err: unknown) {
+        if (cancelled) return;
+
+        setProducts(firstProducts);
+        setOffset(firstProducts.length); // might be < PAGE_SIZE
+        setHasMore(firstProducts.length === PAGE_SIZE);
+      } catch (err) {
+        if (cancelled) return;
         console.error(err);
-        if (axios.isAxiosError(err)) {
-          setError(err.response?.data?.message ?? err.message);
-        } else if (err instanceof Error) {
-          setError(err.message);
-        } else {
-          setError(String(err));
-        }
-        setLoading(false);
+        if (axios.isAxiosError(err)) setError(err.response?.data?.message ?? err.message);
+        else if (err instanceof Error) setError(err.message);
+        else setError(String(err));
+      } finally {
+        if (!cancelled) setLoading(false);
       }
-    })();
+    };
+
+    loadInitial();
+
+    return () => {
+      cancelled = true;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.pathname, currentSort]);
 
-  if (error) {
-    return <NotFoundPage />;
-  }
+  const loadMoreProducts = async () => {
+    if (isLoadingMore || !hasMore) return;
+    setIsLoadingMore(true);
 
-  if (loading) {
-    return <div className="catalog-page">Loading…</div>; //placeholder: add styles, spinner or something
-  }
+    try {
+      const sortParam = getSortParam(currentSort);
+      const nextOffset = offset;
+      const more =
+        currentCategory === null
+          ? await fetchProducts(sortParam, nextOffset, PAGE_SIZE)
+          : await fetchProductsByCategory(currentCategory.id, sortParam, nextOffset, PAGE_SIZE);
+
+      setProducts((prev) => {
+        const existingIds = new Set(prev.map((p) => p.id));
+        const newUnique = more.filter((p) => !existingIds.has(p.id));
+        return [...prev, ...newUnique];
+      });
+
+      setOffset(nextOffset + more.length);
+      setHasMore(more.length === PAGE_SIZE);
+    } catch (err) {
+      console.error("Error loading more:", err);
+    } finally {
+      setIsLoadingMore(false);
+    }
+  };
+
+  if (error) return <NotFoundPage />;
+
+  if (loading)
+    return (
+      <div className="loading">
+        <img src="/images/loading.gif" alt="Loading..." />
+      </div>
+    );
 
   const isRoot = segments.length === 0;
   const title = isRoot ? "All products" : (currentCategory?.name ?? "Loading Category…");
@@ -150,7 +188,6 @@ export default function CategoryPage() {
         </div>
       )}
       <div className="filters">
-        {/* Replace with your real Filters component */}
         <strong>Filters (placeholder)</strong>
       </div>
     </>
@@ -163,12 +200,7 @@ export default function CategoryPage() {
         <div className="category-content-colomn">
           <div className="category-title-sort">
             <H3 text={title} />
-            <Sorting
-              currentSort={currentSort}
-              onSortChange={(newSort) => {
-                setCurrentSort(newSort);
-              }}
-            />
+            <Sorting currentSort={currentSort} onSortChange={(s) => setCurrentSort(s)} />
             <button
               className="mobile-filter-toggle"
               onClick={() => setIsMobileFilterOpen(true)}
@@ -183,7 +215,19 @@ export default function CategoryPage() {
               text={isRoot ? "No products available." : "No products in this category yet."}
             />
           ) : (
-            <ProductList products={products} className="category-products" />
+            <>
+              <ProductList products={products} className="category-products" />
+
+              {hasMore ? (
+                <div className="load-more-wrapper">
+                  <button className="btn btn-medium load-more-btn" onClick={loadMoreProducts} disabled={isLoadingMore}>
+                    {isLoadingMore ? "Loading..." : "See more"}
+                  </button>
+                </div>
+              ) : (
+                <p className="no-more-products">You’ve reached the end ✨</p>
+              )}
+            </>
           )}
         </div>
       </div>

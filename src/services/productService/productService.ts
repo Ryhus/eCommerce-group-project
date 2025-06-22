@@ -22,47 +22,16 @@ export async function fetchProductByKey(productKey: string): Promise<Product | n
     }>(`/${PROJECT_KEY}/product-projections/key=${productKey}`);
 
     const item = response.data;
-
-    const masterVariant = item.masterVariant;
-    if (!masterVariant) {
-      console.warn(`Product with key ${productKey} has no master variant.`);
-      return {
-        id: item.id,
-        name: item.name?.en ?? "No Name Available",
-        slug: item.slug?.en ?? "",
-        description: item.description?.en ?? "",
-        imgUrls: [],
-        currentPrice: 0,
-        oldPrice: 0,
-      };
-    }
-
-    const priceEntry = item.masterVariant.prices?.[0];
-    if (!priceEntry) {
-      console.warn(`Product with key ${productKey} has no price set.`);
-      return {
-        id: item.id,
-        name: item.name.en,
-        slug: item.slug.en ?? "",
-        description: item.description?.en ?? "",
-        imgUrls: item.masterVariant.images?.map((img) => img.url) ?? [],
-        currentPrice: 0,
-        oldPrice: 0,
-      };
-    }
-
-    const currentPriceiInCents =
-      item.masterVariant.prices[0].discounted?.value.centAmount ?? item.masterVariant.prices[0].value.centAmount;
-    const oldPriceiInCents = item.masterVariant.prices[0].value.centAmount;
+    const price = item.masterVariant.prices?.[0];
 
     return {
       id: item.id,
-      name: item.name.en,
-      slug: item.slug.en ?? "",
+      name: item.name?.en ?? "No Name Available",
+      slug: item.slug?.en ?? "",
       description: item.description?.en ?? "",
-      imgUrls: item.masterVariant.images.map((img) => img.url),
-      currentPrice: currentPriceiInCents,
-      oldPrice: oldPriceiInCents,
+      imgUrls: item.masterVariant.images?.map((img) => img.url) ?? [],
+      currentPrice: price?.discounted?.value.centAmount ?? price?.value.centAmount ?? 0,
+      oldPrice: price?.value.centAmount ?? 0,
     };
   } catch (error) {
     console.error(`Error fetching product with key ${productKey}:`, error);
@@ -92,23 +61,16 @@ export async function fetchProductById(productId: string): Promise<Product | nul
     }>(`/${PROJECT_KEY}/products/${productId}`);
 
     const item = response.data.masterData.current;
-
-    if (!item.masterVariant?.prices || item.masterVariant.prices.length === 0) {
-      throw new Error("No price info found");
-    }
-
-    const currentPriceInCents =
-      item.masterVariant.prices[0].discounted?.value.centAmount ?? item.masterVariant.prices[0].value.centAmount;
-    const oldPriceInCents = item.masterVariant.prices[0].value.centAmount;
+    const price = item.masterVariant?.prices?.[0];
 
     return {
       id: productId,
       name: item.name.en,
       slug: item.slug.en ?? "",
       description: item.description?.en ?? "",
-      imgUrls: (item.masterVariant.images ?? []).map((img: { url: string }) => img.url),
-      currentPrice: currentPriceInCents,
-      oldPrice: oldPriceInCents,
+      imgUrls: item.masterVariant.images?.map((img) => img.url) ?? [],
+      currentPrice: price?.discounted?.value.centAmount ?? price?.value.centAmount ?? 0,
+      oldPrice: price?.value.centAmount ?? 0,
     };
   } catch (error) {
     console.error(`Error fetching product with ID ${productId}:`, error);
@@ -116,14 +78,17 @@ export async function fetchProductById(productId: string): Promise<Product | nul
   }
 }
 
-//Fetch ALL products
-// GET /<PROJECT_KEY>/product-projections/search"
-
-export async function fetchProducts(sort: string | undefined): Promise<Product[]> {
-  const params: Record<string, string> = {};
-  if (sort) {
-    params.sort = sort;
-  }
+// Fetch all products (supports sorting + pagination)
+export async function fetchProducts(
+  sort: string | undefined,
+  offset: number = 0,
+  limit: number = 20
+): Promise<Product[]> {
+  const params: Record<string, string> = {
+    limit: limit.toString(),
+    offset: offset.toString(),
+  };
+  if (sort) params.sort = sort;
 
   const response = await apiClient.get<{
     results: Array<{
@@ -131,38 +96,43 @@ export async function fetchProducts(sort: string | undefined): Promise<Product[]
       name: { en: string };
       description: { en: string };
       masterVariant: {
-        images: { url: string }[];
-        prices: Array<{
+        images?: { url: string }[];
+        prices?: Array<{
           value: { centAmount: number };
           discounted?: { value: { centAmount: number } };
         }>;
       };
     }>;
-  }>(`/${PROJECT_KEY}/product-projections/search`, {
-    params,
-  });
+  }>(`/${PROJECT_KEY}/product-projections/search`, { params });
 
   return response.data.results.map((item) => {
-    const currentPriceiInCents =
-      item.masterVariant.prices[0].discounted?.value.centAmount ?? item.masterVariant.prices[0].value.centAmount;
-    const oldPriceiInCents = item.masterVariant.prices[0].value.centAmount;
-
+    const price = item.masterVariant.prices?.[0];
     return {
       id: item.id,
       name: item.name.en,
       slug: "",
       description: item.description.en,
-      imgUrls: item.masterVariant.images.map((img: { url: string }) => img.url),
-      currentPrice: currentPriceiInCents,
-      oldPrice: oldPriceiInCents,
+      imgUrls: item.masterVariant.images?.map((img) => img.url) ?? [],
+      currentPrice: price?.discounted?.value.centAmount ?? price?.value.centAmount ?? 0,
+      oldPrice: price?.value.centAmount ?? 0,
     };
   });
 }
 
-//Fetch products by category ID
-// GET /<PROJECT_KEY>/product-projections/search?filter.categories.id:"<categoryId>"
+// Fetch products by category (supports sorting + pagination)
+export async function fetchProductsByCategory(
+  categoryId: string,
+  sort: string | undefined,
+  offset: number = 0,
+  limit: number = 20
+): Promise<Product[]> {
+  const params: Record<string, string> = {
+    filter: `categories.id:"${categoryId}"`,
+    limit: limit.toString(),
+    offset: offset.toString(),
+  };
+  if (sort) params.sort = sort;
 
-export async function fetchProductsByCategory(categoryId: string, sort: string | undefined): Promise<Product[]> {
   const response = await apiClient.get<{
     results: Array<{
       id: string;
@@ -170,34 +140,25 @@ export async function fetchProductsByCategory(categoryId: string, sort: string |
       description: { en: string };
       slug: { en: string };
       masterVariant: {
-        images: { url: string }[];
-        prices: Array<{
-          value: { centAmount: number; currencyCode: string };
+        images?: { url: string }[];
+        prices?: Array<{
+          value: { centAmount: number };
           discounted?: { value: { centAmount: number } };
         }>;
       };
     }>;
-  }>(`/${PROJECT_KEY}/product-projections/search`, {
-    params: {
-      filter: `categories.id:"${categoryId}"`,
-      ...(sort ? { sort } : {}),
-      limit: "50",
-    },
-  });
+  }>(`/${PROJECT_KEY}/product-projections/search`, { params });
 
   return response.data.results.map((item) => {
-    const currentPriceiInCents =
-      item.masterVariant.prices[0].discounted?.value.centAmount ?? item.masterVariant.prices[0].value.centAmount;
-    const oldPriceiInCents = item.masterVariant.prices[0].value.centAmount;
-
+    const price = item.masterVariant.prices?.[0];
     return {
       id: item.id,
       name: item.name.en,
       description: item.description.en,
       slug: item.slug.en,
-      imgUrls: item.masterVariant.images.map((img) => img.url),
-      currentPrice: currentPriceiInCents,
-      oldPrice: oldPriceiInCents,
+      imgUrls: item.masterVariant.images?.map((img) => img.url) ?? [],
+      currentPrice: price?.discounted?.value.centAmount ?? price?.value.centAmount ?? 0,
+      oldPrice: price?.value.centAmount ?? 0,
     };
   });
 }

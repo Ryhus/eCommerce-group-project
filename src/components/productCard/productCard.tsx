@@ -49,7 +49,14 @@ const ProductCard: React.FC<ProductCardProps> = ({
   return (
     <div className={`product-card ${className}`} id={id} onClick={onClick}>
       <div className="product-card__img-wrapper">
-        <img src={imgUrl} alt={altText} className="product-card__img" />
+        <img
+          src={imgUrl || "/images/loading.gif"}
+          alt={altText || name}
+          className="product-card__img"
+          onError={(e) => {
+            e.currentTarget.src = "/images/loading.gif";
+          }}
+        />
       </div>
       <div className="product-card__info">
         <Paragraph text={name} className="product-card__name" />
