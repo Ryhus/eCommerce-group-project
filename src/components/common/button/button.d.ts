@@ -3,9 +3,11 @@ import "./button.scss";
 type ButtonProps = {
   text: string;
   variant?: "dark" | "light";
-  onClick?: () => void;
+  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
   className?: string;
   disabled?: boolean;
+  type?: "button" | "reset" | "submit";
+  icon?: React.ReactNode;
 };
 declare const Button: React.FC<ButtonProps>;
 export default Button;

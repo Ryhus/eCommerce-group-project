@@ -4,6 +4,7 @@ type InputFieldProps = {
   value: string;
   onChange: (newValue: string) => void;
   placeholder?: string;
+  name?: string;
   disabled?: boolean;
   isValid?: boolean;
   wrapperClassName?: string;
