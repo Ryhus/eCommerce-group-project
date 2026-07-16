@@ -10,8 +10,17 @@ lerna-debug.log*
 node_modules
 dist
 dist-ssr
+coverage
+.env
+.env.*
+!.env.example
+frontend/.env.local
+backend/src/generated
+*.tsbuildinfo
+vite.config.d.ts
 *.local
 eslint.config.js
+!backend/eslint.config.js
 
 # Editor directories and files
 .vscode/*
@@ -23,9 +32,4 @@ eslint.config.js
 *.njsproj
 *.sln
 *.sw?
-.env
-
-.env*
 .flaskenv*
-!.env.project
-!.env.vault

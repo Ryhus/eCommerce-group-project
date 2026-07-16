@@ -1,11 +1,11 @@
 echo "🔥 Husky pre-commit running..."
 
-npx eslint . --ext .ts,.tsx --max-warnings=0 || {
+npm run lint || {
   echo "❌ ESLint failed. Commit aborted."
   exit 1
 }
 
-npx prettier . --check || {
+npm run format:check || {
   echo "❌ Prettier check failed. Commit aborted."
   exit 1
 }
