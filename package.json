@@ -12,9 +12,10 @@
   "scripts": {
     "dev": "concurrently -n frontend,backend -c cyan,magenta \"npm run dev --workspace frontend\" \"npm run start:dev --workspace backend\"",
     "build": "npm run build --workspace frontend && npm run build --workspace backend",
-    "lint": "npm run lint --workspaces --if-present",
+    "lint": "npm run lint --workspaces --if-present && eslint e2e playwright.config.ts --config backend/eslint.config.js",
     "test": "npm run test --workspaces --if-present",
     "test:e2e": "npm run test:e2e --workspace backend",
+    "test:smoke": "npm run build && playwright test",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "db:generate": "npm run prisma:generate --workspace backend",
@@ -23,7 +24,9 @@
     "prepare": "husky"
   },
   "devDependencies": {
+    "@playwright/test": "^1.61.1",
     "concurrently": "^9.2.1",
+    "cross-env": "^10.1.0",
     "husky": "^9.1.7",
     "prettier": "^3.6.2"
   }

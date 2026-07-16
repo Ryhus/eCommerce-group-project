@@ -46,6 +46,9 @@ Open `http://localhost:8080`. Nginx serves the SPA and proxies `/api` to NestJS 
 
 - `npm run build` — build frontend and backend.
 - `npm test` — run workspace tests.
+- `npm run test:e2e` — run the API integration flow against the configured PostgreSQL database.
+- `npm run test:smoke` — build the app and run the Playwright Chromium smoke test (install once with
+  `npx playwright install chromium`).
 - `npm run lint` — lint all workspaces.
 - `npm run format:check` — verify formatting.
 - `npm run db:migrate` — create/apply a development migration.
