@@ -1,58 +1,60 @@
-## eCommerce
+# Sport Gear Store
 
-Welcome to our eCommerce application! This platform replicates real-world shopping experiences in a digital environment 🏪. It's a comprehensive online shopping portal that provides an interactive and seamless experience to users. From product discovery to checkout, the application ensures a smooth journey for the user, enhancing their engagement and boosting their purchasing confidence 🚀.
+Full-stack demo e-commerce application with a React frontend and a NestJS backend. PostgreSQL is the only runtime data source; the application no longer depends on commercetools.
 
-Users can browse through a vast range of products 📚👗👟, view detailed descriptions, add their favorite items to the basket 🛒, and proceed to checkout 💳. It includes features such as user registration and login 📝🔐, product search 🔍, product categorization, and sorting to make the shopping experience more streamlined and convenient.
+## Structure
 
-An important aspect of our application is that it's responsive 📲, ensuring it looks great on various devices with a minimum resolution of 390px. This feature makes the shopping experience enjoyable, irrespective of the device users prefer.
+- `frontend` — React 19, Vite and Sass.
+- `backend` — NestJS 11 REST API, Prisma 7 and PostgreSQL.
+- `infra` — same-origin Nginx reverse proxy.
 
-Key pages in the application include:
+The public API is available under `/api/v1`. Swagger is exposed at `/api/docs` outside production.
 
-Login and Registration pages 🖥️
-Main page 🏠
-Catalog Product page 📋
-Detailed Product page 🔎
-User Profile page 👤
-Basket page 🛒
-About Us page 🙋‍♂️🙋‍♀️
-The application is powered by CommerceTools 🌐, a leading provider of commerce solutions for B2C and B2B enterprises. CommerceTools offers a cloud-native, microservices-based commerce platform that enables brands to create unique and engaging digital commerce experiences.
+## Requirements
 
-### Project setup
+- Node.js 24.15 or another Node 24 LTS release.
+- npm 10+.
+- PostgreSQL 17, or Docker for the provided Compose stack.
 
-1. Clone the repository
-2. Switch node vesrion using command: `nvm use`. ([install nvm](https://github.com/nvm-sh/nvm?tab=readme-ov-file#installing-and-updating))
-3. Install packages: `npm install`
-4. Start developing project: `npm run dev`
-5. Build project: `npm run build`
+## Local development
 
-### Testing
+```bash
+nvm use
+npm install
+cp backend/.env.example backend/.env
+docker compose up -d db
+npm run db:generate
+npm run db:migrate
+npm run db:seed
+npm run dev
+```
 
-1. To execute all tests: `npm test`
-2. To run tests in live mode: `npm run test:watch`
+Vite runs on `http://localhost:5173` and proxies `/api` to NestJS on port `3000`.
+The Compose PostgreSQL service is exposed on host port `5433` by default; set
+`POSTGRES_PORT` to override it.
 
-### Linting and formatting
+## Production-like stack
 
-1. To run linter: `npm run lint`
-2. To run prettier: `npm run format` or `npm run format:check` for checking without rewriting
-3. Husky is configured for linting and format checking on precommits
+```bash
+docker compose up --build
+docker compose run --rm migrate node --import tsx backend/prisma/seed.ts
+```
 
-### Deploy
+Open `http://localhost:8080`. Nginx serves the SPA and proxies `/api` to NestJS under the same origin.
 
-1. Production URL: https://ryhus.github.io/eCommerce-group-project/
-2. To deploy project mannualy to **Production**: `npm run deploy:prod`
+## Commands
 
-### Used Technologies
+- `npm run build` — build frontend and backend.
+- `npm test` — run workspace tests.
+- `npm run lint` — lint all workspaces.
+- `npm run format:check` — verify formatting.
+- `npm run db:migrate` — create/apply a development migration.
+- `npm run db:seed` — idempotently seed demo catalog and promotions.
 
-1. TypeScript + React
-2. Vite
-3. Sass
-4. Vitest
-5. Eslit
-6. Prettier
-7. Husky
+## Security model
 
-### Setup eCommerce
-
-1. Create account on https://docs.commercetools.com/getting-started/initial-setup
-2. Generate API keys
-3. Use dot.env.vault for secure storage of env variables
+- Access JWT and rotating refresh tokens are stored in HttpOnly cookies.
+- Refresh tokens are persisted only as SHA-256 hashes.
+- Mutating requests require `X-CSRF-Token`.
+- Anonymous carts use a signed HttpOnly cookie and merge transactionally on login or registration.
+- Passwords are hashed with Argon2id; secrets are never exposed through Vite variables.
