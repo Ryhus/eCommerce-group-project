@@ -1,0 +1,33 @@
+.order-promo-form {
+  display: flex;
+  gap: 1rem;
+
+  svg {
+    width: 20px;
+    height: 20px;
+    color: #000000 40%;
+  }
+
+  .promo-input {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    padding-left: 40px;
+    width: 326px;
+    height: 48px;
+    background: #f0f0f0;
+    border-radius: 62px;
+  }
+  .promo-apply-button {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 12px 16px;
+    gap: 12px;
+    width: 119px;
+    height: 48px;
+    background: #000000;
+    border-radius: 62px;
+  }
+}
