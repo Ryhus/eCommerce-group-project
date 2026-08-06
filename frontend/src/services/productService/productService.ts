@@ -25,6 +25,14 @@ const sortMap: Record<string, string> = {
   "name.en desc": "NAME_DESC",
 };
 
+interface ProductListQuery {
+  categoryId?: string;
+  sort?: string;
+  search?: string;
+  offset?: number;
+  limit?: number;
+}
+
 function mapProduct(item: ProductDto): Product {
   return {
     id: item.id,
@@ -45,21 +53,22 @@ export async function fetchProductById(productId: string): Promise<Product | nul
   }
 }
 
-export async function fetchProducts(sort?: string, offset = 0, limit = 20): Promise<Product[]> {
-  const response = await apiClient.get<ProductPageDto>("/catalog/products", {
-    params: { sort: sort ? sortMap[sort] : "RELEVANCE", offset, limit },
-  });
-  return response.data.items.map(mapProduct);
-}
-
-export async function fetchProductsByCategory(
-  categoryId: string,
-  sort?: string,
+export async function fetchProducts({
+  categoryId,
+  sort,
+  search,
   offset = 0,
-  limit = 20
-): Promise<Product[]> {
+  limit = 20,
+}: ProductListQuery = {}): Promise<Product[]> {
+  const normalizedSearch = search?.trim();
   const response = await apiClient.get<ProductPageDto>("/catalog/products", {
-    params: { categoryId, sort: sort ? sortMap[sort] : "RELEVANCE", offset, limit },
+    params: {
+      ...(categoryId ? { categoryId } : {}),
+      ...(normalizedSearch ? { search: normalizedSearch } : {}),
+      sort: sort ? sortMap[sort] : "RELEVANCE",
+      offset,
+      limit,
+    },
   });
   return response.data.items.map(mapProduct);
 }
