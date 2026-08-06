@@ -1,21 +1,37 @@
+@use "../../../assets/styles/tokens" as tokens;
+
 .heading {
-  font-family: "Roboto", sans-serif;
-  font-style: normal;
   margin: 0;
+  color: inherit;
+  font-family: var(--font-family-heading);
+  font-style: normal;
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-heading);
 }
 
 .h1 {
-  font-size: 64px;
-  font-weight: 700;
-  line-height: 64px;
+  font-size: var(--font-size-hero);
+  line-height: var(--line-height-tight);
 }
 
 .h2 {
-  font-size: 48px;
-  font-weight: 700;
+  font-size: var(--font-size-4xl);
 }
 
 .h3 {
-  font-size: 40px;
-  font-weight: 700;
+  font-size: var(--font-size-2xl);
+}
+
+@media (max-width: tokens.$breakpoint-tablet) {
+  .h1 {
+    font-size: var(--font-size-hero-mobile);
+  }
+
+  .h2 {
+    font-size: var(--font-size-2xl);
+  }
+
+  .h3 {
+    font-size: var(--font-size-xl);
+  }
 }
