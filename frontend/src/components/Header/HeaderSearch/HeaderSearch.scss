@@ -33,6 +33,10 @@
     opacity: 1;
   }
 
+  &:focus-visible {
+    box-shadow: none;
+  }
+
   &::-webkit-search-cancel-button {
     cursor: pointer;
   }
