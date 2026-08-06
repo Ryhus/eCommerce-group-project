@@ -1,5 +1,5 @@
-import { Type } from "class-transformer";
-import { IsEnum, IsInt, IsOptional, IsUUID, Max, Min } from "class-validator";
+import { Transform, Type } from "class-transformer";
+import { IsEnum, IsInt, IsOptional, IsString, IsUUID, Max, MaxLength, Min } from "class-validator";
 
 export enum ProductSort {
   RELEVANCE = "RELEVANCE",
@@ -10,6 +10,12 @@ export enum ProductSort {
 }
 
 export class ProductQueryDto {
+  @IsOptional()
+  @Transform(({ value }) => (typeof value === "string" ? value.trim() : value))
+  @IsString()
+  @MaxLength(100)
+  search?: string;
+
   @IsOptional()
   @IsUUID()
   categoryId?: string;
