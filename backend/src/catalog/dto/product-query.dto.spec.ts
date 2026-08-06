@@ -1,0 +1,22 @@
+import "reflect-metadata";
+
+import { plainToInstance } from "class-transformer";
+import { validate } from "class-validator";
+import { describe, expect, it } from "vitest";
+
+import { ProductQueryDto } from "./product-query.dto.js";
+
+describe("ProductQueryDto", () => {
+  it("trims a valid search query", async () => {
+    const query = plainToInstance(ProductQueryDto, { search: "  running shoes  " });
+
+    expect(query.search).toBe("running shoes");
+    expect(await validate(query)).toHaveLength(0);
+  });
+
+  it("rejects search queries longer than 100 characters", async () => {
+    const query = plainToInstance(ProductQueryDto, { search: "a".repeat(101) });
+
+    expect(await validate(query)).not.toHaveLength(0);
+  });
+});

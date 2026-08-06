@@ -40,6 +40,14 @@ export class CatalogService {
       isActive: true,
       variant: { isNot: null },
       ...(query.categoryId ? { categories: { some: { categoryId: query.categoryId } } } : {}),
+      ...(query.search
+        ? {
+            OR: [
+              { name: { contains: query.search, mode: "insensitive" } },
+              { description: { contains: query.search, mode: "insensitive" } },
+            ],
+          }
+        : {}),
     };
     const orderBy = this.orderBy(query.sort);
     const [items, total] = await this.prisma.$transaction(async (tx) => {

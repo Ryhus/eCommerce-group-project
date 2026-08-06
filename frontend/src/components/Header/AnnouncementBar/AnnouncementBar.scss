@@ -1,0 +1,48 @@
+@use "../../../assets/styles/tokens" as tokens;
+
+.announcement-bar {
+  background-color: var(--color-ink);
+  color: var(--color-surface);
+}
+
+.announcement-bar__inner {
+  position: relative;
+  display: flex;
+  min-height: 3.8rem;
+  padding-block: var(--space-2);
+  align-items: center;
+  justify-content: center;
+}
+
+.announcement-bar__message {
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-body);
+  text-align: center;
+}
+
+.announcement-bar__link {
+  color: inherit;
+  font-weight: var(--font-weight-medium);
+  text-underline-offset: 0.2em;
+}
+
+.announcement-bar__dismiss {
+  position: absolute;
+  right: 0;
+  color: inherit;
+}
+
+@media (max-width: tokens.$breakpoint-mobile) {
+  .announcement-bar__inner {
+    min-height: 3.4rem;
+    padding-block: var(--space-1);
+  }
+
+  .announcement-bar__message {
+    font-size: var(--font-size-xs);
+  }
+
+  .announcement-bar__dismiss {
+    display: none;
+  }
+}

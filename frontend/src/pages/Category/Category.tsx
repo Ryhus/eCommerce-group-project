@@ -15,7 +15,7 @@ import type { Category } from "../../services/categoryService/types";
 import type { Crumb } from "../../components/Breadcrumbs/Breadcrumbs";
 import type { SortOption } from "../../components/Sorting/Sorting";
 
-import { fetchProductsByCategory, fetchProducts } from "../../services/productService/productService";
+import { fetchProducts } from "../../services/productService/productService";
 import { fetchCategoryBySlug, fetchChildCategories } from "../../services/categoryService/categoryService";
 
 import "./Category.scss";
@@ -45,6 +45,7 @@ export default function CategoryPage() {
 
   const rawPath = location.pathname.replace(/^\/catalog\/?/, "");
   const segments = rawPath === "" ? [] : rawPath.split("/");
+  const searchTerm = new URLSearchParams(location.search).get("search")?.trim() ?? "";
 
   const getSortParam = (sortOption: SortOption): string | undefined => {
     switch (sortOption) {
@@ -96,10 +97,13 @@ export default function CategoryPage() {
 
         /* Initial product batch */
         const sortParam = getSortParam(currentSort);
-        const firstProducts =
-          parentId === null
-            ? await fetchProducts(sortParam, 0, PAGE_SIZE)
-            : await fetchProductsByCategory(parentId, sortParam, 0, PAGE_SIZE);
+        const firstProducts = await fetchProducts({
+          categoryId: parentId ?? undefined,
+          sort: sortParam,
+          search: searchTerm,
+          offset: 0,
+          limit: PAGE_SIZE,
+        });
 
         if (cancelled) return;
 
@@ -123,7 +127,7 @@ export default function CategoryPage() {
       cancelled = true;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [location.pathname, currentSort]);
+  }, [location.pathname, location.search, currentSort]);
 
   const loadMoreProducts = async () => {
     if (isLoadingMore || !hasMore) return;
@@ -132,10 +136,13 @@ export default function CategoryPage() {
     try {
       const sortParam = getSortParam(currentSort);
       const nextOffset = offset;
-      const more =
-        currentCategory === null
-          ? await fetchProducts(sortParam, nextOffset, PAGE_SIZE)
-          : await fetchProductsByCategory(currentCategory.id, sortParam, nextOffset, PAGE_SIZE);
+      const more = await fetchProducts({
+        categoryId: currentCategory?.id,
+        sort: sortParam,
+        search: searchTerm,
+        offset: nextOffset,
+        limit: PAGE_SIZE,
+      });
 
       setProducts((prev) => {
         const existingIds = new Set(prev.map((p) => p.id));
@@ -162,7 +169,11 @@ export default function CategoryPage() {
     );
 
   const isRoot = segments.length === 0;
-  const title = isRoot ? "All products" : (currentCategory?.name ?? "Loading Category…");
+  const title = searchTerm
+    ? `Search results for “${searchTerm}”`
+    : isRoot
+      ? "All products"
+      : (currentCategory?.name ?? "Loading Category…");
   const baseCatalogPath = segments.length > 0 ? "/catalog/" + segments.join("/") : "/catalog/";
 
   const sidebarContent = (
@@ -212,7 +223,13 @@ export default function CategoryPage() {
           {products.length === 0 ? (
             <Paragraph
               className="no-products"
-              text={isRoot ? "No products available." : "No products in this category yet."}
+              text={
+                searchTerm
+                  ? `No products found for “${searchTerm}”.`
+                  : isRoot
+                    ? "No products available."
+                    : "No products in this category yet."
+              }
             />
           ) : (
             <>
