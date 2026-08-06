@@ -1,17 +1,21 @@
-import React from "react";
+import type { ComponentPropsWithoutRef } from "react";
+
 import "./paragraph.scss";
 
-type ParagraphProps = {
-  text: string; // text content
-  isError?: boolean; // Turns text red when true
-  className?: string; // Optional classes for customization
+type ParagraphProps = Omit<ComponentPropsWithoutRef<"p">, "children"> & {
+  text: string;
+  isError?: boolean;
 };
 
-const Paragraph: React.FC<ParagraphProps> = ({ text, isError = false, className = "" }) => {
+const Paragraph = ({ text, isError = false, className = "", ...props }: ParagraphProps) => {
   const errorClass = isError ? "paragraph--error" : "";
   const paragraphClass = `paragraph ${errorClass} ${className}`.trim();
 
-  return <p className={paragraphClass}>{text}</p>;
+  return (
+    <p {...props} className={paragraphClass}>
+      {text}
+    </p>
+  );
 };
 
 export default Paragraph;
