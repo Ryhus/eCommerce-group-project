@@ -1,6 +1,12 @@
-.error-message {
-  margin-top: 0.25rem; //placeholder
-  font-size: 0.875rem; //placeholder
+.span {
+  color: inherit;
+  font-family: var(--font-family-body);
+  font-size: var(--font-size-sm);
+  font-style: normal;
+  font-weight: var(--font-weight-regular);
+  line-height: normal;
+}
 
-  color: #e74c3c;
+.span--error {
+  color: var(--color-danger);
 }

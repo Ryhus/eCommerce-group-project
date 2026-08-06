@@ -1,0 +1,68 @@
+$breakpoint-mobile: 48rem;
+$breakpoint-tablet: 76.8rem;
+$breakpoint-desktop: 120rem;
+
+:root {
+  --color-ink: #000000;
+  --color-surface: #ffffff;
+  --color-surface-subtle: #f0f0f0;
+  --color-surface-hero: #f2f0f1;
+  --color-border: #f0eeed;
+  --color-text-muted: rgb(0 0 0 / 60%);
+  --color-text-subtle: rgb(0 0 0 / 40%);
+  --color-danger: #ff3333;
+  --color-rating: #ffc633;
+  --color-success: #01ab31;
+
+  --font-family-body: "Roboto", "Helvetica Neue", Arial, sans-serif;
+  --font-family-heading: "Roboto", "Helvetica Neue", Arial, sans-serif;
+
+  --font-size-xs: 1.2rem;
+  --font-size-sm: 1.4rem;
+  --font-size-md: 1.6rem;
+  --font-size-lg: 2rem;
+  --font-size-xl: 2.4rem;
+  --font-size-2xl: 3.2rem;
+  --font-size-hero-mobile: 3.6rem;
+  --font-size-3xl: 4rem;
+  --font-size-4xl: 4.8rem;
+  --font-size-hero: 6.4rem;
+
+  --line-height-tight: 1;
+  --line-height-heading: 1.15;
+  --line-height-body: 1.375;
+  --line-height-relaxed: 1.5;
+
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-bold: 700;
+
+  --space-1: 0.4rem;
+  --space-2: 0.8rem;
+  --space-3: 1.2rem;
+  --space-4: 1.6rem;
+  --space-5: 2rem;
+  --space-6: 2.4rem;
+  --space-8: 3.2rem;
+  --space-10: 4rem;
+  --space-12: 4.8rem;
+  --space-16: 6.4rem;
+  --space-20: 8rem;
+  --space-25: 10rem;
+
+  --radius-sm: 0.8rem;
+  --radius-md: 2rem;
+  --radius-lg: 4rem;
+  --radius-pill: 999rem;
+
+  --border-subtle: 1px solid var(--color-border);
+  --shadow-focus: 0 0 0 3px rgb(0 0 0 / 18%);
+
+  --container-max-width: 124rem;
+  --container-gutter: 10rem;
+  --container-gutter-tablet: 3.2rem;
+  --container-gutter-mobile: 1.6rem;
+
+  --transition-fast: 150ms ease;
+  --transition-base: 250ms ease;
+}

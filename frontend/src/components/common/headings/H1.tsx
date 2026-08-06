@@ -1,16 +1,17 @@
-import React from "react";
+import type { ComponentPropsWithoutRef } from "react";
+
 import "./headings.scss";
 
-//h1 - main page banner title
-//h2 - page titles, section titles
-//h3 - product title
-
-type H1Props = {
+type H1Props = Omit<ComponentPropsWithoutRef<"h1">, "children"> & {
   text: string;
-  className?: string;
 };
 
-export const H1: React.FC<H1Props> = ({ text, className = "" }) => {
+export const H1 = ({ text, className = "", ...props }: H1Props) => {
   const classes = `heading h1 ${className}`.trim();
-  return <h1 className={classes}>{text}</h1>;
+
+  return (
+    <h1 {...props} className={classes}>
+      {text}
+    </h1>
+  );
 };

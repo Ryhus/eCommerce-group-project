@@ -35,3 +35,4 @@ eslint.config.js
 *.sln
 *.sw?
 .flaskenv*
+/design-reference
