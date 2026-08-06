@@ -1,0 +1,21 @@
+@use "../../../assets/styles/tokens" as tokens;
+
+.page-container {
+  --page-container-gutter: var(--container-gutter);
+
+  width: calc(100% - var(--page-container-gutter) - var(--page-container-gutter));
+  max-width: var(--container-max-width);
+  margin-inline: auto;
+}
+
+@media (max-width: tokens.$breakpoint-desktop) {
+  .page-container {
+    --page-container-gutter: var(--container-gutter-tablet);
+  }
+}
+
+@media (max-width: tokens.$breakpoint-tablet) {
+  .page-container {
+    --page-container-gutter: var(--container-gutter-mobile);
+  }
+}
