@@ -7,6 +7,7 @@ import { CatalogModule } from "./catalog/catalog.module.js";
 import { validateConfig } from "./config/configuration.js";
 import { DatabaseModule } from "./database/database.module.js";
 import { HealthModule } from "./health/health.module.js";
+import { NewsletterModule } from "./newsletter/newsletter.module.js";
 import { PromotionsModule } from "./promotions/promotions.module.js";
 import { SecurityModule } from "./security/security.module.js";
 import { UsersModule } from "./users/users.module.js";
@@ -18,6 +19,7 @@ import { UsersModule } from "./users/users.module.js";
     DatabaseModule,
     SecurityModule,
     HealthModule,
+    NewsletterModule,
     UsersModule,
     CatalogModule,
     PromotionsModule,
