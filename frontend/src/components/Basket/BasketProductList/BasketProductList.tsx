@@ -12,17 +12,7 @@ export function BasketProductList() {
   return (
     <div className="basket-list-container">
       {products.length ? (
-        products.map((item) => (
-          <BasketProductCard
-            key={item.id}
-            productName={item.name}
-            quantity={item.quantity}
-            imgUrl={item.image ?? "/images/loading.gif"}
-            productId={item.productId}
-            productPrice={`Price: €${(item.unitPrice.amount / 100).toFixed(2)}`}
-            totalPrice={`Total: €${(item.lineTotal.amount / 100).toFixed(2)}`}
-          />
-        ))
+        products.map((item) => <BasketProductCard item={item} key={item.id} />)
       ) : (
         <Link
           className="cart-to-catalog-link"
