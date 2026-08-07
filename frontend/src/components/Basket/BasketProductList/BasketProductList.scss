@@ -1,20 +1,96 @@
-.basket-list-container {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  padding: 20px 24px;
-  margin-left: 0.6rem;
-  height: 100%;
-  gap: 24px;
-  width: 715px;
-  border: 1px solid rgba(46, 42, 42, 0.1);
-  border-radius: 20px;
-  .cart-to-catalog-link {
-    align-self: center;
-    text-align: center;
+@use "../../../assets/styles/tokens" as *;
+
+.basket-list {
+  min-width: 0;
+  padding: var(--space-5) var(--space-6);
+  border: var(--border-subtle);
+  border-radius: var(--radius-md);
+}
+
+.basket-list > ul {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.basket-list > ul > li {
+  min-width: 0;
+  padding-block: var(--space-6);
+  border-bottom: var(--border-subtle);
+
+  &:first-child {
+    padding-top: 0;
+  }
+
+  &:last-child {
+    padding-bottom: 0;
+    border-bottom: 0;
   }
 }
 
-.list-underline {
-  width: 100%;
+.basket-empty {
+  display: flex;
+  min-height: 34rem;
+  padding: var(--space-10);
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  border: var(--border-subtle);
+  border-radius: var(--radius-md);
+  text-align: center;
+}
+
+.basket-empty > svg {
+  width: 5.6rem;
+  height: 5.6rem;
+  color: var(--color-text-subtle);
+}
+
+.basket-empty h2 {
+  margin: var(--space-5) 0 0;
+  font-size: var(--font-size-2xl);
+}
+
+.basket-empty p {
+  max-width: 42rem;
+  margin: var(--space-3) 0 0;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-md);
+  line-height: var(--line-height-relaxed);
+}
+
+.basket-empty__link {
+  min-width: 18rem;
+  margin-top: var(--space-6);
+  padding: var(--space-4) var(--space-6);
+  border-radius: var(--radius-pill);
+  background: var(--color-ink);
+  color: var(--color-surface);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-medium);
+  text-decoration: none;
+}
+
+@media (max-width: $breakpoint-mobile) {
+  .basket-list {
+    padding: var(--space-4);
+  }
+
+  .basket-list > ul > li {
+    padding-block: var(--space-4);
+  }
+
+  .basket-empty {
+    min-height: 28rem;
+    padding: var(--space-6);
+  }
+
+  .basket-empty h2 {
+    font-size: var(--font-size-xl);
+  }
+
+  .basket-empty p {
+    font-size: var(--font-size-sm);
+  }
 }
