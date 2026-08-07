@@ -70,4 +70,33 @@ describe("CatalogService", () => {
     expect(transaction.product.findMany).toHaveBeenCalledWith(expect.objectContaining({ where }));
     expect(transaction.product.count).toHaveBeenCalledWith({ where });
   });
+
+  it("includes descendant categories when filtering by a parent category", async () => {
+    const transaction = {
+      category: {
+        findMany: vi.fn().mockResolvedValue([
+          { id: "balls", parentId: null },
+          { id: "football", parentId: "balls" },
+          { id: "youth-football", parentId: "football" },
+          { id: "fitness", parentId: null },
+        ]),
+      },
+      product: {
+        findMany: vi.fn().mockResolvedValue([]),
+        count: vi.fn().mockResolvedValue(0),
+      },
+    };
+    const prisma = {
+      $transaction: vi.fn(async (callback: (tx: typeof transaction) => Promise<unknown>) => callback(transaction)),
+    };
+    const query = Object.assign(new ProductQueryDto(), { categoryId: "balls" });
+
+    await new CatalogService(prisma as never).products(query);
+
+    const where = expect.objectContaining({
+      categories: { some: { categoryId: { in: ["balls", "football", "youth-football"] } } },
+    });
+    expect(transaction.product.findMany).toHaveBeenCalledWith(expect.objectContaining({ where }));
+    expect(transaction.product.count).toHaveBeenCalledWith({ where });
+  });
 });

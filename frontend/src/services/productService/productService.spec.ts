@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { apiClient } from "../apiClient";
-import { fetchProducts } from "./productService";
+import { fetchProductPage, fetchProducts } from "./productService";
 
 vi.mock("../apiClient", () => ({
   apiClient: { get: vi.fn() },
@@ -40,6 +40,44 @@ describe("productService", () => {
 
     expect(apiClient.get).toHaveBeenCalledWith("/catalog/products", {
       params: { sort: "RELEVANCE", offset: 0, limit: 20 },
+    });
+  });
+
+  it("returns pagination metadata with mapped products", async () => {
+    vi.mocked(apiClient.get).mockResolvedValueOnce({
+      data: {
+        items: [
+          {
+            id: "product-id",
+            slug: "match-football",
+            name: "Match Football",
+            description: null,
+            images: [{ url: "football.jpg", alt: "Match Football" }],
+            price: { amount: 3499, currency: "EUR" },
+            compareAtPrice: { amount: 4499, currency: "EUR" },
+          },
+        ],
+        offset: 6,
+        limit: 6,
+        total: 8,
+      },
+    });
+
+    await expect(fetchProductPage({ offset: 6, limit: 6 })).resolves.toEqual({
+      items: [
+        {
+          id: "product-id",
+          slug: "match-football",
+          name: "Match Football",
+          description: "",
+          imgUrls: ["football.jpg"],
+          currentPrice: 3499,
+          oldPrice: 4499,
+        },
+      ],
+      offset: 6,
+      limit: 6,
+      total: 8,
     });
   });
 });
