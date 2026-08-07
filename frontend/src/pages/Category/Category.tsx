@@ -1,261 +1,240 @@
-import { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import axios from "axios";
+import { useEffect, useMemo, useState } from "react";
+import { PiSlidersHorizontal } from "react-icons/pi";
+import { useLocation, useSearchParams } from "react-router-dom";
 
-import Breadcrumbs from "../../components/Breadcrumbs/Breadcrumbs";
-import { H3 } from "../../components/common/headings/H3";
-import Paragraph from "../../components/common/paragraph/paragraph";
-import Link from "../../components/common/link/link";
-import NotFoundPage from "../NotFound/NotFound";
+import Breadcrumbs, { type Crumb } from "../../components/Breadcrumbs/Breadcrumbs";
+import { CategoryFilter, type CategoryFilterItem } from "../../components/Catalog/CategoryFilter/CategoryFilter";
+import { FilterDrawer } from "../../components/Catalog/FilterDrawer/FilterDrawer";
+import { PageContainer } from "../../components/common/PageContainer/PageContainer";
+import { Pagination } from "../../components/common/Pagination/Pagination";
 import ProductList from "../../components/productList/ProductList";
-import Sorting from "../../components/Sorting/Sorting";
-
-import type { Product } from "../../services/productService/types";
-import type { Category } from "../../services/categoryService/types";
-import type { Crumb } from "../../components/Breadcrumbs/Breadcrumbs";
-import type { SortOption } from "../../components/Sorting/Sorting";
-
-import { fetchProducts } from "../../services/productService/productService";
+import Sorting, { type SortOption } from "../../components/Sorting/Sorting";
 import { fetchCategoryBySlug, fetchChildCategories } from "../../services/categoryService/categoryService";
+import type { Category } from "../../services/categoryService/types";
+import { fetchProductPage } from "../../services/productService/productService";
+import type { ProductPage } from "../../services/productService/types";
+import NotFoundPage from "../NotFound/NotFound";
 
 import "./Category.scss";
-import { IoMdOptions, IoMdClose } from "react-icons/io";
 
-const PAGE_SIZE = 20;
+const PAGE_SIZE = 6;
+const EMPTY_PAGE: ProductPage = { items: [], offset: 0, limit: PAGE_SIZE, total: 0 };
+const SORT_OPTIONS: SortOption[] = ["default", "price asc", "price desc", "name asc", "name desc"];
+
+class CategoryNotFoundError extends Error {}
+
+function readPage(value: string | null): number {
+  const page = Number(value);
+  return Number.isInteger(page) && page > 0 ? page : 1;
+}
+
+function readSort(value: string | null): SortOption {
+  return SORT_OPTIONS.includes(value as SortOption) ? (value as SortOption) : "default";
+}
+
+function apiSort(sort: SortOption): string | undefined {
+  switch (sort) {
+    case "price asc":
+    case "price desc":
+      return sort;
+    case "name asc":
+      return "name.en asc";
+    case "name desc":
+      return "name.en desc";
+    default:
+      return undefined;
+  }
+}
+
+function categoryPath(parentSegments: string[], slug: string): string {
+  return ["", "catalog", ...parentSegments, slug].join("/");
+}
+
+function pageSummary(page: ProductPage): string {
+  if (!page.total) return "0 products";
+  const firstItem = page.offset + 1;
+  const lastItem = Math.min(page.offset + page.items.length, page.total);
+  return `Showing ${firstItem}-${lastItem} of ${page.total} products`;
+}
 
 export default function CategoryPage() {
   const location = useLocation();
-  const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const [breadcrumbs, setBreadcrumbs] = useState<Crumb[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const [categoriesToShow, setCategoriesToShow] = useState<Category[]>([]);
-  const [products, setProducts] = useState<Product[]>([]);
-
+  const [categoryItems, setCategoryItems] = useState<CategoryFilterItem[]>([]);
   const [currentCategory, setCurrentCategory] = useState<Category | null>(null);
-  const [currentSort, setCurrentSort] = useState<SortOption>("default");
-
-  const [offset, setOffset] = useState(0);
-  const [isLoadingMore, setIsLoadingMore] = useState(false);
-  const [hasMore, setHasMore] = useState(true);
-
-  const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
+  const [productPage, setProductPage] = useState<ProductPage>(EMPTY_PAGE);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [categoryNotFound, setCategoryNotFound] = useState(false);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [reloadKey, setReloadKey] = useState(0);
 
   const rawPath = location.pathname.replace(/^\/catalog\/?/, "");
-  const segments = rawPath === "" ? [] : rawPath.split("/");
-  const searchTerm = new URLSearchParams(location.search).get("search")?.trim() ?? "";
-
-  const getSortParam = (sortOption: SortOption): string | undefined => {
-    switch (sortOption) {
-      case "price asc":
-      case "price desc":
-        return sortOption;
-      case "name asc":
-        return "name.en asc";
-      case "name desc":
-        return "name.en desc";
-      default:
-        return undefined;
-    }
-  };
+  const segments = useMemo(() => (rawPath ? rawPath.split("/").filter(Boolean) : []), [rawPath]);
+  const currentPage = readPage(searchParams.get("page"));
+  const currentSort = readSort(searchParams.get("sort"));
+  const searchTerm = searchParams.get("search")?.trim() ?? "";
 
   useEffect(() => {
     let cancelled = false;
 
-    const loadInitial = async () => {
-      setLoading(true);
+    const loadCatalog = async () => {
+      setIsLoading(true);
       setError(null);
+      setCategoryNotFound(false);
 
       try {
         let parentId: string | null = null;
-        let lastCat: Category | null = null;
-        const crumbsTemp: Crumb[] = [];
+        let selectedCategory: Category | null = null;
+        const nextBreadcrumbs: Crumb[] = [];
 
-        if (segments.length > 0) {
-          for (let i = 0; i < segments.length; i++) {
-            const slug = segments[i];
-            const cat = await fetchCategoryBySlug(slug, parentId);
-            if (!cat) throw new Error(`Category not found: "${slug}"`);
+        for (let index = 0; index < segments.length; index += 1) {
+          const slug = segments[index];
+          const category = await fetchCategoryBySlug(slug, parentId);
+          if (!category) throw new CategoryNotFoundError();
 
-            const pathSoFar = "/catalog/" + segments.slice(0, i + 1).join("/");
-            crumbsTemp.push({ name: cat.name, path: pathSoFar });
+          parentId = category.id;
+          selectedCategory = category;
+          nextBreadcrumbs.push({
+            name: category.name,
+            path: categoryPath(segments.slice(0, index), category.slug),
+          });
+        }
 
-            parentId = cat.id;
-            lastCat = cat;
-          }
-          setCurrentCategory(lastCat);
-        } else {
-          setCurrentCategory(null);
+        const [children, nextProductPage] = await Promise.all([
+          fetchChildCategories(parentId),
+          fetchProductPage({
+            categoryId: parentId ?? undefined,
+            limit: PAGE_SIZE,
+            offset: (currentPage - 1) * PAGE_SIZE,
+            search: searchTerm,
+            sort: apiSort(currentSort),
+          }),
+        ]);
+
+        let navigationCategories = children;
+        let navigationSegments = segments;
+        if (!children.length && selectedCategory?.parentId) {
+          navigationCategories = await fetchChildCategories(selectedCategory.parentId);
+          navigationSegments = segments.slice(0, -1);
         }
 
         if (cancelled) return;
 
-        setBreadcrumbs(crumbsTemp);
-        setCategoriesToShow(await fetchChildCategories(parentId));
-
-        /* Initial product batch */
-        const sortParam = getSortParam(currentSort);
-        const firstProducts = await fetchProducts({
-          categoryId: parentId ?? undefined,
-          sort: sortParam,
-          search: searchTerm,
-          offset: 0,
-          limit: PAGE_SIZE,
-        });
-
+        setBreadcrumbs(nextBreadcrumbs);
+        setCurrentCategory(selectedCategory);
+        setCategoryItems(
+          navigationCategories.map((category) => ({
+            id: category.id,
+            isActive: category.id === selectedCategory?.id,
+            name: category.name,
+            to: categoryPath(navigationSegments, category.slug),
+          }))
+        );
+        setProductPage(nextProductPage);
+      } catch (loadError) {
         if (cancelled) return;
-
-        setProducts(firstProducts);
-        setOffset(firstProducts.length); // might be < PAGE_SIZE
-        setHasMore(firstProducts.length === PAGE_SIZE);
-      } catch (err) {
-        if (cancelled) return;
-        console.error(err);
-        if (axios.isAxiosError(err)) setError(err.response?.data?.message ?? err.message);
-        else if (err instanceof Error) setError(err.message);
-        else setError(String(err));
+        if (loadError instanceof CategoryNotFoundError) setCategoryNotFound(true);
+        else setError(loadError instanceof Error ? loadError.message : "Unable to load the catalog.");
       } finally {
-        if (!cancelled) setLoading(false);
+        if (!cancelled) setIsLoading(false);
       }
     };
 
-    loadInitial();
+    void loadCatalog();
 
     return () => {
       cancelled = true;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [location.pathname, location.search, currentSort]);
+  }, [currentPage, currentSort, reloadKey, searchTerm, segments]);
 
-  const loadMoreProducts = async () => {
-    if (isLoadingMore || !hasMore) return;
-    setIsLoadingMore(true);
-
-    try {
-      const sortParam = getSortParam(currentSort);
-      const nextOffset = offset;
-      const more = await fetchProducts({
-        categoryId: currentCategory?.id,
-        sort: sortParam,
-        search: searchTerm,
-        offset: nextOffset,
-        limit: PAGE_SIZE,
-      });
-
-      setProducts((prev) => {
-        const existingIds = new Set(prev.map((p) => p.id));
-        const newUnique = more.filter((p) => !existingIds.has(p.id));
-        return [...prev, ...newUnique];
-      });
-
-      setOffset(nextOffset + more.length);
-      setHasMore(more.length === PAGE_SIZE);
-    } catch (err) {
-      console.error("Error loading more:", err);
-    } finally {
-      setIsLoadingMore(false);
-    }
+  const updatePage = (page: number) => {
+    const nextParams = new URLSearchParams(searchParams);
+    if (page === 1) nextParams.delete("page");
+    else nextParams.set("page", String(page));
+    setSearchParams(nextParams);
   };
 
-  if (error) return <NotFoundPage />;
+  const updateSort = (sort: SortOption) => {
+    const nextParams = new URLSearchParams(searchParams);
+    if (sort === "default") nextParams.delete("sort");
+    else nextParams.set("sort", sort);
+    nextParams.delete("page");
+    setSearchParams(nextParams);
+  };
 
-  if (loading)
-    return (
-      <div className="loading">
-        <img src="/images/loading.gif" alt="Loading..." />
-      </div>
-    );
+  if (categoryNotFound) return <NotFoundPage />;
 
-  const isRoot = segments.length === 0;
-  const title = searchTerm
-    ? `Search results for “${searchTerm}”`
-    : isRoot
-      ? "All products"
-      : (currentCategory?.name ?? "Loading Category…");
-  const baseCatalogPath = segments.length > 0 ? "/catalog/" + segments.join("/") : "/catalog/";
+  const title = searchTerm ? `Search results for “${searchTerm}”` : (currentCategory?.name ?? "All products");
 
-  const sidebarContent = (
-    <>
-      {categoriesToShow.length > 0 && (
-        <div className="category-list">
-          {categoriesToShow.map((cat) => {
-            const nextURL = isRoot ? `/catalog/${cat.slug}` : `${baseCatalogPath}/${cat.slug}`;
-            return (
-              <Link
-                key={cat.id}
-                text={cat.name}
-                className="category-link"
-                href=""
-                onClick={(e) => {
-                  e.preventDefault();
-                  setIsMobileFilterOpen(false);
-                  navigate(nextURL);
-                }}
-              />
-            );
-          })}
-        </div>
-      )}
-      <div className="filters">
-        <strong>Filters (placeholder)</strong>
-      </div>
-    </>
-  );
   return (
-    <div className="category-page">
+    <PageContainer className="category-page">
       <Breadcrumbs crumbs={breadcrumbs} />
-      <div className="category-content">
-        <div className="category-subcats-filter">{sidebarContent}</div>
-        <div className="category-content-colomn">
-          <div className="category-title-sort">
-            <H3 text={title} />
-            <Sorting currentSort={currentSort} onSortChange={(s) => setCurrentSort(s)} />
-            <button
-              className="mobile-filter-toggle"
-              onClick={() => setIsMobileFilterOpen(true)}
-              aria-label="Open Filters"
-            >
-              <IoMdOptions size={24} />
-            </button>
-          </div>
-          {products.length === 0 ? (
-            <Paragraph
-              className="no-products"
-              text={
-                searchTerm
-                  ? `No products found for “${searchTerm}”.`
-                  : isRoot
-                    ? "No products available."
-                    : "No products in this category yet."
-              }
-            />
-          ) : (
-            <>
-              <ProductList products={products} className="category-products" />
 
-              {hasMore ? (
-                <div className="load-more-wrapper">
-                  <button className="btn btn-medium load-more-btn" onClick={loadMoreProducts} disabled={isLoadingMore}>
-                    {isLoadingMore ? "Loading..." : "See more"}
-                  </button>
-                </div>
-              ) : (
-                <p className="no-more-products">You’ve reached the end ✨</p>
-              )}
+      <div className="category-page__layout">
+        <aside className="category-page__sidebar">
+          <CategoryFilter items={categoryItems} />
+        </aside>
+
+        <main aria-labelledby="catalog-title" className="category-page__main">
+          <header className="category-page__toolbar">
+            <div className="category-page__heading">
+              <h1 id="catalog-title">{title}</h1>
+              <p>{isLoading ? "Loading products…" : pageSummary(productPage)}</p>
+            </div>
+
+            <Sorting className="category-page__desktop-sort" currentSort={currentSort} onSortChange={updateSort} />
+            <button
+              aria-controls="catalog-options"
+              aria-expanded={isDrawerOpen}
+              aria-label="Open catalog options"
+              className="category-page__filter-toggle"
+              onClick={() => setIsDrawerOpen(true)}
+              type="button"
+            >
+              <PiSlidersHorizontal aria-hidden="true" />
+            </button>
+          </header>
+
+          {isLoading ? (
+            <div aria-live="polite" className="category-page__status" role="status">
+              <span className="category-page__spinner" />
+              Loading products…
+            </div>
+          ) : error ? (
+            <div className="category-page__status" role="alert">
+              <p>{error}</p>
+              <button className="category-page__retry" onClick={() => setReloadKey((key) => key + 1)} type="button">
+                Try again
+              </button>
+            </div>
+          ) : productPage.items.length ? (
+            <>
+              <ProductList className="category-products" products={productPage.items} />
+              <Pagination
+                className="category-page__pagination"
+                currentPage={currentPage}
+                onPageChange={updatePage}
+                pageSize={PAGE_SIZE}
+                totalItems={productPage.total}
+              />
             </>
+          ) : (
+            <div className="category-page__status">
+              <p>{searchTerm ? `No products found for “${searchTerm}”.` : "No products found in this category."}</p>
+            </div>
           )}
-        </div>
+        </main>
       </div>
-      {isMobileFilterOpen && (
-        <div className="mobile-filter-overlay">
-          <button className="close-overlay" onClick={() => setIsMobileFilterOpen(false)} aria-label="Close Filters">
-            <IoMdClose size={28} />
-          </button>
-          <div className="category-subcats-filter-inner">{sidebarContent}</div>
-        </div>
-      )}
-    </div>
+
+      <div id="catalog-options">
+        <FilterDrawer isOpen={isDrawerOpen} onClose={() => setIsDrawerOpen(false)}>
+          <Sorting currentSort={currentSort} onSortChange={updateSort} />
+          <CategoryFilter items={categoryItems} onNavigate={() => setIsDrawerOpen(false)} />
+        </FilterDrawer>
+      </div>
+    </PageContainer>
   );
 }
