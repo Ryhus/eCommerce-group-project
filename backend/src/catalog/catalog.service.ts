@@ -36,10 +36,9 @@ export class CatalogService {
   }
 
   async products(query: ProductQueryDto) {
-    const where: Prisma.ProductWhereInput = {
+    const baseWhere: Prisma.ProductWhereInput = {
       isActive: true,
       variant: { isNot: null },
-      ...(query.categoryId ? { categories: { some: { categoryId: query.categoryId } } } : {}),
       ...(query.search
         ? {
             OR: [
@@ -51,6 +50,11 @@ export class CatalogService {
     };
     const orderBy = this.orderBy(query.sort);
     const [items, total] = await this.prisma.$transaction(async (tx) => {
+      const categoryIds = query.categoryId ? await this.categoryScope(tx, query.categoryId) : undefined;
+      const where: Prisma.ProductWhereInput = {
+        ...baseWhere,
+        ...(categoryIds ? { categories: { some: { categoryId: { in: categoryIds } } } } : {}),
+      };
       const page = await tx.product.findMany({
         where,
         include: productInclude,
@@ -67,6 +71,24 @@ export class CatalogService {
       limit: query.limit,
       total,
     };
+  }
+
+  private async categoryScope(tx: Prisma.TransactionClient, categoryId: string): Promise<string[]> {
+    const categories = await tx.category.findMany({ select: { id: true, parentId: true } });
+    const categoryIds = new Set([categoryId]);
+
+    let foundDescendant = true;
+    while (foundDescendant) {
+      foundDescendant = false;
+      for (const category of categories) {
+        if (category.parentId && categoryIds.has(category.parentId) && !categoryIds.has(category.id)) {
+          categoryIds.add(category.id);
+          foundDescendant = true;
+        }
+      }
+    }
+
+    return [...categoryIds];
   }
 
   async product(productId: string) {
