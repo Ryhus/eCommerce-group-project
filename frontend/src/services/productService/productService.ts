@@ -1,3 +1,5 @@
+import { isAxiosError } from "axios";
+
 import { apiClient } from "../apiClient";
 import type { Product, ProductPage } from "./types";
 
@@ -9,6 +11,7 @@ interface ProductDto {
   images: { url: string; alt: string }[];
   price: { amount: number; currency: "EUR" };
   compareAtPrice: { amount: number; currency: "EUR" } | null;
+  categoryIds: string[];
 }
 
 interface ProductPageDto {
@@ -40,6 +43,7 @@ function mapProduct(item: ProductDto): Product {
     slug: item.slug,
     description: item.description ?? "",
     imgUrls: item.images.map((image) => image.url),
+    categoryIds: item.categoryIds,
     currentPrice: item.price.amount,
     oldPrice: item.compareAtPrice?.amount ?? item.price.amount,
   };
@@ -48,8 +52,9 @@ function mapProduct(item: ProductDto): Product {
 export async function fetchProductById(productId: string): Promise<Product | null> {
   try {
     return mapProduct((await apiClient.get<ProductDto>(`/catalog/products/${productId}`)).data);
-  } catch {
-    return null;
+  } catch (error) {
+    if (isAxiosError(error) && error.response?.status === 404) return null;
+    throw error;
   }
 }
 

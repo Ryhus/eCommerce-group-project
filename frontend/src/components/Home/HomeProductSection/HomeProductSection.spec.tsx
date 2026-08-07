@@ -20,6 +20,7 @@ const products: Product[] = [
     slug: "running-shoes",
     name: "Running Shoes",
     imgUrls: ["/shoes.jpg"],
+    categoryIds: ["shoes"],
     currentPrice: 7999,
     oldPrice: 9999,
   },

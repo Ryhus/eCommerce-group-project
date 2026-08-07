@@ -22,6 +22,7 @@ const products: Product[] = Array.from({ length: 8 }, (_, index) => ({
   slug: `product-${index}`,
   name: `Product ${index}`,
   imgUrls: [],
+  categoryIds: [],
   currentPrice: 1000 + index,
   oldPrice: 1000 + index,
 }));
