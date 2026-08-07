@@ -16,10 +16,15 @@ function renderActions({ isAuthenticated = false, quantity = 0 } = {}) {
   };
   const cartValue: CartContextType = {
     cart: null,
+    cartError: null,
+    isCartLoading: false,
     addToCart: vi.fn(),
     removeFromCart: vi.fn(),
+    updateCartQuantity: vi.fn(),
+    removeCartItem: vi.fn(),
     calculateTotalQuantity: () => quantity,
     applyPromoCode: vi.fn(),
+    removePromoCode: vi.fn(),
     clearCart: vi.fn(),
     refreshCart: vi.fn(),
     setNewCart: vi.fn(),

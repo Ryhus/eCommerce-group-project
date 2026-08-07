@@ -1,70 +1,90 @@
-import Paragraph from "../../common/paragraph/paragraph";
-import { FaMinus, FaPlus } from "react-icons/fa";
-import { PiTrashFill } from "react-icons/pi";
+import { useState } from "react";
+import { PiTrash } from "react-icons/pi";
+import { Link } from "react-router-dom";
+
+import type { CartItem } from "../../../services/cartService/types";
+import { IconButton } from "../../common/IconButton/IconButton";
 import { useCart } from "../../context/useCart";
+import { QuantitySelector } from "../../Product/QuantitySelector/QuantitySelector";
 
 import "./BasketProductCard.scss";
 
-interface BasketProductCardProps {
-  productId?: string;
-  lineItemId?: string;
-  productName?: string;
-  quantity?: number;
-  imgUrl?: string;
-  totalPrice?: string;
-  discountedProductPrice?: string;
-  productPrice?: string;
-}
+type BasketProductCardProps = {
+  item: CartItem;
+};
 
-export function BasketProductCard({
-  productId,
-  lineItemId,
-  productName,
-  quantity,
-  imgUrl,
-  totalPrice,
-  productPrice,
-}: BasketProductCardProps) {
-  const { addToCart, removeFromCart } = useCart();
+const moneyFormatter = new Intl.NumberFormat("en-IE", {
+  style: "currency",
+  currency: "EUR",
+});
+
+export function BasketProductCard({ item }: BasketProductCardProps) {
+  const { removeCartItem, updateCartQuantity } = useCart();
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const update = async (request: () => Promise<void>) => {
+    setIsUpdating(true);
+    setError(null);
+    try {
+      await request();
+    } catch {
+      setError("We couldn't update this item. Please try again.");
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  const image = item.image ?? "/images/loading.gif";
 
   return (
-    <div className="basket-pr-container" key={lineItemId}>
-      <div className="pr-img-container">
-        <img src={imgUrl}></img>
-      </div>
-      <div className="pr-info-container">
-        <div className="pr-text-container">
-          <div className="pr-description-container">
-            <Paragraph className="basket-pr-name" text={productName ? productName : ""}></Paragraph>
-          </div>
-          <Paragraph className="basket-item-price" text={productPrice ? productPrice : "N/A"}></Paragraph>
-          <Paragraph className="basket-pr-price" text={totalPrice ? totalPrice : "N/A"}></Paragraph>
+    <article aria-label={`${item.name} in cart`} className="basket-item">
+      <Link aria-label={`View ${item.name}`} className="basket-item__image-link" to={`/product/${item.productId}`}>
+        <img
+          alt={item.name}
+          onError={(event) => {
+            event.currentTarget.src = "/images/loading.gif";
+          }}
+          src={image}
+        />
+      </Link>
+
+      <div className="basket-item__content">
+        <div className="basket-item__header">
+          <Link className="basket-item__name" to={`/product/${item.productId}`}>
+            {item.name}
+          </Link>
+          <IconButton
+            className="basket-item__remove"
+            disabled={isUpdating}
+            icon={<PiTrash />}
+            label={`Remove ${item.name} from cart`}
+            onClick={() => void update(() => removeCartItem(item.id))}
+            size="small"
+          />
         </div>
-        <div className="pr-actions-container">
-          <div className="delete-pr-btn">
-            <PiTrashFill
-              onClick={() => {
-                if (productId) removeFromCart(productId);
-              }}
-            />
-          </div>
-          <div className="pr-quantity-btns">
-            <FaMinus
-              className="basket-add-btn"
-              onClick={() => {
-                if (productId) removeFromCart(productId, 1);
-              }}
-            />
-            <Paragraph text={quantity ? quantity.toString() : "N/A"} />
-            <FaPlus
-              className="basket-remove-btn"
-              onClick={() => {
-                if (productId) addToCart(productId);
-              }}
-            />
-          </div>
+
+        {item.quantity > 1 && (
+          <p className="basket-item__unit-price">{moneyFormatter.format(item.unitPrice.amount / 100)} each</p>
+        )}
+
+        <div className="basket-item__footer">
+          <strong className="basket-item__line-total">{moneyFormatter.format(item.lineTotal.amount / 100)}</strong>
+          <QuantitySelector
+            className="basket-item__quantity"
+            disabled={isUpdating}
+            max={999}
+            onChange={(quantity) => void update(() => updateCartQuantity(item.id, quantity))}
+            value={item.quantity}
+          />
         </div>
+
+        {error && (
+          <p className="basket-item__error" role="alert">
+            {error}
+          </p>
+        )}
       </div>
-    </div>
+    </article>
   );
 }

@@ -26,7 +26,8 @@ test("registers, shops with a promo code, opens profile and logs out", async ({ 
   await cartLink.click();
   await page.getByPlaceholder("Add promo code").fill("WELCOME10");
   await page.getByRole("button", { name: "Apply" }).click();
-  await expect(page.locator(".discount-field .order-field-price")).not.toHaveText("€0.00");
+  await expect(page.getByLabel("Applied promo code")).toContainText("WELCOME10");
+  await expect(page.getByText("Discount", { exact: true })).toBeVisible();
 
   await page.getByRole("link", { name: "Open profile" }).click();
   await expect(page.getByText(email)).toBeVisible();
@@ -36,7 +37,7 @@ test("registers, shops with a promo code, opens profile and logs out", async ({ 
   await expect(page.getByRole("heading", { name: "Login" })).toBeVisible();
 });
 
-test("opens a product and adds the selected quantity", async ({ page }) => {
+test("manages product quantity and a promo code in the cart", async ({ page }) => {
   await page.goto("/catalog");
   await page
     .getByRole("link", { name: /^View / })
@@ -52,5 +53,23 @@ test("opens a product and adds the selected quantity", async ({ page }) => {
 
   await page.getByRole("button", { name: "Add to Cart" }).click();
   await expect(page.getByText(/3 × .+ added to your cart\./)).toBeVisible();
-  await expect(page.getByRole("link", { name: "Shopping cart, 3 items" })).toBeVisible();
+
+  const cartLink = page.getByRole("link", { name: "Shopping cart, 3 items" });
+  await expect(cartLink).toBeVisible();
+  await cartLink.click();
+
+  await expect(page.getByRole("heading", { level: 1, name: "Your cart" })).toBeVisible();
+  await page.getByRole("button", { name: "Decrease quantity" }).click();
+  await expect(page.getByRole("status", { name: "Quantity" })).toHaveText("2");
+
+  await page.getByPlaceholder("Add promo code").fill("welcome10");
+  await page.getByRole("button", { name: "Apply" }).click();
+  await expect(page.getByLabel("Applied promo code")).toContainText("WELCOME10");
+  await expect(page.getByText("Discount", { exact: true })).toBeVisible();
+
+  await page.getByRole("button", { name: "Remove promo code WELCOME10" }).click();
+  await expect(page.getByLabel("Applied promo code")).toHaveCount(0);
+
+  await page.getByRole("button", { name: /Remove .+ from cart/ }).click();
+  await expect(page.getByRole("heading", { name: "Your cart is empty" })).toBeVisible();
 });

@@ -1,117 +1,106 @@
-.basket-page-container {
-  margin-top: 8rem;
+@use "../../assets/styles/tokens" as *;
+
+.basket-page {
+  padding-bottom: var(--space-20);
+}
+
+.basket-page .breadcrumbs {
+  margin-top: var(--space-6);
+}
+
+.basket-page__main {
+  min-width: 0;
+}
+
+.basket-page h1 {
+  margin: var(--space-8) 0 var(--space-6);
+  color: var(--color-ink);
+  font-family: var(--font-family-heading);
+  font-size: var(--font-size-3xl);
+  line-height: var(--line-height-heading);
+  text-transform: none;
+}
+
+.basket-page__content {
+  display: grid;
+  min-width: 0;
+  align-items: start;
+  grid-template-columns: minmax(0, 1.4fr) minmax(38rem, 1fr);
+  gap: var(--space-5);
+}
+
+.basket-page__content--empty {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.basket-page__status {
   display: flex;
-  flex-direction: column;
-  gap: 2rem;
+  min-height: 36rem;
   align-items: center;
-  .clear-cart-btn {
-    width: 20rem;
-  }
-  .cart-order-data {
-    display: flex;
-    flex-direction: row;
-    gap: 2rem;
-    justify-content: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: var(--space-4);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-md);
+  text-align: center;
+}
+
+.basket-page__spinner {
+  width: 3.2rem;
+  height: 3.2rem;
+  border: 0.3rem solid var(--color-border);
+  border-top-color: var(--color-ink);
+  border-radius: 50%;
+  animation: basket-page-spin 700ms linear infinite;
+}
+
+.basket-page__retry {
+  min-width: 14rem;
+  min-height: 4.4rem;
+  padding: var(--space-3) var(--space-5);
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--color-ink);
+  color: var(--color-surface);
+  cursor: pointer;
+  font: inherit;
+  font-weight: var(--font-weight-medium);
+}
+
+@keyframes basket-page-spin {
+  to {
+    transform: rotate(360deg);
   }
 }
 
-@media (max-width: 1200px) {
-  .order-summary-container {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 20px;
-    margin-right: 0.6rem;
-    gap: 16px;
-
-    width: 358px;
-
-    .order-subtotals {
-      width: 318px;
-      .order-field {
-        width: 318px;
-      }
-    }
-
-    .order-promo-form {
-      width: 318px;
-      .promo-input {
-        width: 218px;
-      }
-      .promo-apply-button {
-        width: 88px;
-      }
-    }
-  }
-}
-@media (max-width: 862px) {
-  .basket-list-container {
-    padding: 14px;
-    gap: 16px;
-    width: 358px;
-
-    .basket-pr-container {
-      padding: 0px;
-      gap: 14px;
-      width: 330px;
-      height: 99px;
-
-      .pr-img-container {
-        width: 99px;
-        height: 99px;
-        img {
-          width: 85px;
-          height: 85px;
-        }
-      }
-      .pr-info-container {
-        padding: 0px;
-        gap: 16px;
-        width: 217px;
-        height: 99px;
-
-        .pr-text-container {
-          padding: 0px;
-          margin: 0 auto;
-          width: 100px;
-          height: 99px;
-
-          .pr-description-container {
-            padding: 0px;
-            gap: 1px;
-            margin: 0 auto;
-            width: 172px;
-            height: 50px;
-
-            .basket-pr-name {
-              font-size: 1.6rem;
-            }
-            .basket-pr-price {
-              font-size: 2rem;
-            }
-          }
-        }
-        .pr-actions-container {
-          width: 110px;
-          height: 99px;
-          .pr-quantity-btns {
-            width: 110px;
-            height: 31px;
-          }
-        }
-      }
-    }
+@media (max-width: 900px) {
+  .basket-page__content {
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
-@media (max-width: 746px) {
-  .basket-page-container {
-    .cart-order-data {
-      flex-direction: column;
-      .order-summary-containe,
-      .basket-list-container {
-        margin: 0 0.6rem;
-      }
-    }
+@media (max-width: $breakpoint-mobile) {
+  .basket-page {
+    padding-bottom: var(--space-16);
+  }
+
+  .basket-page .breadcrumbs {
+    margin-top: var(--space-5);
+  }
+
+  .basket-page h1 {
+    margin: var(--space-5) 0;
+    font-size: var(--font-size-2xl);
+  }
+
+  .basket-page__status {
+    min-height: 28rem;
+    font-size: var(--font-size-sm);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .basket-page__spinner {
+    animation-duration: 1400ms;
   }
 }

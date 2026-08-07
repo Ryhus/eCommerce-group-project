@@ -1,39 +1,37 @@
-import { useNavigate } from "react-router-dom";
-import Link from "../../common/link/link";
+import { PiShoppingCart } from "react-icons/pi";
+import { Link } from "react-router-dom";
+
 import { useCart } from "../../context/useCart";
 import { BasketProductCard } from "../BasketProductCard/BasketProductCard";
+
 import "./BasketProductList.scss";
 
 export function BasketProductList() {
   const { cart } = useCart();
-  const navigate = useNavigate();
-  const products = cart?.items ?? [];
+  const items = cart?.items ?? [];
+
+  if (!items.length) {
+    return (
+      <section aria-labelledby="empty-cart-title" className="basket-empty">
+        <PiShoppingCart aria-hidden="true" />
+        <h2 id="empty-cart-title">Your cart is empty</h2>
+        <p>Explore the catalog and add something for your next training session.</p>
+        <Link className="basket-empty__link" to="/catalog">
+          Browse products
+        </Link>
+      </section>
+    );
+  }
 
   return (
-    <div className="basket-list-container">
-      {products.length ? (
-        products.map((item) => (
-          <BasketProductCard
-            key={item.id}
-            productName={item.name}
-            quantity={item.quantity}
-            imgUrl={item.image ?? "/images/loading.gif"}
-            productId={item.productId}
-            productPrice={`Price: €${(item.unitPrice.amount / 100).toFixed(2)}`}
-            totalPrice={`Total: €${(item.lineTotal.amount / 100).toFixed(2)}`}
-          />
-        ))
-      ) : (
-        <Link
-          className="cart-to-catalog-link"
-          text="Empty cart? Click on me and buy our products 🥎"
-          onClick={(event) => {
-            event.preventDefault();
-            navigate("/catalog");
-          }}
-          href="/catalog"
-        />
-      )}
-    </div>
+    <section aria-label="Cart items" className="basket-list">
+      <ul>
+        {items.map((item) => (
+          <li key={item.id}>
+            <BasketProductCard item={item} />
+          </li>
+        ))}
+      </ul>
+    </section>
   );
 }

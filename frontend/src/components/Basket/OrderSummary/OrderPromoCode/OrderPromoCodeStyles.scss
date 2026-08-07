@@ -1,33 +1,67 @@
-.order-promo-form {
-  display: flex;
-  gap: 1rem;
+@use "../../../../assets/styles/tokens" as *;
 
-  svg {
-    width: 20px;
-    height: 20px;
-    color: #000000 40%;
+.order-promo {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.order-promo__form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 12rem;
+  gap: var(--space-3);
+}
+
+.order-promo__apply {
+  height: 4.8rem;
+  padding-inline: var(--space-5);
+}
+
+.order-promo__applied {
+  display: grid;
+  padding: var(--space-3) var(--space-4);
+  align-items: center;
+  grid-template-columns: 2.4rem minmax(0, 1fr) auto;
+  gap: var(--space-3);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-subtle);
+}
+
+.order-promo__applied > svg {
+  width: 2.4rem;
+  height: 2.4rem;
+  color: var(--color-text-muted);
+}
+
+.order-promo__applied div {
+  display: grid;
+  min-width: 0;
+  gap: var(--space-1);
+}
+
+.order-promo__applied strong {
+  font-size: var(--font-size-sm);
+}
+
+.order-promo__applied span {
+  overflow: hidden;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.order-promo__error {
+  color: var(--color-danger);
+  font-size: var(--font-size-xs);
+}
+
+@media (max-width: $breakpoint-mobile) {
+  .order-promo__form {
+    grid-template-columns: minmax(0, 1fr) 8.8rem;
   }
 
-  .promo-input {
-    display: flex;
-    flex-direction: row;
-    align-items: flex-start;
-    padding-left: 40px;
-    width: 326px;
-    height: 48px;
-    background: #f0f0f0;
-    border-radius: 62px;
-  }
-  .promo-apply-button {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    padding: 12px 16px;
-    gap: 12px;
-    width: 119px;
-    height: 48px;
-    background: #000000;
-    border-radius: 62px;
+  .order-promo__apply {
+    padding-inline: var(--space-4);
+    font-size: var(--font-size-sm);
   }
 }
