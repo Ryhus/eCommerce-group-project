@@ -118,6 +118,11 @@
 
   .product-card__info {
     padding: var(--space-4) 0 0;
+    flex: 0;
+  }
+
+  .product-card__prices {
+    margin-top: 0;
   }
 }
 
