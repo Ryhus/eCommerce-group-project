@@ -1,0 +1,56 @@
+@use "../../../assets/styles/tokens" as *;
+
+.activity-strip {
+  overflow: hidden;
+  background: var(--color-ink);
+  color: var(--color-surface);
+
+  ul {
+    display: flex;
+    width: min(calc(100% - (2 * var(--container-gutter))), var(--container-max-width));
+    min-height: 12.2rem;
+    margin-inline: auto;
+    padding: 0;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-8);
+    list-style: none;
+  }
+
+  li {
+    font-size: clamp(2.4rem, 3vw, 4rem);
+    font-weight: var(--font-weight-bold);
+    letter-spacing: -0.04em;
+    line-height: var(--line-height-tight);
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: $breakpoint-desktop) {
+  .activity-strip ul {
+    width: calc(100% - (2 * var(--container-gutter-tablet)));
+  }
+}
+
+@media (max-width: $breakpoint-tablet) {
+  .activity-strip ul {
+    width: calc(100% - (2 * var(--container-gutter-mobile)));
+    min-height: 10rem;
+  }
+}
+
+@media (max-width: $breakpoint-mobile) {
+  .activity-strip ul {
+    min-height: 14.6rem;
+    padding-block: var(--space-6);
+    justify-content: center;
+    flex-wrap: wrap;
+    column-gap: var(--space-8);
+    row-gap: var(--space-5);
+  }
+
+  .activity-strip li {
+    font-size: var(--font-size-xl);
+  }
+}
