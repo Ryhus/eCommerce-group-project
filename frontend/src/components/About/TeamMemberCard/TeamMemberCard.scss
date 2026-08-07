@@ -95,7 +95,7 @@
   }
 }
 
-@media (max-width: 90rem) {
+@media (max-width: 900px) {
   .team-member-card {
     display: grid;
     grid-template-columns: minmax(11rem, 36%) minmax(0, 1fr);
@@ -127,7 +127,7 @@
   }
 }
 
-@media (max-width: 34rem) {
+@media (max-width: 340px) {
   .team-member-card {
     display: flex;
   }
