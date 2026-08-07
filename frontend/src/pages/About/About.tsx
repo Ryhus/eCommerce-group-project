@@ -4,27 +4,29 @@ const team = [
   {
     name: "Yevhen Ryhus",
     isLead: true,
-    bio: "Our team lead and the driving force behind every decision. Kept the vision clear and spirits high.",
+    role: "Team Lead & Full-Stack Developer",
     github: "https://github.com/ryhus",
     image: "/photos/Ryhus.jpg",
     contributions:
-      "Organized workflow, reviewed all pull requests, ensured code quality, and resolved complex logic challenges.",
+      "Designed the frontend and backend architecture; led workflow and reviewed pull requests; solved complex integration challenges.",
   },
   {
     name: "Natalia Andreeva",
     isLead: false,
-    bio: "Always focused and consistent, Nataliia shaped much of the project’s UI logic and pixel-perfect layout.",
+    role: "Full-Stack Developer",
     github: "https://github.com/n-andr",
     image: "/photos/Nata.jpeg",
-    contributions: "Implemented page structure, routing logic, and ensured responsive design across views.",
+    contributions:
+      "Built application pages and routing; implemented responsive interfaces; connected frontend features with backend APIs.",
   },
   {
     name: "Olha Teplova",
     isLead: false,
-    bio: "Creative and detail-oriented. Olha added the finishing touches and kept accessibility and UX in focus.",
+    role: "Frontend Developer & QA",
     github: "https://github.com/ola793",
     image: "/photos/Olya.jpg",
-    contributions: "Finalized About Us page, styled components with SCSS, and worked on user flow improvements.",
+    contributions:
+      "Developed reusable UI components; improved accessibility and user experience; tested critical user flows and application quality.",
   },
 ];
 
@@ -38,7 +40,6 @@ const About = () => {
             <img src={member.image} alt={member.name} className="about__photo" />
             <h2 className="about__name">{member.name}</h2>
             {member.isLead && <p className="about__lead-tag">Team Lead</p>}
-            <p className="about__bio">{member.bio}</p>
             <p className="about__contributions">
               <strong>Contributions:</strong> {member.contributions}
             </p>
