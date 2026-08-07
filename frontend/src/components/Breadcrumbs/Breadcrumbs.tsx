@@ -10,22 +10,25 @@ export interface Crumb {
 
 interface BreadcrumbsProps {
   crumbs: Crumb[];
+  includeCatalog?: boolean;
 }
 
 const BreadcrumbSeparator = () => <PiCaretRight aria-hidden="true" className="breadcrumbs__separator" />;
 
-const Breadcrumbs = ({ crumbs }: BreadcrumbsProps) => {
+const Breadcrumbs = ({ crumbs, includeCatalog = true }: BreadcrumbsProps) => {
   return (
     <nav aria-label="Breadcrumb" className="breadcrumbs">
       <ol>
         <li>
           <Link to="/">Home</Link>
-          <BreadcrumbSeparator />
+          {(includeCatalog || crumbs.length > 0) && <BreadcrumbSeparator />}
         </li>
-        <li>
-          {crumbs.length ? <Link to="/catalog">Catalog</Link> : <span aria-current="page">Catalog</span>}
-          {crumbs.length > 0 && <BreadcrumbSeparator />}
-        </li>
+        {includeCatalog && (
+          <li>
+            {crumbs.length ? <Link to="/catalog">Catalog</Link> : <span aria-current="page">Catalog</span>}
+            {crumbs.length > 0 && <BreadcrumbSeparator />}
+          </li>
+        )}
         {crumbs.map((crumb, index) => {
           const isCurrentPage = index === crumbs.length - 1;
           return (
