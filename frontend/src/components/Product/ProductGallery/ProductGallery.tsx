@@ -37,9 +37,10 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
 
   const activeImage = galleryImages[activeIndex] ?? galleryImages[0];
   const imageLabel = `${productName}, image ${activeIndex + 1} of ${galleryImages.length}`;
+  const galleryClassName = `product-gallery${galleryImages.length === 1 ? " product-gallery--single" : ""}`;
 
   return (
-    <section aria-label={`${productName} images`} className="product-gallery">
+    <section aria-label={`${productName} images`} className={galleryClassName}>
       {galleryImages.length > 1 && (
         <div className="product-gallery__thumbnails">
           {galleryImages.map((image, index) => (

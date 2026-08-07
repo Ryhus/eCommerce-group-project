@@ -8,6 +8,10 @@
   gap: var(--space-4);
 }
 
+.product-gallery--single {
+  grid-template-columns: minmax(0, 1fr);
+}
+
 .product-gallery__thumbnails {
   display: grid;
   align-content: start;
@@ -104,6 +108,10 @@
   .product-gallery {
     grid-template-columns: 11rem minmax(0, 1fr);
     grid-template-rows: minmax(0, 44rem);
+  }
+
+  .product-gallery--single {
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 

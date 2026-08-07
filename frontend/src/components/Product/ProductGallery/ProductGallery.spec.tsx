@@ -14,8 +14,9 @@ describe("ProductGallery", () => {
   });
 
   it("opens an enlarged image and closes it with Escape", () => {
-    render(<ProductGallery images={["shirt.jpg"]} productName="Training shirt" />);
+    const { container } = render(<ProductGallery images={["shirt.jpg"]} productName="Training shirt" />);
 
+    expect(container.firstChild).toHaveClass("product-gallery--single");
     expect(screen.queryByRole("button", { name: /View Training shirt image/ })).not.toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "Expand Training shirt, image 1 of 1" }));
     expect(screen.getByRole("dialog", { name: "Training shirt enlarged image" })).toBeVisible();
