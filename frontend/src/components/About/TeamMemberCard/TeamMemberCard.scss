@@ -95,7 +95,7 @@
   }
 }
 
-@media (max-width: $breakpoint-mobile) {
+@media (max-width: 90rem) {
   .team-member-card {
     display: grid;
     grid-template-columns: minmax(11rem, 36%) minmax(0, 1fr);

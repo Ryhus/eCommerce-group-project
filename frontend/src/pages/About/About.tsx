@@ -1,4 +1,6 @@
 import { TeamMemberCard, type TeamMember } from "../../components/About/TeamMemberCard/TeamMemberCard";
+import Breadcrumbs from "../../components/Breadcrumbs/Breadcrumbs";
+import { PageContainer } from "../../components/common/PageContainer/PageContainer";
 
 import "./About.scss";
 
@@ -46,23 +48,23 @@ const team: TeamMember[] = [
 
 const About = () => {
   return (
-    <section className="about">
-      <h1 className="about__title">Meet Our Team 🤝</h1>
-      <ul className="about__team">
-        {team.map((member) => (
-          <li className="about__team-item" key={member.githubHandle}>
-            <TeamMemberCard {...member} />
-          </li>
-        ))}
-      </ul>
+    <PageContainer className="about-page">
+      <Breadcrumbs crumbs={[{ name: "About", path: "/about" }]} includeCatalog={false} />
+      <section aria-labelledby="about-title" className="about-page__main">
+        <header className="about-page__intro">
+          <h1 id="about-title">Meet our team</h1>
+          <p>The people behind Sport Gear and the work that brought the store to life.</p>
+        </header>
 
-      <div className="about__rss">
-        <a href="https://rs.school/" target="_blank" rel="noopener noreferrer">
-          <img src="/logos/rs-school-logo.svg" alt="RS School Logo" className="about__rss-logo" />
-        </a>
-        <p className="about__rss-text">Powered by RS School 🏫</p>
-      </div>
-    </section>
+        <ul className="about-page__team">
+          {team.map((member) => (
+            <li className="about-page__team-item" key={member.githubHandle}>
+              <TeamMemberCard {...member} />
+            </li>
+          ))}
+        </ul>
+      </section>
+    </PageContainer>
   );
 };
 
