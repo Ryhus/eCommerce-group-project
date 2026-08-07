@@ -1,0 +1,91 @@
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { MemoryRouter, Route, Routes } from "react-router-dom";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+
+import { fetchCategoryTrail } from "../../services/categoryService/categoryService";
+import { fetchProductById, fetchProductPage } from "../../services/productService/productService";
+import type { Product } from "../../services/productService/types";
+import ProductPage from "./Product";
+
+vi.mock("../../services/categoryService/categoryService", () => ({ fetchCategoryTrail: vi.fn() }));
+vi.mock("../../services/productService/productService", () => ({
+  fetchProductById: vi.fn(),
+  fetchProductPage: vi.fn(),
+}));
+vi.mock("../../components/Product/ProductGallery/ProductGallery", () => ({
+  ProductGallery: ({ productName }: { productName: string }) => <div>{productName} gallery</div>,
+}));
+vi.mock("../../components/Product/ProductPurchasePanel/ProductPurchasePanel", () => ({
+  ProductPurchasePanel: ({ product }: { product: Product }) => <h1>{product.name}</h1>,
+}));
+vi.mock("../../components/Product/RelatedProducts/RelatedProducts", () => ({
+  RelatedProducts: ({ products }: { products: Product[] }) => <div>{products.length} recommendations</div>,
+}));
+
+const product: Product = {
+  id: "product-id",
+  slug: "match-football",
+  name: "Match Football",
+  description: "Competition-ready football.",
+  imgUrls: ["football.jpg"],
+  categoryIds: ["football-id"],
+  currentPrice: 3499,
+  oldPrice: 4499,
+};
+
+function renderProduct() {
+  render(
+    <MemoryRouter initialEntries={["/product/product-id"]}>
+      <Routes>
+        <Route element={<ProductPage />} path="/product/:id" />
+      </Routes>
+    </MemoryRouter>
+  );
+}
+
+describe("ProductPage", () => {
+  beforeEach(() => {
+    vi.mocked(fetchProductById).mockReset();
+    vi.mocked(fetchCategoryTrail).mockReset();
+    vi.mocked(fetchProductPage).mockReset();
+    vi.mocked(fetchCategoryTrail).mockResolvedValue([
+      { id: "balls-id", name: "Balls", slug: "balls", parentId: null },
+      { id: "football-id", name: "Football", slug: "football", parentId: "balls-id" },
+    ]);
+    vi.mocked(fetchProductPage).mockResolvedValue({ items: [product], offset: 0, limit: 5, total: 1 });
+  });
+
+  it("loads the product, category breadcrumbs, and related category products", async () => {
+    vi.mocked(fetchProductById).mockResolvedValue(product);
+    renderProduct();
+
+    expect(screen.getByRole("status")).toHaveTextContent("Loading product");
+    expect(await screen.findByRole("heading", { name: "Match Football" })).toBeVisible();
+
+    await waitFor(() => expect(fetchCategoryTrail).toHaveBeenCalledWith("football-id"));
+    expect(fetchProductPage).toHaveBeenCalledWith({ categoryId: "balls-id", limit: 5 });
+    expect(await screen.findByText("1 recommendations")).toBeVisible();
+    expect(screen.getByRole("navigation", { name: "Breadcrumb" })).toHaveTextContent(
+      "HomeCatalogBallsFootballMatch Football"
+    );
+  });
+
+  it("shows the not-found page for an unknown product", async () => {
+    vi.mocked(fetchProductById).mockResolvedValue(null);
+    renderProduct();
+
+    expect(await screen.findByRole("heading", { name: "404" })).toBeVisible();
+    expect(fetchCategoryTrail).not.toHaveBeenCalled();
+  });
+
+  it("lets the user retry a temporary product failure", async () => {
+    vi.mocked(fetchProductById).mockRejectedValueOnce(new Error("Network unavailable")).mockResolvedValueOnce(product);
+    renderProduct();
+
+    expect(await screen.findByRole("alert")).toHaveTextContent("Network unavailable");
+    fireEvent.click(screen.getByRole("button", { name: "Try again" }));
+
+    expect(await screen.findByRole("heading", { name: "Match Football" })).toBeVisible();
+    expect(fetchProductById).toHaveBeenCalledTimes(2);
+  });
+});

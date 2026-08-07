@@ -1,153 +1,130 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
-import { fetchProductById } from "../../services/productService/productService";
+
+import Breadcrumbs, { type Crumb } from "../../components/Breadcrumbs/Breadcrumbs";
+import { PageContainer } from "../../components/common/PageContainer/PageContainer";
+import { ProductGallery } from "../../components/Product/ProductGallery/ProductGallery";
+import { ProductPurchasePanel } from "../../components/Product/ProductPurchasePanel/ProductPurchasePanel";
+import { RelatedProducts } from "../../components/Product/RelatedProducts/RelatedProducts";
+import { fetchCategoryTrail } from "../../services/categoryService/categoryService";
+import type { Category } from "../../services/categoryService/types";
+import { fetchProductById, fetchProductPage } from "../../services/productService/productService";
 import type { Product } from "../../services/productService/types";
-import Button from "../../components/common/button/button";
+import NotFoundPage from "../NotFound/NotFound";
+
 import "./Product.scss";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, Pagination } from "swiper/modules";
-import "swiper/css";
-import "swiper/css/navigation";
-import "swiper/css/pagination";
-import { useCart } from "../../components/context/useCart";
-import Message from "../../components/common/message/Message";
+
+function categoryCrumbs(categories: Category[]): Crumb[] {
+  const segments: string[] = [];
+  return categories.map((category) => {
+    segments.push(category.slug);
+    return { name: category.name, path: `/catalog/${segments.join("/")}` };
+  });
+}
 
 export default function ProductPage() {
-  const [product, setProduct] = useState<Product | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [activeImageIndex, setActiveImageIndex] = useState(0);
   const { id } = useParams<{ id: string }>();
-  const [productInCart, setProductInCart] = useState(false);
-  const [showMessage, setShowMessage] = useState(false);
-  const { cart, addToCart, removeFromCart } = useCart();
+  const [product, setProduct] = useState<Product | null>(null);
+  const [categoryTrail, setCategoryTrail] = useState<Category[]>([]);
+  const [recommendations, setRecommendations] = useState<Product[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [notFound, setNotFound] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [reloadKey, setReloadKey] = useState(0);
 
   useEffect(() => {
-    fetchProductById(id!)
-      .then((data) => {
-        if (data) setProduct(data);
-        else setError("Product not found.");
-      })
-      .catch((err) => setError(err.message));
-  }, [id]);
+    let cancelled = false;
 
-  useEffect(() => {
-    if (cart && id) {
-      setProductInCart(cart.items.some((item) => item.productId === id));
-    }
-  }, [cart, id]);
+    const loadProduct = async () => {
+      setProduct(null);
+      setCategoryTrail([]);
+      setRecommendations([]);
+      setIsLoading(true);
+      setNotFound(false);
+      setError(null);
 
-  if (error) return <div>{error}</div>;
-  if (!product) return <div>Loading product...</div>;
+      if (!id) {
+        setNotFound(true);
+        setIsLoading(false);
+        return;
+      }
 
-  const hasDiscount = product.oldPrice > product.currentPrice;
-  const discountPercentage = hasDiscount
-    ? Math.round(((product.oldPrice - product.currentPrice) / product.oldPrice) * 100)
-    : 0;
+      let nextProduct: Product | null;
+      try {
+        nextProduct = await fetchProductById(id);
+      } catch (loadError) {
+        if (!cancelled) {
+          setError(loadError instanceof Error ? loadError.message : "Unable to load this product.");
+          setIsLoading(false);
+        }
+        return;
+      }
+
+      if (cancelled) return;
+      if (!nextProduct) {
+        setNotFound(true);
+        setIsLoading(false);
+        return;
+      }
+
+      setProduct(nextProduct);
+      setIsLoading(false);
+
+      const categoryId = nextProduct.categoryIds[0];
+      if (!categoryId) return;
+
+      try {
+        const nextTrail = await fetchCategoryTrail(categoryId);
+        const recommendationCategoryId = nextTrail[0]?.id ?? categoryId;
+        const relatedPage = await fetchProductPage({ categoryId: recommendationCategoryId, limit: 5 });
+        if (!cancelled) {
+          setCategoryTrail(nextTrail);
+          setRecommendations(relatedPage.items);
+        }
+      } catch {
+        // Product context is supplementary; the product remains usable if it is unavailable.
+      }
+    };
+
+    void loadProduct();
+    return () => {
+      cancelled = true;
+    };
+  }, [id, reloadKey]);
+
+  const breadcrumbs = useMemo<Crumb[]>(() => {
+    if (!product) return [];
+    return [...categoryCrumbs(categoryTrail), { name: product.name, path: `/product/${product.id}` }];
+  }, [categoryTrail, product]);
+
+  if (notFound) return <NotFoundPage />;
 
   return (
-    <div className="product-page">
-      <div className="product-container">
-        <div className="product-page__slider">
-          {product.imgUrls.length > 1 ? (
-            <Swiper
-              modules={[Navigation, Pagination]}
-              spaceBetween={10}
-              slidesPerView={1}
-              navigation
-              pagination={{ clickable: true }}
-              loop={true}
-            >
-              {product.imgUrls.map((url, index) => (
-                <SwiperSlide key={index}>
-                  <img
-                    src={url}
-                    alt={`${product.name} ${index + 1}`}
-                    className="slider-image"
-                    onClick={() => {
-                      setActiveImageIndex(index);
-                      setIsModalOpen(true);
-                    }}
-                  />
-                </SwiperSlide>
-              ))}
-            </Swiper>
-          ) : (
-            <img
-              src={product.imgUrls[0]}
-              alt={product.name}
-              onClick={() => {
-                setActiveImageIndex(0);
-                setIsModalOpen(true);
-              }}
-            />
-          )}
+    <PageContainer className="product-page">
+      {isLoading ? (
+        <div aria-live="polite" className="product-page__status" role="status">
+          <span className="product-page__spinner" />
+          Loading product…
         </div>
-
-        <div className="product-details">
-          <h1>{product.name}</h1>
-          <p>{product.description ?? "No description available."}</p>
-          <div className="price">
-            <span className="current-price">{(product.currentPrice / 100).toFixed(2)}€</span>
-            {hasDiscount && (
-              <>
-                <span className="old-price">{(product.oldPrice / 100).toFixed(2)}€</span>
-                <span className="discount-badge">-{discountPercentage}%</span>
-              </>
-            )}
-          </div>
-          <div className="add-to-cart">
-            <Button
-              disabled={productInCart}
-              text="Add to Cart"
-              onClick={() => {
-                if (id) {
-                  addToCart(id);
-                }
-                return cart;
-              }}
-            />
-            <Button
-              disabled={!productInCart}
-              text="Remove"
-              onClick={() => {
-                if (id) {
-                  removeFromCart(id);
-                  setShowMessage(true);
-                }
-                return cart;
-              }}
-            />
-          </div>
+      ) : error ? (
+        <div className="product-page__status" role="alert">
+          <p>We couldn't load this product. {error}</p>
+          <button className="product-page__retry" onClick={() => setReloadKey((key) => key + 1)} type="button">
+            Try again
+          </button>
         </div>
-        {showMessage && (
-          <Message text="Product has been removed from the cart." onClose={() => setShowMessage(false)} />
-        )}
-      </div>
-
-      {isModalOpen && (
-        <div className="modal-overlay" onClick={() => setIsModalOpen(false)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <button className="modal-close" onClick={() => setIsModalOpen(false)}>
-              ✕
-            </button>
-            <Swiper
-              modules={[Navigation, Pagination]}
-              navigation
-              pagination={{ clickable: true }}
-              initialSlide={activeImageIndex}
-              loop={true}
-              className="modal-slider"
-            >
-              {product.imgUrls.map((url, index) => (
-                <SwiperSlide key={index}>
-                  <img src={url} alt={`Enlarged ${index + 1}`} className="modal-image" />
-                </SwiperSlide>
-              ))}
-            </Swiper>
-          </div>
-        </div>
-      )}
-    </div>
+      ) : product ? (
+        <>
+          <Breadcrumbs crumbs={breadcrumbs} />
+          <main className="product-page__main">
+            <div className="product-page__hero">
+              <ProductGallery images={product.imgUrls} productName={product.name} />
+              <ProductPurchasePanel product={product} />
+            </div>
+            <RelatedProducts currentProductId={product.id} products={recommendations} />
+          </main>
+        </>
+      ) : null}
+    </PageContainer>
   );
 }

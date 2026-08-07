@@ -33,6 +33,7 @@ function product(index: number): Product {
     name: `Product ${index}`,
     description: "Catalog product",
     imgUrls: [`product-${index}.jpg`],
+    categoryIds: ["category-id"],
     currentPrice: 1000 + index,
     oldPrice: 1200 + index,
   };

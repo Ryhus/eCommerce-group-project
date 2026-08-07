@@ -1,0 +1,101 @@
+@use "../../../assets/styles/tokens" as *;
+
+.product-purchase-panel {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+}
+
+.product-purchase-panel h1 {
+  margin: 0;
+  color: var(--color-ink);
+  font-family: var(--font-family-heading);
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-heading);
+}
+
+.product-purchase-panel__prices {
+  display: flex;
+  margin-top: var(--space-5);
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.product-purchase-panel__current-price,
+.product-purchase-panel__old-price {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-heading);
+}
+
+.product-purchase-panel__old-price {
+  color: var(--color-text-subtle);
+  text-decoration: line-through;
+}
+
+.product-purchase-panel__discount {
+  padding: 0.6rem var(--space-4);
+  border-radius: var(--radius-pill);
+  background: rgb(255 51 51 / 10%);
+  color: var(--color-danger);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+.product-purchase-panel__description {
+  margin-top: var(--space-5);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-md);
+  line-height: var(--line-height-relaxed);
+}
+
+.product-purchase-panel__actions {
+  display: flex;
+  margin-top: var(--space-6);
+  padding-top: var(--space-6);
+  align-items: stretch;
+  gap: var(--space-5);
+  border-top: var(--border-subtle);
+}
+
+.product-purchase-panel__add {
+  min-height: 5.2rem;
+  flex: 1;
+}
+
+@media (max-width: $breakpoint-mobile) {
+  .product-purchase-panel h1 {
+    font-size: var(--font-size-xl);
+  }
+
+  .product-purchase-panel__prices {
+    margin-top: var(--space-3);
+  }
+
+  .product-purchase-panel__current-price,
+  .product-purchase-panel__old-price {
+    font-size: var(--font-size-xl);
+  }
+
+  .product-purchase-panel__discount {
+    padding: var(--space-1) var(--space-3);
+    font-size: var(--font-size-xs);
+  }
+
+  .product-purchase-panel__description {
+    margin-top: var(--space-3);
+    font-size: var(--font-size-sm);
+  }
+
+  .product-purchase-panel__actions {
+    margin-top: var(--space-4);
+    padding-top: var(--space-4);
+    gap: var(--space-3);
+  }
+
+  .product-purchase-panel__add {
+    min-height: 4.4rem;
+  }
+}

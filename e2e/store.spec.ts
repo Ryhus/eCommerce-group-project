@@ -35,3 +35,22 @@ test("registers, shops with a promo code, opens profile and logs out", async ({ 
   await expect(page).toHaveURL(/\/login$/);
   await expect(page.getByRole("heading", { name: "Login" })).toBeVisible();
 });
+
+test("opens a product and adds the selected quantity", async ({ page }) => {
+  await page.goto("/catalog");
+  await page
+    .getByRole("link", { name: /^View / })
+    .first()
+    .click();
+
+  await expect(page).toHaveURL(/\/product\/[0-9a-f-]+$/);
+  await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+
+  await page.getByRole("button", { name: "Increase quantity" }).click();
+  await page.getByRole("button", { name: "Increase quantity" }).click();
+  await expect(page.getByRole("status", { name: "Quantity" })).toHaveText("3");
+
+  await page.getByRole("button", { name: "Add to Cart" }).click();
+  await expect(page.getByText(/3 × .+ added to your cart\./)).toBeVisible();
+  await expect(page.getByRole("link", { name: "Shopping cart, 3 items" })).toBeVisible();
+});
