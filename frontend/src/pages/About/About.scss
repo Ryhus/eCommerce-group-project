@@ -15,7 +15,14 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
+    margin: 0;
+    padding: 0;
     gap: 32px;
+    list-style: none;
+  }
+
+  &__team-item {
+    width: 300px;
   }
 
   &__card {
