@@ -51,12 +51,15 @@ describe("CategoryPage", () => {
     vi.mocked(fetchChildCategories).mockReset();
     vi.mocked(fetchProductPage).mockReset();
     vi.mocked(fetchChildCategories).mockResolvedValue([{ id: "balls", name: "Balls", slug: "balls", parentId: null }]);
-    vi.mocked(fetchProductPage).mockImplementation(async ({ offset = 0, limit = 6 }) => ({
-      items: Array.from({ length: offset ? 2 : 6 }, (_, index) => product(offset + index + 1)),
-      offset,
-      limit,
-      total: 8,
-    }));
+    vi.mocked(fetchProductPage).mockImplementation(async (query = {}) => {
+      const { offset = 0, limit = 6 } = query;
+      return {
+        items: Array.from({ length: offset ? 2 : 6 }, (_, index) => product(offset + index + 1)),
+        offset,
+        limit,
+        total: 8,
+      };
+    });
   });
 
   it("loads server pages and reports the visible product range", async () => {
