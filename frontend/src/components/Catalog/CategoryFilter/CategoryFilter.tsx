@@ -1,3 +1,4 @@
+import { useId } from "react";
 import { PiCaretRight, PiSlidersHorizontal } from "react-icons/pi";
 import { Link } from "react-router-dom";
 
@@ -17,10 +18,12 @@ type CategoryFilterProps = {
 };
 
 export function CategoryFilter({ className = "", items, onNavigate }: CategoryFilterProps) {
+  const titleId = useId();
+
   return (
-    <section aria-labelledby="category-filter-title" className={`category-filter ${className}`.trim()}>
+    <section aria-labelledby={titleId} className={`category-filter ${className}`.trim()}>
       <div className="category-filter__header">
-        <h2 id="category-filter-title">Categories</h2>
+        <h2 id={titleId}>Categories</h2>
         <PiSlidersHorizontal aria-hidden="true" />
       </div>
 
