@@ -1,87 +1,87 @@
-import React from "react";
-import { useEffect, useState } from "react";
-import Paragraph from "../common/paragraph/paragraph";
+import { Link } from "react-router-dom";
+
 import Button from "../common/button/button";
 import { useCart } from "../context/useCart";
+
 import "./productCard.scss";
+
+export type ProductCardVariant = "catalog" | "showcase";
 
 type ProductCardProps = {
   id: string;
   name: string;
   description?: string;
-  onClick: () => void;
   imgUrl: string;
-  currentPrice: number; //in cents
-  oldPrice: number; //in cents
+  currentPrice: number;
+  oldPrice: number;
   altText?: string;
   className?: string;
+  variant?: ProductCardVariant;
 };
 
-const ProductCard: React.FC<ProductCardProps> = ({
+const moneyFormatter = new Intl.NumberFormat("en-IE", {
+  style: "currency",
+  currency: "EUR",
+});
+
+const ProductCard = ({
   id,
   name,
   description = "",
-  onClick,
   imgUrl,
   currentPrice,
   oldPrice,
   altText = name,
   className = "",
-}) => {
-  let discount: number = 0;
-  if (oldPrice > currentPrice) {
-    discount = Math.round(((oldPrice - currentPrice) / oldPrice) * 100);
-  }
-  let shortDescription = description;
-  if (description && description.length > 50) {
-    shortDescription = description.slice(0, 47).concat("...");
-  }
-  if (imgUrl === "") imgUrl = "";
-
-  const [productInCart, setProductInCart] = useState(false);
+  variant = "catalog",
+}: ProductCardProps) => {
   const { cart, addToCart } = useCart();
-
-  useEffect(() => {
-    if (cart && id) {
-      setProductInCart(cart.items.some((item) => item.productId === id));
-    }
-  }, [cart, id]);
+  const productInCart = cart?.items.some((item) => item.productId === id) ?? false;
+  const discount = oldPrice > currentPrice ? Math.round(((oldPrice - currentPrice) / oldPrice) * 100) : 0;
+  const shortDescription = description.length > 50 ? `${description.slice(0, 47)}...` : description;
+  const cardClassName = `product-card product-card--${variant} ${className}`.trim();
 
   return (
-    <div className={`product-card ${className}`} id={id} onClick={onClick}>
-      <div className="product-card__img-wrapper">
-        <img
-          src={imgUrl || "/images/loading.gif"}
-          alt={altText || name}
-          className="product-card__img"
-          onError={(e) => {
-            e.currentTarget.src = "/images/loading.gif";
-          }}
-        />
-      </div>
-      <div className="product-card__info">
-        <Paragraph text={name} className="product-card__name" />
-        {description && <Paragraph text={shortDescription} className="product-card__description" />}
-        <div className="product-card__prices">
-          <Paragraph text={`${(currentPrice / 100).toFixed(2)}€`} className="product-card__current-price" />
-          {oldPrice > currentPrice && discount && (
-            <>
-              <Paragraph text={`${(oldPrice / 100).toFixed(2)}€`} className="product-card__old-price" />
-              <div className="product-card__discount">-{discount}%</div>
-            </>
-          )}
+    <article className={cardClassName}>
+      <Link aria-label={`View ${name}`} className="product-card__link" to={`/product/${id}`}>
+        <div className="product-card__img-wrapper">
+          <img
+            alt={altText}
+            className="product-card__img"
+            loading="lazy"
+            onError={(event) => {
+              event.currentTarget.src = "/images/loading.gif";
+            }}
+            src={imgUrl || "/images/loading.gif"}
+          />
         </div>
-      </div>
-      <Button
-        text={productInCart ? "In Cart" : "Add to Cart"}
-        disabled={productInCart}
-        className="btn-medium product-card__add-to-cart"
-        onClick={(e) => {
-          e.stopPropagation();
-          if (!productInCart) addToCart(id);
-        }}
-      />
-    </div>
+
+        <div className="product-card__info">
+          <h3 className="product-card__name">{name}</h3>
+          {description && variant === "catalog" && <p className="product-card__description">{shortDescription}</p>}
+          <div className="product-card__prices">
+            <span className="product-card__current-price">{moneyFormatter.format(currentPrice / 100)}</span>
+            {discount > 0 && (
+              <>
+                <span className="product-card__old-price">{moneyFormatter.format(oldPrice / 100)}</span>
+                <span className="product-card__discount">-{discount}%</span>
+              </>
+            )}
+          </div>
+        </div>
+      </Link>
+
+      {variant === "catalog" && (
+        <Button
+          className="btn-medium product-card__add-to-cart"
+          disabled={productInCart}
+          onClick={() => {
+            if (!productInCart) void addToCart(id);
+          }}
+          text={productInCart ? "In Cart" : "Add to Cart"}
+        />
+      )}
+    </article>
   );
 };
 
