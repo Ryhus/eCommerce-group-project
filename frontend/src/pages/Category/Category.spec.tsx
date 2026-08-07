@@ -1,5 +1,5 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { createMemoryRouter, RouterProvider } from "react-router-dom";
+import { MemoryRouter, Route, Routes, useLocation } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { fetchChildCategories } from "../../services/categoryService/categoryService";
@@ -38,12 +38,27 @@ function product(index: number): Product {
   };
 }
 
+function LocationProbe() {
+  const location = useLocation();
+  return <output aria-label="Location search">{location.search}</output>;
+}
+
 function renderCatalog(initialEntry = "/catalog") {
-  const router = createMemoryRouter([{ path: "/catalog/*", element: <CategoryPage /> }], {
-    initialEntries: [initialEntry],
-  });
-  render(<RouterProvider router={router} />);
-  return router;
+  render(
+    <MemoryRouter initialEntries={[initialEntry]}>
+      <Routes>
+        <Route
+          element={
+            <>
+              <CategoryPage />
+              <LocationProbe />
+            </>
+          }
+          path="/catalog/*"
+        />
+      </Routes>
+    </MemoryRouter>
+  );
 }
 
 describe("CategoryPage", () => {
@@ -75,14 +90,16 @@ describe("CategoryPage", () => {
   });
 
   it("stores sorting in the URL and exposes categories in the mobile drawer", async () => {
-    const router = renderCatalog();
+    renderCatalog();
 
     await screen.findByText("Showing 1-6 of 8 products");
     fireEvent.change(screen.getByRole("combobox", { name: "Sort products" }), {
       target: { value: "price desc" },
     });
 
-    await waitFor(() => expect(router.state.location.search).toContain("sort=price+desc"));
+    await waitFor(() =>
+      expect(screen.getByRole("status", { name: "Location search" })).toHaveTextContent("sort=price+desc")
+    );
     expect(fetchProductPage).toHaveBeenLastCalledWith(expect.objectContaining({ sort: "price desc" }));
 
     fireEvent.click(screen.getByRole("button", { name: "Open catalog options" }));
