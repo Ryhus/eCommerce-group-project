@@ -1,5 +1,6 @@
-import React from "react";
+import { PiCaretRight } from "react-icons/pi";
 import { Link } from "react-router-dom";
+
 import "./Breadcrumbs.scss";
 
 export interface Crumb {
@@ -11,21 +12,37 @@ interface BreadcrumbsProps {
   crumbs: Crumb[];
 }
 
-const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ crumbs }) => {
-  return (
-    <div className="breadcrumbs">
-      <Link to="/">Home</Link>
-      {/* use '>' as a divider */}
-      <span className="breadcrumb-separatour">&gt;</span>
-      <Link to="/catalog">Catalog</Link>
+const BreadcrumbSeparator = () => <PiCaretRight aria-hidden="true" className="breadcrumbs__separator" />;
 
-      {crumbs.map((crumb, idx) => (
-        <React.Fragment key={idx}>
-          <span className="breadcrumb-separatour">&gt;</span>
-          <Link to={crumb.path}>{crumb.name}</Link>
-        </React.Fragment>
-      ))}
-    </div>
+const Breadcrumbs = ({ crumbs }: BreadcrumbsProps) => {
+  return (
+    <nav aria-label="Breadcrumb" className="breadcrumbs">
+      <ol>
+        <li>
+          <Link to="/">Home</Link>
+          <BreadcrumbSeparator />
+        </li>
+        <li>
+          {crumbs.length ? <Link to="/catalog">Catalog</Link> : <span aria-current="page">Catalog</span>}
+          {crumbs.length > 0 && <BreadcrumbSeparator />}
+        </li>
+        {crumbs.map((crumb, index) => {
+          const isCurrentPage = index === crumbs.length - 1;
+          return (
+            <li key={crumb.path}>
+              {isCurrentPage ? (
+                <span aria-current="page">{crumb.name}</span>
+              ) : (
+                <>
+                  <Link to={crumb.path}>{crumb.name}</Link>
+                  <BreadcrumbSeparator />
+                </>
+              )}
+            </li>
+          );
+        })}
+      </ol>
+    </nav>
   );
 };
 
