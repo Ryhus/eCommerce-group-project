@@ -1,0 +1,63 @@
+@use "../../../assets/styles/tokens" as *;
+
+.quantity-selector {
+  display: grid;
+  min-width: 17rem;
+  min-height: 5.2rem;
+  padding: 0 var(--space-4);
+  align-items: center;
+  grid-template-columns: 4rem 1fr 4rem;
+  border-radius: var(--radius-pill);
+  background: var(--color-surface-subtle);
+}
+
+.quantity-selector button {
+  display: grid;
+  width: 4rem;
+  height: 4rem;
+  padding: 0;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--color-ink);
+  cursor: pointer;
+  font-size: var(--font-size-xl);
+  transition: background var(--transition-fast);
+
+  &:hover:not(:disabled) {
+    background: rgb(0 0 0 / 7%);
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: var(--shadow-focus);
+  }
+
+  &:disabled {
+    color: var(--color-text-subtle);
+    cursor: not-allowed;
+  }
+}
+
+.quantity-selector output {
+  color: var(--color-ink);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-medium);
+  text-align: center;
+}
+
+@media (max-width: $breakpoint-mobile) {
+  .quantity-selector {
+    min-width: 11rem;
+    min-height: 4.4rem;
+    padding: 0 var(--space-2);
+    grid-template-columns: 3.2rem 1fr 3.2rem;
+  }
+
+  .quantity-selector button {
+    width: 3.2rem;
+    height: 3.2rem;
+    font-size: var(--font-size-lg);
+  }
+}
