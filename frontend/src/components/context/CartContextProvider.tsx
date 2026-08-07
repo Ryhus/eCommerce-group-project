@@ -21,7 +21,7 @@ export function CartDataProvider({ children }: { children: React.ReactNode }) {
     void refreshCart();
   }, [refreshCart]);
 
-  const addToCart = async (productId: string) => setCart(await addCartItem(productId));
+  const addToCart = async (productId: string, quantity = 1) => setCart(await addCartItem(productId, quantity));
 
   const removeFromCart = async (productId: string, quantity?: number) => {
     if (!cart) throw new Error("Cart not initialized");
