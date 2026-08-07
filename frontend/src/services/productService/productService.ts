@@ -1,5 +1,5 @@
 import { apiClient } from "../apiClient";
-import type { Product } from "./types";
+import type { Product, ProductPage } from "./types";
 
 interface ProductDto {
   id: string;
@@ -53,13 +53,13 @@ export async function fetchProductById(productId: string): Promise<Product | nul
   }
 }
 
-export async function fetchProducts({
+export async function fetchProductPage({
   categoryId,
   sort,
   search,
   offset = 0,
   limit = 20,
-}: ProductListQuery = {}): Promise<Product[]> {
+}: ProductListQuery = {}): Promise<ProductPage> {
   const normalizedSearch = search?.trim();
   const response = await apiClient.get<ProductPageDto>("/catalog/products", {
     params: {
@@ -70,5 +70,14 @@ export async function fetchProducts({
       limit,
     },
   });
-  return response.data.items.map(mapProduct);
+  return {
+    items: response.data.items.map(mapProduct),
+    offset: response.data.offset,
+    limit: response.data.limit,
+    total: response.data.total,
+  };
+}
+
+export async function fetchProducts(query: ProductListQuery = {}): Promise<Product[]> {
+  return (await fetchProductPage(query)).items;
 }

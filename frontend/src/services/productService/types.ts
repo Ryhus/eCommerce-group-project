@@ -7,3 +7,10 @@ export interface Product {
   currentPrice: number; //in centes
   oldPrice: number; //in centes
 }
+
+export interface ProductPage {
+  items: Product[];
+  offset: number;
+  limit: number;
+  total: number;
+}
