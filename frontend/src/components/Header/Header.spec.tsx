@@ -16,10 +16,15 @@ const authValue: AuthContextValue = {
 
 const cartValue: CartContextType = {
   cart: null,
+  cartError: null,
+  isCartLoading: false,
   addToCart: vi.fn(),
   removeFromCart: vi.fn(),
+  updateCartQuantity: vi.fn(),
+  removeCartItem: vi.fn(),
   calculateTotalQuantity: () => 0,
   applyPromoCode: vi.fn(),
+  removePromoCode: vi.fn(),
   clearCart: vi.fn(),
   refreshCart: vi.fn(),
   setNewCart: vi.fn(),
