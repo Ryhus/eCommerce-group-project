@@ -17,17 +17,18 @@ test("registers, shops with a promo code, opens profile and logs out", async ({ 
   await page.locator('input[type="checkbox"]').check();
   await page.locator(".register-btn").click();
 
-  await expect(page.getByRole("button", { name: "Profile" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Open profile" })).toBeVisible();
   await page.getByRole("link", { name: "Catalog" }).click();
   await page.getByRole("button", { name: "Add to Cart" }).first().click();
-  await expect(page.locator(".nav-basket")).toContainText("(1)");
 
-  await page.locator(".nav-basket").click();
+  const cartLink = page.getByRole("link", { name: "Shopping cart, 1 items" });
+  await expect(cartLink).toBeVisible();
+  await cartLink.click();
   await page.getByPlaceholder("Add promo code").fill("WELCOME10");
   await page.getByRole("button", { name: "Apply" }).click();
   await expect(page.locator(".discount-field .order-field-price")).not.toHaveText("€0.00");
 
-  await page.getByRole("button", { name: "Profile" }).click();
+  await page.getByRole("link", { name: "Open profile" }).click();
   await expect(page.getByText(email)).toBeVisible();
 
   await page.getByRole("button", { name: "Log out" }).click();

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Button from "../common/button/button";
 import { H2 } from "../common/headings/H2";
-import { HiPencilAlt, HiOutlineKey } from "react-icons/hi";
+import { HiOutlineKey, HiOutlineLogout, HiPencilAlt } from "react-icons/hi";
 import { FaEyeSlash, FaEye } from "react-icons/fa";
 import Paragraph from "../common/paragraph/paragraph";
 import type { Address } from "../../services/customerService/types";
@@ -28,6 +28,7 @@ interface UserInfoProps {
   defaultBillingAddressId?: string | null;
   shippingAddressIds?: string[] | null;
   billingAddressIds?: string[] | null;
+  onLogout: () => Promise<void>;
 }
 
 export function UserInfo({
@@ -40,6 +41,7 @@ export function UserInfo({
   billingAddressIds = [],
   defaultShippingAddressId,
   defaultBillingAddressId,
+  onLogout,
 }: UserInfoProps) {
   const actionData = useActionData() as { message: string; statusCode: number } | undefined;
   const serverError = actionData?.message;
@@ -132,6 +134,13 @@ export function UserInfo({
               variant="light"
               className="edit-info-btn"
               onClick={() => setChangePassword(!isChangePassword)}
+            ></Button>
+            <Button
+              text="Log out"
+              icon={<HiOutlineLogout />}
+              variant="light"
+              className="edit-info-btn"
+              onClick={() => void onLogout()}
             ></Button>
           </div>
         </div>
