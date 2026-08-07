@@ -1,0 +1,55 @@
+.filter-drawer__backdrop {
+  position: fixed;
+  z-index: 1000;
+  display: flex;
+  inset: 0;
+  background: rgb(0 0 0 / 45%);
+  justify-content: flex-end;
+}
+
+.filter-drawer {
+  width: min(100%, 38rem);
+  height: 100%;
+  padding: var(--space-5);
+  overflow-y: auto;
+  background: var(--color-surface);
+  box-shadow: -1rem 0 3rem rgb(0 0 0 / 15%);
+}
+
+.filter-drawer__header {
+  display: flex;
+  padding-bottom: var(--space-5);
+  border-bottom: var(--border-subtle);
+  align-items: center;
+  justify-content: space-between;
+
+  h2 {
+    margin: 0;
+    font-size: var(--font-size-xl);
+  }
+
+  button {
+    display: inline-flex;
+    width: 4rem;
+    height: 4rem;
+    padding: 0;
+    border: 0;
+    border-radius: var(--radius-pill);
+    background: var(--color-surface-subtle);
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+
+  svg {
+    width: 2.2rem;
+    height: 2.2rem;
+  }
+}
+
+.filter-drawer__content {
+  display: flex;
+  padding-top: var(--space-5);
+  flex-direction: column;
+  gap: var(--space-5);
+}
