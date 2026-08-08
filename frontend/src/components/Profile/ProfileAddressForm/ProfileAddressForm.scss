@@ -1,0 +1,97 @@
+.profile-address-form {
+  display: grid;
+  padding: var(--space-5);
+  gap: var(--space-4);
+}
+
+.profile-address-form__location-row {
+  display: grid;
+  gap: var(--space-4);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.profile-address-form .input {
+  min-height: 5.2rem;
+  border-color: var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+}
+
+.profile-address-form select.input {
+  appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg fill='gray' height='16' viewBox='0 0 20 20' width='16' xmlns='http://www.w3.org/2000/svg'><path d='M5.293 7.293l4.707 4.707 4.707-4.707-1.414-1.414L10 9.586 6.707 5.879z'/></svg>");
+  background-position: right var(--space-4) center;
+  background-repeat: no-repeat;
+  background-size: 2rem;
+}
+
+.profile-address-form__defaults {
+  display: grid;
+  padding: 0;
+  gap: var(--space-2);
+  border: 0;
+}
+
+.profile-address-form__defaults legend {
+  margin-bottom: var(--space-2);
+  color: var(--color-ink);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+.profile-address-form__defaults label {
+  display: flex;
+  min-height: 4.6rem;
+  padding: var(--space-3) var(--space-4);
+  align-items: center;
+  gap: var(--space-3);
+  border: var(--border-subtle);
+  border-radius: var(--radius-sm);
+  color: var(--color-ink);
+  cursor: pointer;
+  font-size: var(--font-size-sm);
+}
+
+.profile-address-form__defaults input {
+  width: 2rem;
+  height: 2rem;
+  flex: 0 0 auto;
+  accent-color: var(--color-ink);
+}
+
+.profile-address-form__server-error {
+  min-height: 4.2rem;
+}
+
+.profile-address-form__server-error p {
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid rgb(255 51 51 / 32%);
+  border-radius: var(--radius-sm);
+  background: rgb(255 51 51 / 7%);
+  color: var(--color-danger);
+  font-size: var(--font-size-xs);
+  line-height: var(--line-height-body);
+  text-align: center;
+}
+
+.profile-address-form__actions {
+  display: grid;
+  gap: var(--space-3);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.profile-address-form__actions .btn {
+  max-width: none;
+  border-radius: var(--radius-sm);
+}
+
+@media (max-width: 480px) {
+  .profile-address-form {
+    padding: var(--space-4);
+  }
+
+  .profile-address-form__location-row,
+  .profile-address-form__actions {
+    grid-template-columns: 1fr;
+  }
+}
