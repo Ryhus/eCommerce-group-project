@@ -1,6 +1,7 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+import i18n from "../../../../i18n/i18n";
 import type { CartResponse } from "../../../../services/cartService/types";
 import { useCart } from "../../../context/useCart";
 import OrderPromoCode from "./OrderPromoCode";
@@ -21,7 +22,8 @@ describe("OrderPromoCode", () => {
   const applyPromoCode = vi.fn();
   const removePromoCode = vi.fn();
 
-  beforeEach(() => {
+  beforeEach(async () => {
+    await i18n.changeLanguage("en");
     applyPromoCode.mockReset();
     removePromoCode.mockReset();
     applyPromoCode.mockResolvedValue(undefined);
@@ -60,5 +62,17 @@ describe("OrderPromoCode", () => {
     fireEvent.click(screen.getByRole("button", { name: "Remove promo code WELCOME10" }));
 
     await waitFor(() => expect(removePromoCode).toHaveBeenCalledOnce());
+  });
+
+  it("localizes promo-code controls", async () => {
+    await i18n.changeLanguage("de");
+    render(<OrderPromoCode />);
+
+    expect(screen.getByRole("textbox", { name: "Aktionscode" })).toHaveAttribute(
+      "placeholder",
+      "Aktionscode hinzufügen"
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Anwenden" }));
+    expect(await screen.findByRole("alert")).toHaveTextContent("Gib einen Aktionscode ein.");
   });
 });

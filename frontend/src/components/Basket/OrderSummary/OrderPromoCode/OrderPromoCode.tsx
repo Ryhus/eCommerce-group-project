@@ -1,7 +1,7 @@
-import { isAxiosError } from "axios";
 import { useState, type FormEvent } from "react";
 import { MdOutlineDiscount } from "react-icons/md";
 import { PiX } from "react-icons/pi";
+import { useTranslation } from "react-i18next";
 
 import Button from "../../../common/button/button";
 import { IconButton } from "../../../common/IconButton/IconButton";
@@ -10,22 +10,20 @@ import { useCart } from "../../../context/useCart";
 
 import "./OrderPromoCodeStyles.scss";
 
-function apiErrorMessage(error: unknown) {
-  if (isAxiosError<{ message?: string }>(error) && error.response?.data.message) return error.response.data.message;
-  return "We couldn't apply this promo code. Please try again.";
-}
+type PromoError = "required" | "request";
 
 export default function OrderPromoCode() {
+  const { t } = useTranslation("common");
   const { applyPromoCode, cart, removePromoCode } = useCart();
   const [promoCode, setPromoCode] = useState("");
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<PromoError | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const normalizedCode = promoCode.trim().toUpperCase();
     if (!normalizedCode) {
-      setError("Enter a promo code.");
+      setError("required");
       return;
     }
 
@@ -34,8 +32,8 @@ export default function OrderPromoCode() {
     try {
       await applyPromoCode(normalizedCode);
       setPromoCode("");
-    } catch (submitError) {
-      setError(apiErrorMessage(submitError));
+    } catch {
+      setError("request");
     } finally {
       setIsSubmitting(false);
     }
@@ -46,8 +44,8 @@ export default function OrderPromoCode() {
     setError(null);
     try {
       await removePromoCode();
-    } catch (removeError) {
-      setError(apiErrorMessage(removeError));
+    } catch {
+      setError("request");
     } finally {
       setIsSubmitting(false);
     }
@@ -56,46 +54,50 @@ export default function OrderPromoCode() {
   return (
     <div className="order-promo">
       {cart?.discountCode && (
-        <div aria-label="Applied promo code" className="order-promo__applied">
+        <div aria-label={t("promoCode.applied")} className="order-promo__applied">
           <MdOutlineDiscount aria-hidden="true" />
           <div>
             <strong>{cart.discountCode.code}</strong>
-            <span>{cart.discountCode.description}</span>
+            <span>{t("promoCode.appliedDescription")}</span>
           </div>
           <IconButton
             disabled={isSubmitting}
             icon={<PiX />}
-            label={`Remove promo code ${cart.discountCode.code}`}
+            label={t("promoCode.remove", { code: cart.discountCode.code })}
             onClick={() => void removeCode()}
             size="small"
           />
         </div>
       )}
 
-      <form aria-label="Promo code" className="order-promo__form" onSubmit={(event) => void handleSubmit(event)}>
+      <form
+        aria-label={t("promoCode.form")}
+        className="order-promo__form"
+        onSubmit={(event) => void handleSubmit(event)}
+      >
         <InputField
           aria-describedby={error ? "promo-code-error" : undefined}
-          aria-label="Promo code"
+          aria-label={t("promoCode.label")}
           disabled={isSubmitting}
           icon={<MdOutlineDiscount />}
           inputClassName="order-promo__input"
           isValid={!error}
           name="promoCode"
           onChange={setPromoCode}
-          placeholder="Add promo code"
+          placeholder={t("promoCode.placeholder")}
           value={promoCode}
         />
         <Button
           className="order-promo__apply"
           disabled={isSubmitting}
-          text={isSubmitting ? "Applying…" : "Apply"}
+          text={isSubmitting ? t("promoCode.applying") : t("promoCode.apply")}
           type="submit"
         />
       </form>
 
       {error && (
         <p className="order-promo__error" id="promo-code-error" role="alert">
-          {error}
+          {t(`promoCode.${error}`)}
         </p>
       )}
     </div>

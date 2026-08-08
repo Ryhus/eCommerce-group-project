@@ -1,7 +1,8 @@
 import { render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
+import i18n from "../../../i18n/i18n";
 import type { CartResponse } from "../../../services/cartService/types";
 import { useCart } from "../../context/useCart";
 import { BasketProductList } from "./BasketProductList";
@@ -33,6 +34,10 @@ const cart: CartResponse = {
 };
 
 describe("BasketProductList", () => {
+  beforeEach(async () => {
+    await i18n.changeLanguage("en");
+  });
+
   it("renders cart items as a semantic list", () => {
     vi.mocked(useCart).mockReturnValue({ cart } as never);
     render(
@@ -55,5 +60,18 @@ describe("BasketProductList", () => {
 
     expect(screen.getByRole("heading", { name: "Your cart is empty" })).toBeVisible();
     expect(screen.getByRole("link", { name: "Browse products" })).toHaveAttribute("href", "/catalog");
+  });
+
+  it("localizes the empty-cart guidance", async () => {
+    await i18n.changeLanguage("ru");
+    vi.mocked(useCart).mockReturnValue({ cart: { ...cart, items: [], totalQuantity: 0 } } as never);
+    render(
+      <MemoryRouter>
+        <BasketProductList />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByRole("heading", { name: "Ваша корзина пуста" })).toBeVisible();
+    expect(screen.getByRole("link", { name: "Перейти к товарам" })).toHaveAttribute("href", "/catalog");
   });
 });

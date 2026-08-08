@@ -215,6 +215,47 @@ export const enCommon = {
     loadError: "We couldn't load this product. Please try again.",
     retry: "Try again",
   },
+  basketItem: {
+    region: "{{name}} in cart",
+    view: "View {{name}}",
+    remove: "Remove {{name}} from cart",
+    each: "{{price}} each",
+    updateError: "We couldn't update this item. Please try again.",
+  },
+  basketList: {
+    items: "Cart items",
+    emptyTitle: "Your cart is empty",
+    emptyDescription: "Explore the catalog and add something for your next training session.",
+    browseProducts: "Browse products",
+  },
+  promoCode: {
+    applied: "Applied promo code",
+    appliedDescription: "Promo code applied",
+    remove: "Remove promo code {{code}}",
+    form: "Promo code",
+    label: "Promo code",
+    placeholder: "Add promo code",
+    applying: "Applying…",
+    apply: "Apply",
+    required: "Enter a promo code.",
+    request: "We couldn't update this promo code. Please try again.",
+  },
+  orderSummary: {
+    title: "Order Summary",
+    subtotal: "Subtotal",
+    discount: "Discount",
+    total: "Total",
+    checkoutUnavailable: "Checkout unavailable",
+    checkoutNote: "Checkout is not available in this demo yet.",
+    continueShopping: "Continue shopping",
+  },
+  basketPage: {
+    breadcrumb: "Cart",
+    title: "Your cart",
+    loading: "Loading your cart…",
+    loadError: "We couldn't load your cart. Please try again.",
+    retry: "Try again",
+  },
 } as const;
 
 export type CommonTranslations = {

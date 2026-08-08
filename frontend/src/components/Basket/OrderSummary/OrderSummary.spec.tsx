@@ -1,7 +1,8 @@
 import { render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
+import i18n from "../../../i18n/i18n";
 import type { CartResponse } from "../../../services/cartService/types";
 import { useCart } from "../../context/useCart";
 import OrderSummary from "./OrderSummary";
@@ -20,6 +21,10 @@ const cart: CartResponse = {
 };
 
 describe("OrderSummary", () => {
+  beforeEach(async () => {
+    await i18n.changeLanguage("en");
+  });
+
   it("renders only totals calculated by the backend", () => {
     vi.mocked(useCart).mockReturnValue({ cart } as never);
     render(
@@ -44,5 +49,21 @@ describe("OrderSummary", () => {
 
     expect(screen.getByRole("button", { name: "Checkout unavailable" })).toBeDisabled();
     expect(screen.getByRole("link", { name: "Continue shopping" })).toHaveAttribute("href", "/catalog");
+  });
+
+  it("localizes labels and server-calculated totals", async () => {
+    await i18n.changeLanguage("de");
+    vi.mocked(useCart).mockReturnValue({ cart } as never);
+    render(
+      <MemoryRouter>
+        <OrderSummary />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByRole("heading", { name: "Bestellübersicht" })).toBeVisible();
+    expect(screen.getByText("Zwischensumme").parentElement).toHaveTextContent("Zwischensumme100,00 €");
+    expect(screen.getByText("Rabatt").parentElement).toHaveTextContent("Rabatt-10,00 €");
+    expect(screen.getByText("Gesamtsumme").parentElement).toHaveTextContent("Gesamtsumme90,00 €");
+    expect(screen.getByRole("link", { name: "Weiter einkaufen" })).toHaveAttribute("href", "/catalog");
   });
 });

@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { PiTrash } from "react-icons/pi";
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 
 import type { CartItem } from "../../../services/cartService/types";
+import { formatMoney } from "../../../utils/formatMoney";
 import { IconButton } from "../../common/IconButton/IconButton";
 import { useCart } from "../../context/useCart";
 import { QuantitySelector } from "../../Product/QuantitySelector/QuantitySelector";
@@ -13,23 +15,20 @@ type BasketProductCardProps = {
   item: CartItem;
 };
 
-const moneyFormatter = new Intl.NumberFormat("en-IE", {
-  style: "currency",
-  currency: "EUR",
-});
-
 export function BasketProductCard({ item }: BasketProductCardProps) {
+  const { t, i18n } = useTranslation("common");
   const { removeCartItem, updateCartQuantity } = useCart();
   const [isUpdating, setIsUpdating] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [hasError, setHasError] = useState(false);
+  const language = i18n.resolvedLanguage ?? i18n.language;
 
   const update = async (request: () => Promise<void>) => {
     setIsUpdating(true);
-    setError(null);
+    setHasError(false);
     try {
       await request();
     } catch {
-      setError("We couldn't update this item. Please try again.");
+      setHasError(true);
     } finally {
       setIsUpdating(false);
     }
@@ -38,8 +37,12 @@ export function BasketProductCard({ item }: BasketProductCardProps) {
   const image = item.image ?? "/images/loading.gif";
 
   return (
-    <article aria-label={`${item.name} in cart`} className="basket-item">
-      <Link aria-label={`View ${item.name}`} className="basket-item__image-link" to={`/product/${item.productId}`}>
+    <article aria-label={t("basketItem.region", { name: item.name })} className="basket-item">
+      <Link
+        aria-label={t("basketItem.view", { name: item.name })}
+        className="basket-item__image-link"
+        to={`/product/${item.productId}`}
+      >
         <img
           alt={item.name}
           onError={(event) => {
@@ -58,18 +61,20 @@ export function BasketProductCard({ item }: BasketProductCardProps) {
             className="basket-item__remove"
             disabled={isUpdating}
             icon={<PiTrash />}
-            label={`Remove ${item.name} from cart`}
+            label={t("basketItem.remove", { name: item.name })}
             onClick={() => void update(() => removeCartItem(item.id))}
             size="small"
           />
         </div>
 
         {item.quantity > 1 && (
-          <p className="basket-item__unit-price">{moneyFormatter.format(item.unitPrice.amount / 100)} each</p>
+          <p className="basket-item__unit-price">
+            {t("basketItem.each", { price: formatMoney(item.unitPrice.amount, language) })}
+          </p>
         )}
 
         <div className="basket-item__footer">
-          <strong className="basket-item__line-total">{moneyFormatter.format(item.lineTotal.amount / 100)}</strong>
+          <strong className="basket-item__line-total">{formatMoney(item.lineTotal.amount, language)}</strong>
           <QuantitySelector
             className="basket-item__quantity"
             disabled={isUpdating}
@@ -79,9 +84,9 @@ export function BasketProductCard({ item }: BasketProductCardProps) {
           />
         </div>
 
-        {error && (
+        {hasError && (
           <p className="basket-item__error" role="alert">
-            {error}
+            {t("basketItem.updateError")}
           </p>
         )}
       </div>
