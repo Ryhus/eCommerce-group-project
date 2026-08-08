@@ -1,0 +1,104 @@
+@use "../../../assets/styles/tokens" as *;
+
+.home-product-section__container {
+  display: flex;
+  padding-block: var(--space-20);
+  align-items: center;
+  flex-direction: column;
+}
+
+.home-product-section__title {
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.home-product-section__list {
+  display: grid;
+  width: 100%;
+  margin-top: var(--space-12);
+  align-items: stretch;
+  gap: var(--space-5);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+
+  .product-list__item,
+  .product-card {
+    width: 100%;
+  }
+}
+
+.home-product-section__view-all {
+  display: inline-flex;
+  width: 21.8rem;
+  min-height: 5.2rem;
+  margin-top: var(--space-10);
+  align-items: center;
+  justify-content: center;
+  border: var(--border-subtle);
+  border-radius: var(--radius-pill);
+  color: var(--color-ink);
+  font-weight: var(--font-weight-medium);
+  text-decoration: none;
+  transition:
+    background-color var(--transition-fast),
+    color var(--transition-fast);
+
+  &:hover {
+    background: var(--color-ink);
+    color: var(--color-surface);
+  }
+}
+
+.home-product-section + .home-product-section .home-product-section__container {
+  border-top: var(--border-subtle);
+}
+
+@media (max-width: $breakpoint-tablet) {
+  .home-product-section__container {
+    padding-block: var(--space-16);
+  }
+
+  .home-product-section__list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: $breakpoint-mobile) {
+  .home-product-section__container {
+    align-items: stretch;
+    padding-block: var(--space-10);
+  }
+
+  .home-product-section__title {
+    text-align: center;
+  }
+
+  .home-product-section__list {
+    display: flex;
+    margin-top: var(--space-8);
+    padding-bottom: var(--space-2);
+    align-items: stretch;
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+    gap: var(--space-3);
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    scroll-snap-type: inline mandatory;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
+    .product-list__item {
+      width: calc((100% - var(--space-3)) / 2);
+      min-width: 0;
+      flex: 0 0 calc((100% - var(--space-3)) / 2);
+      scroll-snap-align: start;
+    }
+  }
+
+  .home-product-section__view-all {
+    width: 100%;
+    margin-top: var(--space-6);
+  }
+}

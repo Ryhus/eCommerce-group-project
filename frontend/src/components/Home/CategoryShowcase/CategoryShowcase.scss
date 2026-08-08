@@ -1,0 +1,109 @@
+@use "../../../assets/styles/tokens" as *;
+
+.category-showcase {
+  padding-block: var(--space-10) var(--space-20);
+}
+
+.category-showcase__container {
+  padding: var(--space-16);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface-subtle);
+  text-align: center;
+}
+
+.category-showcase__grid {
+  display: grid;
+  margin-top: var(--space-12);
+  gap: var(--space-5);
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  grid-template-rows: repeat(2, 28.9rem);
+}
+
+.category-showcase__tile {
+  position: relative;
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--color-ink);
+  text-decoration: none;
+
+  &:nth-child(1),
+  &:nth-child(4) {
+    grid-column: span 5;
+  }
+
+  &:nth-child(2),
+  &:nth-child(3) {
+    grid-column: span 7;
+  }
+
+  img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--transition-base);
+  }
+
+  span {
+    position: absolute;
+    z-index: 1;
+    top: var(--space-6);
+    left: var(--space-6);
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radius-pill);
+    background: rgb(255 255 255 / 88%);
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-bold);
+    backdrop-filter: blur(0.4rem);
+  }
+
+  &:hover img,
+  &:focus-visible img {
+    transform: scale(1.03);
+  }
+}
+
+@media (max-width: $breakpoint-tablet) {
+  .category-showcase__container {
+    padding: var(--space-10);
+  }
+
+  .category-showcase__grid {
+    grid-template-rows: repeat(2, 23rem);
+  }
+}
+
+@media (max-width: $breakpoint-mobile) {
+  .category-showcase {
+    padding-block: var(--space-6) var(--space-12);
+  }
+
+  .category-showcase__container {
+    padding: var(--space-10) var(--space-6) var(--space-6);
+    border-radius: var(--radius-md);
+  }
+
+  .category-showcase__grid {
+    margin-top: var(--space-8);
+    gap: var(--space-4);
+    grid-template-columns: 1fr;
+    grid-template-rows: none;
+  }
+
+  .category-showcase__tile {
+    height: 19rem;
+
+    &:nth-child(n) {
+      grid-column: auto;
+    }
+
+    span {
+      top: var(--space-4);
+      left: var(--space-4);
+      font-size: var(--font-size-xl);
+    }
+  }
+}

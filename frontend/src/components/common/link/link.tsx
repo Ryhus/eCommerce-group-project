@@ -1,19 +1,18 @@
-import React from "react";
+import type { ComponentPropsWithoutRef, ReactNode } from "react";
+
 import "./link.scss";
 
-type LinkProps = {
-  text: string; // text label
-  href: string; // URL or path to go to
-  onClick?: (e: React.MouseEvent<HTMLAnchorElement>) => void; // Optional click handler
-  className?: string; // Optional CSS classes
-  icon?: React.ReactNode;
+type LinkProps = Omit<ComponentPropsWithoutRef<"a">, "children" | "href"> & {
+  text: string;
+  href: string;
+  icon?: ReactNode;
 };
 
-const Link: React.FC<LinkProps> = ({ text, href, onClick, className = "", icon }) => {
+const Link = ({ text, href, className = "", icon, ...props }: LinkProps) => {
   const linkClass = `link ${className}`.trim();
 
   return (
-    <a className={linkClass} href={href} onClick={onClick}>
+    <a {...props} className={linkClass} href={href}>
       {icon && <span className="link-icon">{icon}</span>}
       {text}
     </a>

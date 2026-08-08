@@ -1,0 +1,30 @@
+.guest-only-route__status {
+  display: flex;
+  min-height: 32rem;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+.guest-only-route__spinner {
+  width: 1.8rem;
+  height: 1.8rem;
+  border: 0.2rem solid var(--color-border);
+  border-top-color: var(--color-ink);
+  border-radius: var(--radius-pill);
+  animation: guest-route-spin 0.7s linear infinite;
+}
+
+@keyframes guest-route-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .guest-only-route__spinner {
+    animation: none;
+  }
+}

@@ -12,16 +12,23 @@ import { loadCutomerData } from "./DataHandlers/Profile/ProfileLoaders";
 import { actionCustomerData } from "./DataHandlers/Profile/ProfileActions";
 import ProductPage from "../pages/Product/Product";
 import BasketPage from "../pages/Basket/Basket";
+import { GuestOnlyRoute } from "./guards/GuestOnlyRoute";
 
 const router = createBrowserRouter(
   [
     {
       path: "/",
       Component: MainLayout,
+      errorElement: <NotFoundPage />,
       children: [
         { index: true, Component: HomePage },
-        { path: "login", Component: LoginPage },
-        { path: "sign-up", Component: RegistrationPage },
+        {
+          Component: GuestOnlyRoute,
+          children: [
+            { path: "login", Component: LoginPage },
+            { path: "sign-up", Component: RegistrationPage },
+          ],
+        },
         {
           path: "profile",
           loader: loadCutomerData,

@@ -1,20 +1,22 @@
 import { useState } from "react";
-import Button from "../common/button/button";
-import { H2 } from "../common/headings/H2";
-import { HiPencilAlt, HiOutlineKey } from "react-icons/hi";
-import { FaEyeSlash, FaEye } from "react-icons/fa";
-import Paragraph from "../common/paragraph/paragraph";
-import type { Address } from "../../services/customerService/types";
-import { Form, useActionData } from "react-router-dom";
-import InputField from "../common/inputField/inputField";
-import { AddressesComponent, BillingAddressesComponent, ShippingAddressesComponent } from "./AddressesProfile";
+import { useTranslation } from "react-i18next";
+import { HiOutlineLogout } from "react-icons/hi";
+import { useRevalidator } from "react-router-dom";
 
-import {
-  validateName,
-  validateEmailFormat,
-  validateDateOfBirth,
-  validatePasswordStrength,
-} from "../../utils/validation";
+import type { Address } from "../../services/customerService/types";
+import { updateCustomer } from "../../services/customerService/customerService";
+import Breadcrumbs from "../Breadcrumbs/Breadcrumbs";
+import { DeleteAddressDialog } from "../Profile/DeleteAddressDialog/DeleteAddressDialog";
+import { ProfileAddressForm } from "../Profile/ProfileAddressForm/ProfileAddressForm";
+import { ProfileAddresses } from "../Profile/ProfileAddresses/ProfileAddresses";
+import { ProfileDetails } from "../Profile/ProfileDetails/ProfileDetails";
+import { ProfileDetailsForm } from "../Profile/ProfileDetailsForm/ProfileDetailsForm";
+import { ProfileOverview } from "../Profile/ProfileOverview/ProfileOverview";
+import { ProfilePasswordForm } from "../Profile/ProfilePasswordForm/ProfilePasswordForm";
+import { ProfileSection } from "../Profile/ProfileSection/ProfileSection";
+import { ProfileSecurity } from "../Profile/ProfileSecurity/ProfileSecurity";
+import Button from "../common/button/button";
+import { PageContainer } from "../common/PageContainer/PageContainer";
 
 import "./UserInfo.scss";
 
@@ -28,7 +30,10 @@ interface UserInfoProps {
   defaultBillingAddressId?: string | null;
   shippingAddressIds?: string[] | null;
   billingAddressIds?: string[] | null;
+  onLogout: () => Promise<void>;
 }
+
+type ActiveEditor = "address" | "details" | "password" | null;
 
 export function UserInfo({
   firstName,
@@ -40,274 +45,168 @@ export function UserInfo({
   billingAddressIds = [],
   defaultShippingAddressId,
   defaultBillingAddressId,
+  onLogout,
 }: UserInfoProps) {
-  const actionData = useActionData() as { message: string; statusCode: number } | undefined;
-  const serverError = actionData?.message;
+  const { t } = useTranslation("common");
+  const revalidator = useRevalidator();
+  const [activeEditor, setActiveEditor] = useState<ActiveEditor>(null);
+  const [editingAddress, setEditingAddress] = useState<Address | null>(null);
+  const [addressToDelete, setAddressToDelete] = useState<Address | null>(null);
+  const [deleteError, setDeleteError] = useState("");
+  const [isDeletingAddress, setIsDeletingAddress] = useState(false);
 
-  const [isEditMode, setEditMode] = useState(false);
-  const [isChangePassword, setChangePassword] = useState(false);
-  const [changedFirstName, setFirstName] = useState(firstName || "");
-  const [changedLastName, setLastName] = useState(lastName || "");
-  const [changedEmail, setEmail] = useState(email);
-  const [dob, setDob] = useState(dateOfBirth.toString());
-  const [currentPassword, setCurrentPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [firstNameError, setFirstNameError] = useState("");
-  const [lastNameError, setLastNameError] = useState("");
-  const [emailError, setEmailError] = useState("");
-  const [dobError, setDobError] = useState("");
-  const [showCurrentPasswordError, setCurrentPasswordError] = useState(false);
-  const [passwordError, setPasswordError] = useState("");
-  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-
-  const hideEditbuttons = function () {
-    if (isChangePassword || isEditMode) return "hidden";
-    return "edit-profile-btns-container";
+  const closeEditor = () => {
+    setActiveEditor(null);
+    setEditingAddress(null);
   };
 
-  const validateEmail = (value: string) => {
-    const error = validateEmailFormat(value);
-    setEmailError(error || "");
-    return !error;
+  const openDetailsEditor = () => {
+    setEditingAddress(null);
+    setActiveEditor("details");
   };
 
-  const clearAllFormStates = function () {
-    setFirstName(firstName || "");
-    setLastName(lastName || "");
-    setEmail(email);
-    setDob(dateOfBirth.toString());
-    setFirstNameError("");
-    setLastNameError("");
-    setEmailError("");
-    setDobError("");
+  const openPasswordEditor = () => {
+    setEditingAddress(null);
+    setActiveEditor("password");
   };
 
-  const clearPasswordFromstates = function () {
-    setNewPassword("");
-    setPasswordError("");
-    setCurrentPassword("");
-    setCurrentPasswordError(false);
+  const openAddressEditor = (address?: Address) => {
+    setEditingAddress(
+      address
+        ? {
+            ...address,
+            isDefaultBilling: address.isDefaultBilling || address.id === defaultBillingAddressId,
+            isDefaultShipping: address.isDefaultShipping || address.id === defaultShippingAddressId,
+          }
+        : null
+    );
+    setActiveEditor("address");
   };
 
-  // client side validation function
-  const validateAllInputs = function () {
-    const firstNameValid = !validateName(changedFirstName, "First name");
-    const lastNameValid = !validateName(changedLastName, "Last name");
-    const isEmailValid = validateEmail(changedEmail);
-    const dobValid = !validateDateOfBirth(dob.toString());
-
-    setFirstNameError(validateName(changedFirstName, "First name") || "");
-    setLastNameError(validateName(changedLastName, "Last name") || "");
-    setDobError(validateDateOfBirth(dob) || "");
-
-    if (firstNameValid && lastNameValid && isEmailValid && dobValid) return true;
-    return false;
+  const requestAddressDeletion = (address: Address) => {
+    setDeleteError("");
+    setAddressToDelete(address);
   };
 
-  const validatePassword = (value: string) => {
-    const error = validatePasswordStrength(value);
-    setPasswordError(error || "");
-    return !error;
+  const cancelAddressDeletion = () => {
+    setDeleteError("");
+    setAddressToDelete(null);
+  };
+
+  const confirmAddressDeletion = async () => {
+    if (!addressToDelete?.id) return;
+
+    try {
+      setDeleteError("");
+      setIsDeletingAddress(true);
+      await updateCustomer({ removeAddressId: addressToDelete.id });
+      await revalidator.revalidate();
+      setAddressToDelete(null);
+    } catch {
+      setDeleteError(t("profile.unableToDeleteAddress"));
+    } finally {
+      setIsDeletingAddress(false);
+    }
   };
 
   return (
-    <div className="user-profile-container">
-      <div className="user-info-container">
-        <div className="user-login-names-container">
-          <H2 text={`${firstName} ${lastName}`} className="user-names"></H2>
-          <Paragraph text={email} className="user-email"></Paragraph>
-          <Paragraph text={dateOfBirth.toString()} className="user-email"></Paragraph>
-          <div className={hideEditbuttons()}>
-            <Button
-              text="Edit profile"
-              icon={<HiPencilAlt />}
-              variant="light"
-              className="edit-info-btn"
-              onClick={() => setEditMode(!isEditMode)}
-            ></Button>
-            <Button
-              text="Change password"
-              icon={<HiOutlineKey />}
-              variant="light"
-              className="edit-info-btn"
-              onClick={() => setChangePassword(!isChangePassword)}
-            ></Button>
-          </div>
+    <PageContainer className="profile-page">
+      <Breadcrumbs crumbs={[{ name: t("profile.breadcrumb"), path: "/profile" }]} includeCatalog={false} />
+
+      <header className="profile-page__header">
+        <div>
+          <h1>{t("profile.title")}</h1>
+          <p>{t("profile.description")}</p>
         </div>
-        {isChangePassword && (
-          <Form className="personal-info-form" method="post">
-            <input type="hidden" name="actionType" value="changePassword" />
-            <div className="field-group">
-              <InputField
-                name="currentPassword"
-                placeholder="Current password"
-                value={currentPassword}
-                onChange={(v) => {
-                  setCurrentPassword(v);
-                }}
-                type={showCurrentPassword ? "text" : "password"}
-                rightIcon={
-                  <span
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setShowCurrentPassword((prev) => !prev);
-                    }}
-                    style={{ cursor: "pointer" }}
-                  >
-                    {showCurrentPassword ? <FaEyeSlash /> : <FaEye />}
-                  </span>
-                }
-              ></InputField>
-              {serverError && showCurrentPasswordError && <Paragraph text={serverError} isError />}
-            </div>
-            <div className="field-group">
-              <InputField
-                name="newPassword"
-                placeholder="New Password"
-                value={newPassword}
-                isValid={!passwordError}
-                onChange={(v) => {
-                  setNewPassword(v);
-                  if (passwordError) validatePassword(v);
-                }}
-                type={showPassword ? "text" : "password"}
-                rightIcon={
-                  <span
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setShowPassword((prev) => !prev);
-                    }}
-                    style={{ cursor: "pointer" }}
-                  >
-                    {showPassword ? <FaEyeSlash /> : <FaEye />}
-                  </span>
-                }
-              ></InputField>
-              {passwordError && <Paragraph text={passwordError} isError />}
-            </div>
-            <Button
-              type="submit"
-              text="✅ Save"
-              variant="light"
-              className="confirm-btn"
-              onClick={(e) => {
-                const isValidForm = validatePassword(newPassword);
-                if (!isValidForm) {
-                  e.preventDefault();
-                  return;
-                }
-                setCurrentPasswordError(true);
-              }}
-            ></Button>
-            <Button
-              type="button"
-              text="❌ Cancel"
-              variant="light"
-              className="cancel-btn"
-              onClick={() => {
-                clearPasswordFromstates();
-                setChangePassword(!isChangePassword);
-              }}
-            ></Button>
-          </Form>
-        )}
-        {isEditMode && (
-          <Form className="personal-info-form" method="post">
-            <input type="hidden" name="actionType" value="changePersonal" />
-            <div className="field-group">
-              <InputField
-                name="firstName"
-                value={changedFirstName ? changedFirstName : ""}
-                onChange={(v) => {
-                  setFirstName(v);
-                  setFirstNameError(validateName(v, "First name") || "");
-                }}
-                isValid={!firstNameError}
-              ></InputField>
-              {firstNameError && <Paragraph text={firstNameError} isError />}
-            </div>
-            <div className="field-group">
-              <InputField
-                name="lastName"
-                value={changedLastName ? changedLastName : ""}
-                onChange={(v) => {
-                  setLastName(v);
-                  setLastNameError(validateName(v, "Last name") || "");
-                }}
-                isValid={!lastNameError}
-              ></InputField>
-              {lastNameError && <Paragraph text={lastNameError} isError />}
-            </div>
+        <Button
+          className="profile-page__logout"
+          icon={<HiOutlineLogout aria-hidden="true" />}
+          onClick={() => void onLogout()}
+          text={t("profile.logout")}
+          variant="light"
+        />
+      </header>
 
-            <div className="field-group">
-              <InputField
-                name="email"
-                value={changedEmail}
-                onChange={(v) => {
-                  setEmail(v);
-                  validateEmail(v);
-                }}
-                isValid={!emailError}
-              ></InputField>
-              {emailError && <Paragraph text={emailError} isError />}
-            </div>
+      <ProfileOverview
+        email={email}
+        firstName={firstName}
+        lastName={lastName}
+        onChangePassword={openPasswordEditor}
+        onEditProfile={openDetailsEditor}
+      />
 
-            <div className="field-group">
-              <InputField
-                name="dateOfBirth"
-                value={dob}
-                isValid={!dobError}
-                type="date"
-                onChange={(v) => {
-                  setDob(v);
-                  setDobError(validateDateOfBirth(v) || "");
-                }}
-              ></InputField>
-              {dobError && <Paragraph text={dobError} isError />}
-            </div>
+      <div className="profile-page__sections">
+        <div>
+          {activeEditor === "details" ? (
+            <ProfileSection
+              description={t("profile.personalDetailsDescription")}
+              title={t("profile.editPersonalDetails")}
+            >
+              <ProfileDetailsForm
+                dateOfBirth={dateOfBirth}
+                email={email}
+                firstName={firstName}
+                lastName={lastName}
+                onCancel={closeEditor}
+                onSuccess={closeEditor}
+              />
+            </ProfileSection>
+          ) : (
+            <ProfileDetails
+              dateOfBirth={dateOfBirth}
+              email={email}
+              firstName={firstName}
+              lastName={lastName}
+              onEdit={openDetailsEditor}
+            />
+          )}
+        </div>
 
-            <Button
-              type="submit"
-              text="✅ Save"
-              variant="light"
-              className="confirm-btn"
-              onClick={(e) => {
-                const isValidForm = validateAllInputs();
-                if (!isValidForm) {
-                  e.preventDefault();
-                  return;
-                }
+        <div>
+          {activeEditor === "password" ? (
+            <ProfileSection
+              description={t("profile.changePasswordDescription")}
+              title={t("profile.changePasswordTitle")}
+            >
+              <ProfilePasswordForm onCancel={closeEditor} onSuccess={closeEditor} />
+            </ProfileSection>
+          ) : (
+            <ProfileSecurity onChangePassword={openPasswordEditor} />
+          )}
+        </div>
 
-                setTimeout(() => setEditMode(!isEditMode), 10);
-              }}
-            ></Button>
-            <Button
-              type="button"
-              text="❌ Cancel"
-              variant="light"
-              className="cancel-btn"
-              onClick={() => {
-                clearAllFormStates();
-                setEditMode(!isEditMode);
-              }}
-            ></Button>
-          </Form>
-        )}
-        <div className="profile-addresses-container">
-          <AddressesComponent adresses={adresses} />
-          <BillingAddressesComponent
-            adresses={adresses}
-            billingAddressIds={billingAddressIds}
-            defaultBillingAddressId={defaultBillingAddressId}
-          />
-          <ShippingAddressesComponent
-            adresses={adresses}
-            shippingAddressIds={shippingAddressIds}
-            defaultShippingAddressId={defaultShippingAddressId}
-          />
+        <div className="profile-page__addresses">
+          {activeEditor === "address" ? (
+            <ProfileSection
+              description={t("profile.savedAddressesDescription")}
+              title={editingAddress ? t("profile.editAddressTitle") : t("profile.addAddressTitle")}
+            >
+              <ProfileAddressForm address={editingAddress} onCancel={closeEditor} onSuccess={closeEditor} />
+            </ProfileSection>
+          ) : (
+            <ProfileAddresses
+              addresses={adresses}
+              billingAddressIds={billingAddressIds}
+              defaultBillingAddressId={defaultBillingAddressId}
+              defaultShippingAddressId={defaultShippingAddressId}
+              onAdd={() => openAddressEditor()}
+              onDelete={requestAddressDeletion}
+              onEdit={openAddressEditor}
+              shippingAddressIds={shippingAddressIds}
+            />
+          )}
         </div>
       </div>
-    </div>
+
+      {addressToDelete && (
+        <DeleteAddressDialog
+          addressName={addressToDelete.streetName || t("profile.unknownAddress")}
+          error={deleteError}
+          isDeleting={isDeletingAddress}
+          onCancel={cancelAddressDeletion}
+          onConfirm={() => void confirmAddressDeletion()}
+        />
+      )}
+    </PageContainer>
   );
 }

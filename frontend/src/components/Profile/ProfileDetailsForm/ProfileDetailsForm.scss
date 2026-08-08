@@ -1,0 +1,55 @@
+.profile-details-form {
+  display: grid;
+  padding: var(--space-5);
+  gap: var(--space-4);
+}
+
+.profile-details-form__name-row {
+  display: grid;
+  gap: var(--space-4);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.profile-details-form .input {
+  min-height: 5.2rem;
+  border-color: var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+}
+
+.profile-details-form__server-error {
+  min-height: 4.2rem;
+}
+
+.profile-details-form__server-error p {
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid rgb(255 51 51 / 32%);
+  border-radius: var(--radius-sm);
+  background: rgb(255 51 51 / 7%);
+  color: var(--color-danger);
+  font-size: var(--font-size-xs);
+  line-height: var(--line-height-body);
+  text-align: center;
+}
+
+.profile-details-form__actions {
+  display: grid;
+  gap: var(--space-3);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.profile-details-form__actions .btn {
+  max-width: none;
+  border-radius: var(--radius-sm);
+}
+
+@media (max-width: 480px) {
+  .profile-details-form {
+    padding: var(--space-4);
+  }
+
+  .profile-details-form__name-row,
+  .profile-details-form__actions {
+    grid-template-columns: 1fr;
+  }
+}

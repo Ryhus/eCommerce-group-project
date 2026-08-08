@@ -1,38 +1,54 @@
-export const validateEmailFormat = (value: string): string | null => {
+export type EmailValidationErrorCode = "whitespace" | "atSymbol" | "parts" | "spaces" | "domain" | "format";
+
+const EMAIL_VALIDATION_MESSAGES: Record<EmailValidationErrorCode, string> = {
+  whitespace: "Email address must not contain leading or trailing whitespace.",
+  atSymbol: "Email address must contain an '@' symbol separating local part and domain name.",
+  parts: "Email address must contain a local part and a domain name.",
+  spaces: "Email address must not contain spaces in the local or domain part.",
+  domain: "Email address must contain a domain name (e.g., example.com).",
+  format: "Email address must be properly formatted (e.g., user@example.com).",
+};
+
+export const getEmailValidationErrorCode = (value: string): EmailValidationErrorCode | null => {
   const trimmedValue = value.trim();
 
   if (trimmedValue !== value) {
-    return "Email address must not contain leading or trailing whitespace.";
+    return "whitespace";
   }
 
   const atIndex = trimmedValue.indexOf("@");
   const hasAtSymbol = atIndex > 0 && atIndex === trimmedValue.lastIndexOf("@");
 
   if (!hasAtSymbol) {
-    return "Email address must contain an '@' symbol separating local part and domain name.";
+    return "atSymbol";
   }
 
   const [localPart, domain] = trimmedValue.split("@");
 
   if (!localPart || !domain) {
-    return "Email address must contain a local part and a domain name.";
+    return "parts";
   }
 
   if (/\s/.test(localPart) || /\s/.test(domain)) {
-    return "Email address must not contain spaces in the local or domain part.";
+    return "spaces";
   }
 
   const domainParts = domain.split(".");
   if (domainParts.length < 2 || domainParts.some((part) => part.length === 0)) {
-    return "Email address must contain a domain name (e.g., example.com).";
+    return "domain";
   }
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(trimmedValue)) {
-    return "Email address must be properly formatted (e.g., user@example.com).";
+    return "format";
   }
 
   return null;
+};
+
+export const validateEmailFormat = (value: string): string | null => {
+  const errorCode = getEmailValidationErrorCode(value);
+  return errorCode ? EMAIL_VALIDATION_MESSAGES[errorCode] : null;
 };
 
 export const validatePasswordStrength = (value: string): string | null => {
@@ -40,8 +56,8 @@ export const validatePasswordStrength = (value: string): string | null => {
   if (!/[A-Z]/.test(value)) return "Password must include at least one uppercase letter.";
   if (!/[a-z]/.test(value)) return "Password must include at least one lowercase letter.";
   if (!/[0-9]/.test(value)) return "Password must include at least one digit.";
-  if (!/[!@#$%^&*(),.?":{}|<>]/.test(value)) return "Password must include at least one special character.";
-  if (!/^[A-Za-z0-9!@#$%^&*(),.?":{}|<>]+$/.test(value)) return "Password contains invalid characters.";
+  if (!/[!@#$%^&*(),.?":{}|<>_]/.test(value)) return "Password must include at least one special character.";
+  if (!/^[A-Za-z0-9!@#$%^&*(),.?":{}|<>_]+$/.test(value)) return "Password contains invalid characters.";
   return null;
 };
 

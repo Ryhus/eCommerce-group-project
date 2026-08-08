@@ -1,57 +1,105 @@
-.order-summary-container {
+@use "../../../assets/styles/tokens" as *;
+
+.order-summary {
+  display: grid;
+  min-width: 0;
+  padding: var(--space-6);
+  align-self: start;
+  gap: var(--space-6);
+  border: var(--border-subtle);
+  border-radius: var(--radius-md);
+}
+
+.order-summary h2 {
+  margin: 0;
+  color: var(--color-ink);
+  font-size: var(--font-size-xl);
+  line-height: var(--line-height-heading);
+}
+
+.order-summary__amounts {
+  display: grid;
+  margin: 0;
+  gap: var(--space-5);
+}
+
+.order-summary__amounts > div {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  padding: 20px 24px;
-  gap: 24px;
-  width: 100%;
-  max-width: 505px;
-  height: 360px;
-  margin-right: 0.6rem;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  border-radius: 20px;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
 
-  .order-summary-heading {
-    font-size: 2.4rem;
-    letter-spacing: 0%;
-    line-height: 100%;
+.order-summary dt,
+.order-summary dd {
+  margin: 0;
+  font-size: var(--font-size-lg);
+}
+
+.order-summary dt {
+  color: var(--color-text-muted);
+}
+
+.order-summary dd {
+  color: var(--color-ink);
+  font-weight: var(--font-weight-bold);
+}
+
+.order-summary__discount dd {
+  color: var(--color-danger);
+}
+
+.order-summary__amounts > .order-summary__total {
+  padding-top: var(--space-5);
+  border-top: var(--border-subtle);
+}
+
+.order-summary__total dt,
+.order-summary__total dd {
+  color: var(--color-ink);
+  font-size: var(--font-size-xl);
+}
+
+.order-summary__checkout {
+  max-width: none;
+}
+
+.order-summary__checkout .button-icon {
+  order: 2;
+}
+
+.order-summary__checkout-note {
+  margin-top: calc(var(--space-3) * -1);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+  text-align: center;
+}
+
+.order-summary__continue {
+  color: var(--color-ink);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  text-align: center;
+  text-underline-offset: 0.3rem;
+}
+
+@media (max-width: $breakpoint-mobile) {
+  .order-summary {
+    padding: var(--space-5);
+    gap: var(--space-5);
   }
-  .order-subtotals {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 0px;
-    gap: 20px;
-    width: 457px;
-    height: 177px;
 
-    .order-field {
-      display: flex;
-      justify-content: space-between;
-      width: 100%;
-
-      .order-field-name {
-        font-size: 2rem;
-      }
-      .order-field-price {
-        font-size: 2rem;
-        font-weight: 700;
-        color: #000000;
-      }
-    }
-    .discount-field .order-field-price {
-      color: #ff0000;
-    }
+  .order-summary h2 {
+    font-size: var(--font-size-lg);
   }
 
-  .order-promocode {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    padding: 0px;
-    gap: 12px;
-    width: 457px;
-    height: 48px;
+  .order-summary dt,
+  .order-summary dd {
+    font-size: var(--font-size-md);
+  }
+
+  .order-summary__total dt,
+  .order-summary__total dd {
+    font-size: var(--font-size-lg);
   }
 }

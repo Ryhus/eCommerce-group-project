@@ -1,36 +1,40 @@
-import React from "react";
-import Paragraph from "../common/paragraph/paragraph";
-import ProductCard from "../productCard/productCard";
+import { useTranslation } from "react-i18next";
+
 import type { Product } from "../../services/productService/types";
+import Paragraph from "../common/paragraph/paragraph";
+import ProductCard, { type ProductCardVariant } from "../productCard/productCard";
+
 import "./ProductList.scss";
-import { useNavigate } from "react-router-dom";
 
 type ProductListProps = {
   products: Product[];
   className?: string;
+  variant?: ProductCardVariant;
 };
 
-const ProductList: React.FC<ProductListProps> = ({ products, className = "" }) => {
-  const navigate = useNavigate();
+const ProductList = ({ products, className = "", variant = "catalog" }: ProductListProps) => {
+  const { t } = useTranslation("common");
+
   if (!products.length) {
-    return <Paragraph text="No products found." className="product-list__empty" />;
+    return <Paragraph text={t("productCard.noProducts")} className="product-list__empty" />;
   }
 
   return (
-    <div className={`product-list ${className}`}>
+    <ul className={`product-list ${className}`}>
       {products.map((item) => (
-        <ProductCard
-          key={item.id}
-          id={item.id}
-          name={item.name}
-          description={item.description}
-          imgUrl={item.imgUrls[0] || ""}
-          currentPrice={Number(item.currentPrice)}
-          oldPrice={Number(item.oldPrice)}
-          onClick={() => navigate(`/product/${item.id}`)} //change to product slug for seo-frienfly link address
-        />
+        <li className="product-list__item" key={item.id}>
+          <ProductCard
+            currentPrice={Number(item.currentPrice)}
+            description={item.description}
+            id={item.id}
+            imgUrl={item.imgUrls[0] || ""}
+            name={item.name}
+            oldPrice={Number(item.oldPrice)}
+            variant={variant}
+          />
+        </li>
       ))}
-    </div>
+    </ul>
   );
 };
 

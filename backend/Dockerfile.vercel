@@ -1,0 +1,37 @@
+FROM node:24-bookworm-slim AS build
+
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends openssl \
+  && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# Vercel builds this service with backend/ as its context.
+COPY package.json ./
+RUN npm install
+
+COPY . .
+
+# Prisma Client generation only needs the schema at image-build time.
+# The real DATABASE_URL is injected by Vercel at runtime.
+RUN DATABASE_URL=postgresql://build:build@localhost:5432/build npm run prisma:generate
+RUN npm run build
+
+FROM node:24-bookworm-slim AS runtime
+
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends openssl \
+  && rm -rf /var/lib/apt/lists/*
+
+ENV NODE_ENV=production
+WORKDIR /app
+
+COPY --from=build /app/node_modules ./node_modules
+COPY --from=build /app/dist ./dist
+COPY --from=build /app/prisma ./prisma
+COPY --from=build /app/prisma.config.ts ./prisma.config.ts
+COPY --from=build /app/package.json ./package.json
+
+USER node
+EXPOSE 3000
+CMD ["node", "dist/main.js"]

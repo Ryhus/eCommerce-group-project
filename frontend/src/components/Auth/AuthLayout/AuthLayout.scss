@@ -1,0 +1,29 @@
+.auth-layout {
+  width: calc(100% - var(--container-gutter-tablet) - var(--container-gutter-tablet));
+  max-width: 64rem;
+  overflow: hidden;
+  margin-top: var(--space-10);
+  border: var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+}
+
+.auth-layout__form-column {
+  display: flex;
+  padding: var(--space-12);
+  align-items: center;
+  justify-content: center;
+}
+
+@media (max-width: 480px) {
+  .auth-layout {
+    width: 100%;
+    margin-top: 0;
+    border: 0;
+    border-radius: 0;
+  }
+
+  .auth-layout__form-column {
+    padding: var(--space-8) var(--container-gutter-mobile);
+  }
+}

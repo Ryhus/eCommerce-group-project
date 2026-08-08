@@ -1,45 +1,59 @@
-import React from "react";
+import type { ComponentPropsWithoutRef, ReactNode, Ref } from "react";
+
 import "./inputField.scss";
 
-type InputFieldProps = {
-  value: string; // The input's value
-  onChange: (newValue: string) => void; // Function to call when text changes
-  placeholder?: string; // Optional placeholder text
-  name?: string;
-  disabled?: boolean; // Disable interaction
-  isValid?: boolean; // Mark input as invalid
+type InputFieldProps = Omit<ComponentPropsWithoutRef<"input">, "children" | "className" | "onChange" | "value"> & {
+  value: string;
+  onChange: (newValue: string) => void;
+  isValid?: boolean;
   wrapperClassName?: string;
   inputClassName?: string;
-  type?: string;
-  icon?: React.ReactNode;
-  rightIcon?: React.ReactNode;
+  inputRef?: Ref<HTMLInputElement>;
+  icon?: ReactNode;
+  rightIcon?: ReactNode;
 };
 
-const InputField: React.FC<InputFieldProps> = ({
+const InputField = ({
   value,
   onChange,
   placeholder = "",
   name = "",
-  disabled = false, // Default to enabled
-  isValid = true, // Default to valid
+  disabled = false,
+  isValid = true,
   wrapperClassName = "",
   inputClassName = "",
+  inputRef,
   type = "text",
   icon,
   rightIcon,
-}) => {
+  ...props
+}: InputFieldProps) => {
   const errorClass = isValid ? "" : "input--error";
   const inputClass = `input ${errorClass} ${inputClassName}`.trim();
-  const wrapperClass = `input-wrapper ${wrapperClassName}`.trim();
+  const wrapperClass = [
+    "input-wrapper",
+    icon && "input-wrapper--with-leading-icon",
+    rightIcon && "input-wrapper--with-trailing-icon",
+    !isValid && "input-wrapper--error",
+    wrapperClassName,
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   return (
     <div className={wrapperClass}>
-      {icon && <span className="input-icon">{icon}</span>}
+      {icon && (
+        <span aria-hidden="true" className="input-icon">
+          {icon}
+        </span>
+      )}
       <input
+        {...props}
+        ref={inputRef}
         className={inputClass}
         type={type}
         value={value}
-        onChange={(e) => onChange(e.target.value)}
+        onChange={(event) => onChange(event.currentTarget.value)}
         placeholder={placeholder}
         name={name}
         disabled={disabled}
@@ -50,5 +64,4 @@ const InputField: React.FC<InputFieldProps> = ({
   );
 };
 
-// Export the InputField component for use elsewhere
 export default InputField;

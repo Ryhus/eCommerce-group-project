@@ -1,4 +1,6 @@
-import React, { useState, useRef, useEffect } from "react";
+import { PiCaretDownBold } from "react-icons/pi";
+import { useTranslation } from "react-i18next";
+
 import "./Sorting.scss";
 
 export type SortOption = "default" | "price asc" | "price desc" | "name asc" | "name desc";
@@ -6,58 +8,39 @@ export type SortOption = "default" | "price asc" | "price desc" | "name asc" | "
 export interface SortingProps {
   currentSort: SortOption;
   onSortChange: (newSort: SortOption) => void;
+  className?: string;
 }
 
-const LABELS: Record<SortOption, string> = {
-  default: "Most relevant",
-  "price asc": "Price low to hight",
-  "price desc": "Price hight to low",
-  "name asc": "Name A to Z",
-  "name desc": "Name Z to A",
-};
+const SORT_OPTIONS = [
+  { value: "default", labelKey: "sorting.relevance" },
+  { value: "price asc", labelKey: "sorting.priceAscending" },
+  { value: "price desc", labelKey: "sorting.priceDescending" },
+  { value: "name asc", labelKey: "sorting.nameAscending" },
+  { value: "name desc", labelKey: "sorting.nameDescending" },
+] as const satisfies ReadonlyArray<{ value: SortOption; labelKey: string }>;
 
-export const Sorting: React.FC<SortingProps> = ({ currentSort, onSortChange }) => {
-  const [open, setOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setOpen(false);
-      }
-    }
-    if (open) {
-      document.addEventListener("mousedown", handleClickOutside);
-    } else {
-      document.removeEventListener("mousedown", handleClickOutside);
-    }
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [open]);
-
-  const handleOptionClick = (option: SortOption) => {
-    setOpen(false);
-    if (option !== currentSort) {
-      onSortChange(option);
-    }
-  };
+export const Sorting = ({ currentSort, onSortChange, className = "" }: SortingProps) => {
+  const { t } = useTranslation("common");
 
   return (
-    <div className="sorting" ref={dropdownRef}>
-      <button type="button" className="toggle" onClick={() => setOpen((prev) => !prev)}>
-        Sort: {LABELS[currentSort]} <span className="caret">⋁</span>
-      </button>
-      {open && (
-        <ul className="sorting-dropdown">
-          {(Object.keys(LABELS) as SortOption[]).map((opt) => (
-            <li key={opt}>
-              <button type="button" className="option" onClick={() => handleOptionClick(opt)}>
-                {LABELS[opt]}
-              </button>
-            </li>
+    <label className={`sorting ${className}`.trim()}>
+      <span className="sorting__label">{t("sorting.label")}</span>
+      <span className="sorting__control">
+        <select
+          aria-label={t("sorting.control")}
+          className="sorting__select"
+          onChange={(event) => onSortChange(event.target.value as SortOption)}
+          value={currentSort}
+        >
+          {SORT_OPTIONS.map(({ value, labelKey }) => (
+            <option key={value} value={value}>
+              {t(labelKey)}
+            </option>
           ))}
-        </ul>
-      )}
-    </div>
+        </select>
+        <PiCaretDownBold aria-hidden="true" className="sorting__icon" />
+      </span>
+    </label>
   );
 };
 

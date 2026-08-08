@@ -1,14 +1,13 @@
 .paragraph {
-  font-family: "Roboto", sans-serif;
-  color: #00000099;
   margin: 0;
-  font-size: 16px;
+  color: var(--color-text-muted);
+  font-family: var(--font-family-body);
+  font-size: var(--font-size-md);
   font-style: normal;
-  font-weight: 400;
-  line-height: 22px;
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-body);
 }
 
-// Error state: red text
 .paragraph--error {
-  color: #e74c3c;
+  color: var(--color-danger);
 }

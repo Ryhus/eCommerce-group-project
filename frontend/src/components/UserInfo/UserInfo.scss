@@ -1,160 +1,92 @@
-.user-profile-container {
+@use "../../assets/styles/tokens" as tokens;
+
+.profile-page {
+  padding-block: var(--space-6) var(--space-16);
+}
+
+.profile-page__header {
   display: flex;
-  flex-direction: row;
-  justify-content: space-evenly;
+  margin-top: var(--space-8);
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
 
-  .user-info-container {
-    display: flex;
+.profile-page__header h1 {
+  color: var(--color-ink);
+  font-family: var(--font-family-heading);
+  font-size: var(--font-size-4xl);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: -0.03em;
+  line-height: var(--line-height-heading);
+}
+
+.profile-page__header p {
+  margin-top: var(--space-2);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-body);
+}
+
+.profile-page__logout.btn {
+  width: auto;
+  height: 4.2rem;
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-sm);
+  color: var(--color-danger);
+  font-size: var(--font-size-sm);
+  white-space: nowrap;
+}
+
+.profile-page > .profile-overview {
+  margin-top: var(--space-8);
+}
+
+.profile-page__sections {
+  display: grid;
+  margin-top: var(--space-4);
+  gap: var(--space-4);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.profile-page__sections > div {
+  min-width: 0;
+}
+
+.profile-page__addresses {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: tokens.$breakpoint-tablet) {
+  .profile-page__sections {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-page__addresses {
+    grid-column: auto;
+  }
+}
+
+@media (max-width: tokens.$breakpoint-mobile) {
+  .profile-page {
+    padding-block: var(--space-5) var(--space-12);
+  }
+
+  .profile-page__header {
+    margin-top: var(--space-6);
+    align-items: flex-start;
     flex-direction: column;
-    gap: 2rem;
-
-    .user-login-names-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-
-      .user-names {
-        font-size: 2rem;
-      }
-
-      .user-email {
-        font-size: 1.2rem;
-      }
-    }
-
-    .profile-addresses-container {
-      display: flex;
-      flex-direction: row;
-      justify-content: center;
-      gap: 1.5rem;
-      flex-wrap: wrap;
-      .address-container-profile {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 0.5rem;
-
-        .address-heading {
-          font-size: 1.3rem;
-          text-align: center;
-        }
-        .add-address-btn {
-          padding: 0;
-          height: 3rem;
-          width: 15rem;
-          font-size: 1.3rem;
-          cursor: pointer;
-        }
-        .user-adresses-list {
-          list-style-type: none;
-          display: flex;
-          gap: 0.5rem;
-          align-items: center;
-          flex-direction: column;
-
-          .edit-buttons {
-            display: flex;
-            flex-direction: row;
-            gap: 0.3rem;
-            justify-self: center;
-          }
-          .user-address {
-            display: flex;
-            gap: 0.5rem;
-            align-items: center;
-            font-size: 1.6rem;
-            line-height: 2.2rem;
-            color: #5a6566;
-            svg {
-              color: #000000;
-              align-self: center;
-            }
-            .edit-address {
-              width: 50px;
-              height: 100%;
-              font-size: 1.3rem;
-              border-radius: 0.5rem;
-              padding: 0;
-              cursor: pointer;
-            }
-          }
-          .default-add {
-            color: red;
-          }
-        }
-      }
-    }
   }
 
-  .edit-profile-btns-container {
-    display: flex;
-    gap: 0.5rem;
-    height: 100%;
-
-    .edit-info-btn {
-      height: 3.8rem;
-      font-size: 1.3rem;
-      gap: 0.5rem;
-      padding: 0;
-
-      border-radius: 0.8rem;
-      cursor: pointer;
-
-      svg {
-        margin-top: 0.2rem;
-        width: 1.2em;
-        height: 1.2em;
-      }
-    }
+  .profile-page__header h1 {
+    font-size: var(--font-size-2xl);
   }
 
-  .personal-info-form,
-  .change-address-form {
-    display: grid;
-    grid-template-columns: 0.5fr 0.5fr;
-    gap: 1rem 0.5rem;
-
-    p {
-      text-align: center;
-      font-size: 1.3rem;
-    }
-
-    input {
-      text-align: center;
-      background-color: aliceblue;
-    }
-    .confirm-btn,
-    .cancel-btn {
-      height: 4.5rem;
-      gap: 0.5rem;
-      font-size: 1.3rem;
-      cursor: pointer;
-      align-self: center;
-    }
-    .confirm-btn {
-      place-self: end;
-    }
+  .profile-page__logout.btn {
+    width: 100%;
   }
 
-  .hidden {
-    display: none;
-  }
-  .change-address-form {
-    display: flex;
-    flex-direction: column;
-    .set-default-address {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      .default-shipping-address,
-      .default-billing-address {
-        display: flex;
-        gap: 0.5rem;
-      }
-    }
-    .confirm-btn,
-    .cancel-btn {
-      align-self: center;
-    }
+  .profile-page > .profile-overview {
+    margin-top: var(--space-6);
   }
 }

@@ -4,6 +4,14 @@ export interface Product {
   slug: string;
   description?: string;
   imgUrls: string[];
-  currentPrice: number; //in centes
-  oldPrice: number; //in centes
+  categoryIds: string[];
+  currentPrice: number; // in cents
+  oldPrice: number; // in cents
+}
+
+export interface ProductPage {
+  items: Product[];
+  offset: number;
+  limit: number;
+  total: number;
 }

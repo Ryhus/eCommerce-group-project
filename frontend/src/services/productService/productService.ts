@@ -1,5 +1,7 @@
+import { isAxiosError } from "axios";
+
 import { apiClient } from "../apiClient";
-import type { Product } from "./types";
+import type { Product, ProductPage } from "./types";
 
 interface ProductDto {
   id: string;
@@ -9,6 +11,7 @@ interface ProductDto {
   images: { url: string; alt: string }[];
   price: { amount: number; currency: "EUR" };
   compareAtPrice: { amount: number; currency: "EUR" } | null;
+  categoryIds: string[];
 }
 
 interface ProductPageDto {
@@ -25,6 +28,14 @@ const sortMap: Record<string, string> = {
   "name.en desc": "NAME_DESC",
 };
 
+interface ProductListQuery {
+  categoryId?: string;
+  sort?: string;
+  search?: string;
+  offset?: number;
+  limit?: number;
+}
+
 function mapProduct(item: ProductDto): Product {
   return {
     id: item.id,
@@ -32,6 +43,7 @@ function mapProduct(item: ProductDto): Product {
     slug: item.slug,
     description: item.description ?? "",
     imgUrls: item.images.map((image) => image.url),
+    categoryIds: item.categoryIds,
     currentPrice: item.price.amount,
     oldPrice: item.compareAtPrice?.amount ?? item.price.amount,
   };
@@ -40,26 +52,37 @@ function mapProduct(item: ProductDto): Product {
 export async function fetchProductById(productId: string): Promise<Product | null> {
   try {
     return mapProduct((await apiClient.get<ProductDto>(`/catalog/products/${productId}`)).data);
-  } catch {
-    return null;
+  } catch (error) {
+    if (isAxiosError(error) && error.response?.status === 404) return null;
+    throw error;
   }
 }
 
-export async function fetchProducts(sort?: string, offset = 0, limit = 20): Promise<Product[]> {
+export async function fetchProductPage({
+  categoryId,
+  sort,
+  search,
+  offset = 0,
+  limit = 20,
+}: ProductListQuery = {}): Promise<ProductPage> {
+  const normalizedSearch = search?.trim();
   const response = await apiClient.get<ProductPageDto>("/catalog/products", {
-    params: { sort: sort ? sortMap[sort] : "RELEVANCE", offset, limit },
+    params: {
+      ...(categoryId ? { categoryId } : {}),
+      ...(normalizedSearch ? { search: normalizedSearch } : {}),
+      sort: sort ? sortMap[sort] : "RELEVANCE",
+      offset,
+      limit,
+    },
   });
-  return response.data.items.map(mapProduct);
+  return {
+    items: response.data.items.map(mapProduct),
+    offset: response.data.offset,
+    limit: response.data.limit,
+    total: response.data.total,
+  };
 }
 
-export async function fetchProductsByCategory(
-  categoryId: string,
-  sort?: string,
-  offset = 0,
-  limit = 20
-): Promise<Product[]> {
-  const response = await apiClient.get<ProductPageDto>("/catalog/products", {
-    params: { categoryId, sort: sort ? sortMap[sort] : "RELEVANCE", offset, limit },
-  });
-  return response.data.items.map(mapProduct);
+export async function fetchProducts(query: ProductListQuery = {}): Promise<Product[]> {
+  return (await fetchProductPage(query)).items;
 }
