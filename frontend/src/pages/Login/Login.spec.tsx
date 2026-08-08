@@ -51,6 +51,8 @@ describe("LoginPage", () => {
     expect(screen.getByRole("form", { name: "Login" })).toBeVisible();
     expect(screen.getByRole("textbox", { name: "Email address" })).toHaveAttribute("autocomplete", "email");
     expect(screen.getByLabelText("Password")).toHaveAttribute("autocomplete", "current-password");
+    expect(document.querySelector("#login-email-error")).toBeEmptyDOMElement();
+    expect(document.querySelector("#login-password-error")).toBeEmptyDOMElement();
     expect(screen.queryByText(/Secure sign-in/i)).not.toBeInTheDocument();
   });
 

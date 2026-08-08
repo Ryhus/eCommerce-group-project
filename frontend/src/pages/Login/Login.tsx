@@ -110,11 +110,9 @@ export default function LoginPage() {
               type="email"
               value={email}
             />
-            {emailError && (
-              <p className="login-form__error" id="login-email-error">
-                {emailError}
-              </p>
-            )}
+            <p aria-live="polite" className="login-form__error" id="login-email-error">
+              {emailError}
+            </p>
           </div>
 
           <div className="login-form__field">
@@ -139,11 +137,9 @@ export default function LoginPage() {
               type={showPassword ? "text" : "password"}
               value={password}
             />
-            {passwordError && (
-              <p className="login-form__error" id="login-password-error">
-                {passwordError}
-              </p>
-            )}
+            <p aria-live="polite" className="login-form__error" id="login-password-error">
+              {passwordError}
+            </p>
           </div>
         </div>
 
