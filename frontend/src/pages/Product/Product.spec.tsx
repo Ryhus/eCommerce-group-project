@@ -110,7 +110,8 @@ describe("ProductPage", () => {
     vi.mocked(fetchProductById).mockResolvedValue(null);
     renderProduct();
 
-    expect(await screen.findByRole("heading", { name: "404" })).toBeVisible();
+    expect(await screen.findByRole("heading", { name: "This page doesn't exist" })).toBeVisible();
+    expect(screen.getByRole("button", { name: "Browse gear" })).toBeVisible();
     expect(fetchCategoryTrail).not.toHaveBeenCalled();
   });
 
