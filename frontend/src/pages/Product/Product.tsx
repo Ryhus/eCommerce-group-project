@@ -27,10 +27,13 @@ export default function ProductPage() {
   const [product, setProduct] = useState<Product | null>(null);
   const [categoryTrail, setCategoryTrail] = useState<Category[]>([]);
   const [recommendations, setRecommendations] = useState<Product[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [resolvedRequestKey, setResolvedRequestKey] = useState<string | null>(null);
   const [notFound, setNotFound] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [reloadKey, setReloadKey] = useState(0);
+  const requestKey = `${id ?? "missing"}#${reloadKey}`;
+  const isLoading = resolvedRequestKey !== requestKey;
+  const visibleProduct = product?.id === id && !isLoading ? product : null;
 
   useEffect(() => {
     let cancelled = false;
@@ -39,13 +42,12 @@ export default function ProductPage() {
       setProduct(null);
       setCategoryTrail([]);
       setRecommendations([]);
-      setIsLoading(true);
       setNotFound(false);
       setError(null);
 
       if (!id) {
         setNotFound(true);
-        setIsLoading(false);
+        setResolvedRequestKey(requestKey);
         return;
       }
 
@@ -55,7 +57,7 @@ export default function ProductPage() {
       } catch (loadError) {
         if (!cancelled) {
           setError(loadError instanceof Error ? loadError.message : "Unable to load this product.");
-          setIsLoading(false);
+          setResolvedRequestKey(requestKey);
         }
         return;
       }
@@ -63,12 +65,12 @@ export default function ProductPage() {
       if (cancelled) return;
       if (!nextProduct) {
         setNotFound(true);
-        setIsLoading(false);
+        setResolvedRequestKey(requestKey);
         return;
       }
 
       setProduct(nextProduct);
-      setIsLoading(false);
+      setResolvedRequestKey(requestKey);
 
       const categoryId = nextProduct.categoryIds[0];
       if (!categoryId) return;
@@ -90,19 +92,19 @@ export default function ProductPage() {
     return () => {
       cancelled = true;
     };
-  }, [id, reloadKey]);
+  }, [id, requestKey]);
 
   const breadcrumbs = useMemo<Crumb[]>(() => {
     if (!product) return [];
     return [...categoryCrumbs(categoryTrail), { name: product.name, path: `/product/${product.id}` }];
   }, [categoryTrail, product]);
 
-  if (notFound) return <NotFoundPage />;
+  if (!isLoading && notFound) return <NotFoundPage />;
 
   return (
     <PageContainer className="product-page">
       {isLoading ? (
-        <div aria-live="polite" className="product-page__status" role="status">
+        <div aria-label="Product loading" aria-live="polite" className="product-page__status" role="status">
           <span className="product-page__spinner" />
           Loading product…
         </div>
@@ -113,15 +115,15 @@ export default function ProductPage() {
             Try again
           </button>
         </div>
-      ) : product ? (
+      ) : visibleProduct ? (
         <>
           <Breadcrumbs crumbs={breadcrumbs} />
           <main className="product-page__main">
             <div className="product-page__hero">
-              <ProductGallery images={product.imgUrls} productName={product.name} />
-              <ProductPurchasePanel product={product} />
+              <ProductGallery images={visibleProduct.imgUrls} productName={visibleProduct.name} />
+              <ProductPurchasePanel product={visibleProduct} />
             </div>
-            <RelatedProducts currentProductId={product.id} products={recommendations} />
+            <RelatedProducts currentProductId={visibleProduct.id} products={recommendations} />
           </main>
         </>
       ) : null}

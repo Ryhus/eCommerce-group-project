@@ -1,5 +1,5 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { MemoryRouter, Route, Routes } from "react-router-dom";
+import { Link, MemoryRouter, Route, Routes } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { fetchCategoryTrail } from "../../services/categoryService/categoryService";
@@ -33,11 +33,26 @@ const product: Product = {
   oldPrice: 4499,
 };
 
+const secondProduct: Product = {
+  ...product,
+  id: "product-two",
+  slug: "training-backpack",
+  name: "Training Backpack",
+};
+
 function renderProduct() {
   render(
     <MemoryRouter initialEntries={["/product/product-id"]}>
       <Routes>
-        <Route element={<ProductPage />} path="/product/:id" />
+        <Route
+          element={
+            <>
+              <ProductPage />
+              <Link to="/product/product-two">Open product two</Link>
+            </>
+          }
+          path="/product/:id"
+        />
       </Routes>
     </MemoryRouter>
   );
@@ -68,6 +83,25 @@ describe("ProductPage", () => {
     expect(screen.getByRole("navigation", { name: "Breadcrumb" })).toHaveTextContent(
       "HomeCatalogBallsFootballMatch Football"
     );
+  });
+
+  it("hides the previous product while a new URL is loading", async () => {
+    let resolveSecondProduct!: (product: Product | null) => void;
+    const secondProductRequest = new Promise<Product | null>((resolve) => {
+      resolveSecondProduct = resolve;
+    });
+    vi.mocked(fetchProductById).mockResolvedValueOnce(product).mockReturnValueOnce(secondProductRequest);
+
+    renderProduct();
+    expect(await screen.findByRole("heading", { name: "Match Football" })).toBeVisible();
+
+    fireEvent.click(screen.getByRole("link", { name: "Open product two" }));
+
+    expect(screen.getByRole("status", { name: "Product loading" })).toBeVisible();
+    expect(screen.queryByRole("heading", { name: "Match Football" })).not.toBeInTheDocument();
+
+    resolveSecondProduct(secondProduct);
+    expect(await screen.findByRole("heading", { name: "Training Backpack" })).toBeVisible();
   });
 
   it("shows the not-found page for an unknown product", async () => {
