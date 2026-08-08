@@ -34,7 +34,23 @@ test("registers, shops with a promo code, opens profile and logs out", async ({ 
   await expect(page.getByText("Discount", { exact: true })).toBeVisible();
 
   await page.getByRole("link", { name: "Open profile" }).click();
-  await expect(page.getByText(email)).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1, name: "My account" })).toBeVisible();
+  const personalDetailsRegion = page.getByRole("region", { name: "Personal details" });
+  await expect(personalDetailsRegion).toBeVisible();
+  await expect(personalDetailsRegion.getByText(email)).toBeVisible();
+  await expect(page.getByRole("region", { name: "Security" })).toBeVisible();
+  await expect(page.getByRole("region", { name: "Saved addresses" })).toBeVisible();
+
+  await page.getByRole("button", { name: "Edit profile" }).click();
+  const editProfileRegion = page.getByRole("region", { name: "Edit personal details" });
+  await expect(editProfileRegion).toBeVisible();
+  await expect(editProfileRegion.getByLabel("Email address", { exact: true })).toHaveValue(email);
+  await page.getByRole("button", { name: "Cancel" }).click();
+
+  await page.getByRole("button", { name: "Delete Browser Street 1" }).click();
+  await expect(page.getByRole("alertdialog", { name: "Delete address?" })).toBeVisible();
+  await page.getByRole("button", { name: "Cancel" }).click();
+  await expect(page.getByRole("alertdialog")).toHaveCount(0);
 
   await page.getByRole("button", { name: "Log out" }).click();
   await expect(page).toHaveURL(/\/login$/);
