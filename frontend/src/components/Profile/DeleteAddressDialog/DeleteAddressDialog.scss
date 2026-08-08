@@ -1,0 +1,73 @@
+.delete-address-dialog__backdrop {
+  position: fixed;
+  z-index: 1000;
+  display: grid;
+  padding: var(--container-gutter-mobile);
+  background: rgb(0 0 0 / 48%);
+  inset: 0;
+  place-items: center;
+}
+
+.delete-address-dialog {
+  width: 100%;
+  max-width: 44rem;
+  padding: var(--space-6);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+}
+
+.delete-address-dialog h2 {
+  color: var(--color-ink);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-heading);
+}
+
+.delete-address-dialog > p {
+  margin-top: var(--space-3);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-relaxed);
+}
+
+.delete-address-dialog > p strong {
+  color: var(--color-ink);
+  font-weight: var(--font-weight-medium);
+}
+
+.delete-address-dialog__error {
+  min-height: 4.2rem;
+  margin-top: var(--space-3);
+}
+
+.delete-address-dialog__error p {
+  color: var(--color-danger);
+  font-size: var(--font-size-xs);
+  line-height: var(--line-height-body);
+}
+
+.delete-address-dialog__actions {
+  display: grid;
+  margin-top: var(--space-3);
+  gap: var(--space-3);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.delete-address-dialog__actions .btn {
+  max-width: none;
+  border-radius: var(--radius-sm);
+}
+
+.delete-address-dialog__actions .btn--dark {
+  background: var(--color-danger);
+}
+
+@media (max-width: 380px) {
+  .delete-address-dialog {
+    padding: var(--space-5);
+  }
+
+  .delete-address-dialog__actions {
+    grid-template-columns: 1fr;
+  }
+}
