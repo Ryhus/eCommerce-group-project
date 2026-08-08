@@ -146,4 +146,21 @@ export const ruCommon = {
     options: "Параметры каталога",
     closeOptions: "Закрыть параметры каталога",
   },
+  sorting: {
+    label: "Сортировать:",
+    control: "Сортировка товаров",
+    relevance: "По релевантности",
+    priceAscending: "Цена: по возрастанию",
+    priceDescending: "Цена: по убыванию",
+    nameAscending: "Название: от А до Я",
+    nameDescending: "Название: от Я до А",
+  },
+  pagination: {
+    navigation: "Страницы каталога",
+    previousPage: "Предыдущая страница",
+    previous: "Назад",
+    nextPage: "Следующая страница",
+    next: "Вперёд",
+    goToPage: "Перейти на страницу {{page}}",
+  },
 } satisfies CommonTranslations;

@@ -146,6 +146,23 @@ export const enCommon = {
     options: "Catalog options",
     closeOptions: "Close catalog options",
   },
+  sorting: {
+    label: "Sort by:",
+    control: "Sort products",
+    relevance: "Most relevant",
+    priceAscending: "Price: low to high",
+    priceDescending: "Price: high to low",
+    nameAscending: "Name: A to Z",
+    nameDescending: "Name: Z to A",
+  },
+  pagination: {
+    navigation: "Catalog pagination",
+    previousPage: "Previous page",
+    previous: "Previous",
+    nextPage: "Next page",
+    next: "Next",
+    goToPage: "Go to page {{page}}",
+  },
 } as const;
 
 export type CommonTranslations = {

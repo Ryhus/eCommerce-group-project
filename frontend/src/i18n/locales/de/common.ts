@@ -150,4 +150,21 @@ export const deCommon = {
     options: "Katalogoptionen",
     closeOptions: "Katalogoptionen schließen",
   },
+  sorting: {
+    label: "Sortieren nach:",
+    control: "Produkte sortieren",
+    relevance: "Höchste Relevanz",
+    priceAscending: "Preis: aufsteigend",
+    priceDescending: "Preis: absteigend",
+    nameAscending: "Name: A bis Z",
+    nameDescending: "Name: Z bis A",
+  },
+  pagination: {
+    navigation: "Katalogseiten",
+    previousPage: "Vorherige Seite",
+    previous: "Zurück",
+    nextPage: "Nächste Seite",
+    next: "Weiter",
+    goToPage: "Zu Seite {{page}} wechseln",
+  },
 } satisfies CommonTranslations;

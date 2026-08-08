@@ -1,4 +1,5 @@
 import { PiCaretDownBold } from "react-icons/pi";
+import { useTranslation } from "react-i18next";
 
 import "./Sorting.scss";
 
@@ -10,30 +11,30 @@ export interface SortingProps {
   className?: string;
 }
 
-const LABELS: Record<SortOption, string> = {
-  default: "Most relevant",
-  "price asc": "Price: low to high",
-  "price desc": "Price: high to low",
-  "name asc": "Name: A to Z",
-  "name desc": "Name: Z to A",
-};
-
-const SORT_OPTIONS = Object.entries(LABELS) as [SortOption, string][];
+const SORT_OPTIONS = [
+  { value: "default", labelKey: "sorting.relevance" },
+  { value: "price asc", labelKey: "sorting.priceAscending" },
+  { value: "price desc", labelKey: "sorting.priceDescending" },
+  { value: "name asc", labelKey: "sorting.nameAscending" },
+  { value: "name desc", labelKey: "sorting.nameDescending" },
+] as const satisfies ReadonlyArray<{ value: SortOption; labelKey: string }>;
 
 export const Sorting = ({ currentSort, onSortChange, className = "" }: SortingProps) => {
+  const { t } = useTranslation("common");
+
   return (
     <label className={`sorting ${className}`.trim()}>
-      <span className="sorting__label">Sort by:</span>
+      <span className="sorting__label">{t("sorting.label")}</span>
       <span className="sorting__control">
         <select
-          aria-label="Sort products"
+          aria-label={t("sorting.control")}
           className="sorting__select"
           onChange={(event) => onSortChange(event.target.value as SortOption)}
           value={currentSort}
         >
-          {SORT_OPTIONS.map(([value, label]) => (
+          {SORT_OPTIONS.map(({ value, labelKey }) => (
             <option key={value} value={value}>
-              {label}
+              {t(labelKey)}
             </option>
           ))}
         </select>
