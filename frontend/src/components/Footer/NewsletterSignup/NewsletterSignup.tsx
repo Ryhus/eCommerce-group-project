@@ -1,5 +1,6 @@
 import { useState, type ComponentPropsWithoutRef, type FormEvent } from "react";
 import { MdOutlineEmail } from "react-icons/md";
+import { useTranslation } from "react-i18next";
 
 import { subscribeToNewsletter } from "../../../services/newsletterService/newsletterService";
 import { validateEmailFormat } from "../../../utils/validation";
@@ -12,14 +13,18 @@ import "./NewsletterSignup.scss";
 
 type NewsletterSignupProps = Omit<ComponentPropsWithoutRef<"section">, "children">;
 
+type NewsletterFeedbackKey =
+  "newsletter.emailRequired" | "newsletter.error" | "newsletter.invalidEmail" | "newsletter.success";
+
 type Feedback = {
-  text: string;
+  key: NewsletterFeedbackKey;
   variant: "error" | "success";
 };
 
 const NewsletterSignup = ({ className = "", ...props }: NewsletterSignupProps) => {
+  const { t } = useTranslation("common");
   const [email, setEmail] = useState("");
-  const [emailError, setEmailError] = useState<string | null>(null);
+  const [emailError, setEmailError] = useState<NewsletterFeedbackKey | null>(null);
   const [feedback, setFeedback] = useState<Feedback | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -35,8 +40,9 @@ const NewsletterSignup = ({ className = "", ...props }: NewsletterSignupProps) =
     const validationError = validateEmailFormat(normalizedEmail);
 
     if (validationError) {
-      setEmailError(validationError);
-      setFeedback({ text: validationError, variant: "error" });
+      const errorKey = normalizedEmail ? "newsletter.invalidEmail" : "newsletter.emailRequired";
+      setEmailError(errorKey);
+      setFeedback({ key: errorKey, variant: "error" });
       return;
     }
 
@@ -46,9 +52,9 @@ const NewsletterSignup = ({ className = "", ...props }: NewsletterSignupProps) =
     try {
       await subscribeToNewsletter(normalizedEmail);
       setEmail("");
-      setFeedback({ text: "You're subscribed to Sport Gear updates.", variant: "success" });
+      setFeedback({ key: "newsletter.success", variant: "success" });
     } catch {
-      setFeedback({ text: "Unable to subscribe right now. Please try again.", variant: "error" });
+      setFeedback({ key: "newsletter.error", variant: "error" });
     } finally {
       setIsSubmitting(false);
     }
@@ -58,11 +64,11 @@ const NewsletterSignup = ({ className = "", ...props }: NewsletterSignupProps) =
 
   return (
     <section {...props} className={sectionClassName}>
-      <H2 className="newsletter-signup__heading" text="STAY UP TO DATE ABOUT OUR LATEST OFFERS" />
+      <H2 className="newsletter-signup__heading" text={t("newsletter.heading")} />
 
-      <form aria-label="Newsletter subscription" className="newsletter-signup__form" onSubmit={handleSubmit} noValidate>
+      <form aria-label={t("newsletter.form")} className="newsletter-signup__form" onSubmit={handleSubmit} noValidate>
         <InputField
-          aria-label="Email address"
+          aria-label={t("newsletter.email")}
           autoComplete="email"
           disabled={isSubmitting}
           icon={<MdOutlineEmail />}
@@ -71,7 +77,7 @@ const NewsletterSignup = ({ className = "", ...props }: NewsletterSignupProps) =
           maxLength={254}
           name="email"
           onChange={handleEmailChange}
-          placeholder="Enter your email address"
+          placeholder={t("newsletter.placeholder")}
           required
           type="email"
           value={email}
@@ -80,13 +86,13 @@ const NewsletterSignup = ({ className = "", ...props }: NewsletterSignupProps) =
         <Button
           className="btn-medium newsletter-signup__button"
           disabled={isSubmitting}
-          text={isSubmitting ? "Subscribing..." : "Subscribe to Newsletter"}
+          text={isSubmitting ? t("newsletter.submitting") : t("newsletter.submit")}
           type="submit"
           variant="light"
         />
       </form>
 
-      {feedback && <Message onClose={() => setFeedback(null)} text={feedback.text} variant={feedback.variant} />}
+      {feedback && <Message onClose={() => setFeedback(null)} text={t(feedback.key)} variant={feedback.variant} />}
     </section>
   );
 };
