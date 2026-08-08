@@ -1,3 +1,5 @@
+@use "../../../assets/styles/tokens" as tokens;
+
 .header-actions {
   display: flex;
   align-items: center;
@@ -25,6 +27,127 @@
 
   &:active {
     transform: scale(0.94);
+  }
+}
+
+.header-actions__account {
+  display: inline-flex;
+  width: 13.6rem;
+  min-height: 4.8rem;
+  padding: var(--space-1) var(--space-2);
+  align-items: center;
+  gap: var(--space-2);
+  border-radius: var(--radius-sm);
+  color: var(--color-ink);
+  text-decoration: none;
+  transition:
+    background-color var(--transition-fast),
+    transform var(--transition-fast);
+
+  &:hover {
+    background-color: var(--color-surface-subtle);
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+.header-actions__account-copy {
+  display: grid;
+  min-width: 0;
+  line-height: var(--line-height-body);
+
+  strong,
+  > span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  strong {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+  }
+
+  > span {
+    color: var(--color-text-muted);
+    font-size: var(--font-size-xs);
+  }
+}
+
+.header-actions__avatar,
+.header-actions__account-placeholder {
+  display: inline-flex;
+  width: 3.6rem;
+  height: 3.6rem;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  border-radius: var(--radius-pill);
+}
+
+.header-actions__avatar {
+  background-color: var(--color-ink);
+  color: var(--color-surface);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: 0.04em;
+}
+
+.header-actions__account--loading {
+  pointer-events: none;
+}
+
+.header-actions__account-placeholder,
+.header-actions__placeholder-line {
+  background-color: var(--color-surface-subtle);
+  animation: header-account-pulse 1.4s ease-in-out infinite;
+}
+
+.header-actions__placeholder-line {
+  width: 6.4rem;
+  height: 0.8rem;
+  border-radius: var(--radius-pill);
+}
+
+.header-actions__placeholder-line--primary {
+  width: 7.6rem;
+  height: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+@keyframes header-account-pulse {
+  50% {
+    opacity: 0.45;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .header-actions__account-placeholder,
+  .header-actions__placeholder-line {
+    animation: none;
+  }
+}
+
+@media (max-width: tokens.$breakpoint-tablet) {
+  .header-actions__account {
+    width: 4rem;
+    min-width: 4rem;
+    min-height: 4rem;
+    padding: 0;
+    justify-content: center;
+    border-radius: var(--radius-pill);
+  }
+
+  .header-actions__account-copy {
+    display: none;
+  }
+
+  .header-actions__avatar,
+  .header-actions__account-placeholder {
+    width: 3.2rem;
+    height: 3.2rem;
   }
 }
 

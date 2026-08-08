@@ -52,7 +52,7 @@ describe("Header", () => {
     expect(screen.getByRole("navigation", { name: "Primary navigation" })).toBeInTheDocument();
     expect(screen.getByRole("search", { name: "Product search" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Shopping cart, empty" })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Log in" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Sign in" })).toBeInTheDocument();
   });
 
   it("opens one mobile panel at a time and manages scroll locking", () => {
