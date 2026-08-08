@@ -12,7 +12,7 @@
 
 .team-member-card__portrait {
   overflow: hidden;
-  aspect-ratio: 1.28;
+  aspect-ratio: 1;
   background: var(--color-surface-subtle);
 }
 
@@ -20,7 +20,7 @@
   display: block;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   object-position: center;
 }
 
@@ -64,10 +64,11 @@
   display: flex;
   min-height: 4.4rem;
   align-items: center;
+  justify-content: center;
   margin-top: auto;
   padding-top: var(--space-5);
   border-top: var(--border-subtle);
-  color: var(--color-ink);
+  color: var(--color-link);
   gap: var(--space-2);
   font-size: var(--font-size-sm);
   text-decoration: none;
@@ -79,12 +80,11 @@
   }
 
   strong {
-    color: var(--color-text-muted);
+    color: inherit;
     font-weight: var(--font-weight-medium);
   }
 
-  &:hover strong {
-    color: var(--color-ink);
+  &:hover {
     text-decoration: underline;
   }
 
