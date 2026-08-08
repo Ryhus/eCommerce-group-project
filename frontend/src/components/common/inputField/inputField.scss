@@ -11,27 +11,29 @@
   z-index: 1;
   top: 50%;
   display: inline-flex;
-  width: 2.4rem;
-  height: 2.4rem;
   align-items: center;
   justify-content: center;
   color: var(--color-text-subtle);
   transform: translateY(-50%);
+}
 
-  img,
-  svg {
+.input-icon {
+  width: 2.4rem;
+  height: 2.4rem;
+  inset-inline-start: var(--space-4);
+  pointer-events: none;
+
+  > img,
+  > svg {
     width: 100%;
     height: 100%;
   }
 }
 
-.input-icon {
-  inset-inline-start: var(--space-4);
-  pointer-events: none;
-}
-
 .input-right-icon {
-  inset-inline-end: var(--space-4);
+  width: 4.4rem;
+  height: 4.4rem;
+  inset-inline-end: var(--space-1);
 }
 
 .input {
