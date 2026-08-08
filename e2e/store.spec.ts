@@ -155,6 +155,53 @@ test("localizes basket items, promo code and order summary", async ({ page }) =>
   await expect(page.getByRole("button", { name: "Удалить промокод WELCOME10" })).toBeVisible();
 });
 
+test("localizes login validation and authentication states", async ({ page }) => {
+  await page.route("**/api/v1/auth/login", async (route) => {
+    await route.fulfill({
+      body: JSON.stringify({
+        statusCode: 401,
+        code: "UNAUTHORIZED",
+        message: "Email or password is incorrect",
+        requestId: "playwright-login",
+      }),
+      contentType: "application/json",
+      status: 401,
+    });
+  });
+
+  await page.goto("/login");
+  await page.getByRole("button", { name: "Current language: English" }).click();
+  await page.getByRole("menuitemradio", { name: "DE Deutsch" }).click();
+
+  await expect(page.getByRole("heading", { level: 1, name: "Willkommen zurück" })).toBeVisible();
+  const loginForm = page.getByRole("form", { exact: true, name: "Anmeldung" });
+  await loginForm.getByRole("button", { name: "Anmelden" }).click();
+  await expect(
+    page.getByText("Die E-Mail-Adresse muss genau ein '@' zwischen lokalem Teil und Domain enthalten.")
+  ).toBeVisible();
+  await expect(page.getByText("Gib dein Passwort ein.")).toBeVisible();
+
+  await loginForm.getByRole("textbox", { name: "E-Mail-Adresse" }).fill("shopper@example.com");
+  const passwordInput = loginForm.getByRole("textbox", { exact: true, name: "Passwort" });
+  await passwordInput.fill("wrong-password");
+  await loginForm.getByRole("button", { name: "Passwort anzeigen" }).click();
+  await expect(passwordInput).toHaveAttribute("type", "text");
+  await loginForm.getByRole("button", { name: "Anmelden" }).click();
+  await expect(page.getByRole("alert")).toHaveText(
+    "E-Mail-Adresse oder Passwort ist falsch. Bitte versuche es erneut."
+  );
+
+  await page.getByRole("button", { name: "Aktuelle Sprache: Deutsch" }).click();
+  await page.getByRole("menuitemradio", { name: "RU Русский" }).click();
+
+  await expect(page.getByRole("heading", { level: 1, name: "С возвращением" })).toBeVisible();
+  await expect(page.getByRole("alert")).toHaveText("Неверная электронная почта или пароль. Попробуйте ещё раз.");
+  await expect(page.getByRole("button", { name: "Скрыть пароль" })).toHaveAttribute("aria-pressed", "true");
+  await expect(
+    page.getByRole("form", { exact: true, name: "Вход в аккаунт" }).getByRole("link", { name: "Создать аккаунт" })
+  ).toHaveAttribute("href", "/sign-up");
+});
+
 test("registers, shops with a promo code, opens profile and logs out", async ({ page }) => {
   const email = `playwright-${Date.now()}@example.com`;
 
