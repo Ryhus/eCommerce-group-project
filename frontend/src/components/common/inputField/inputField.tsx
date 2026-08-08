@@ -1,4 +1,4 @@
-import type { ComponentPropsWithoutRef, ReactNode } from "react";
+import type { ComponentPropsWithoutRef, ReactNode, Ref } from "react";
 
 import "./inputField.scss";
 
@@ -8,6 +8,7 @@ type InputFieldProps = Omit<ComponentPropsWithoutRef<"input">, "children" | "cla
   isValid?: boolean;
   wrapperClassName?: string;
   inputClassName?: string;
+  inputRef?: Ref<HTMLInputElement>;
   icon?: ReactNode;
   rightIcon?: ReactNode;
 };
@@ -21,6 +22,7 @@ const InputField = ({
   isValid = true,
   wrapperClassName = "",
   inputClassName = "",
+  inputRef,
   type = "text",
   icon,
   rightIcon,
@@ -47,6 +49,7 @@ const InputField = ({
       )}
       <input
         {...props}
+        ref={inputRef}
         className={inputClass}
         type={type}
         value={value}

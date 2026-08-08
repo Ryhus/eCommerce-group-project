@@ -34,7 +34,7 @@ test("registers, shops with a promo code, opens profile and logs out", async ({ 
 
   await page.getByRole("button", { name: "Log out" }).click();
   await expect(page).toHaveURL(/\/login$/);
-  await expect(page.getByRole("heading", { name: "Login" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Welcome back" })).toBeVisible();
 });
 
 test("manages product quantity and a promo code in the cart", async ({ page }) => {
