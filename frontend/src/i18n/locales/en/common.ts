@@ -249,6 +249,13 @@ export const enCommon = {
     checkoutNote: "Checkout is not available in this demo yet.",
     continueShopping: "Continue shopping",
   },
+  basketPage: {
+    breadcrumb: "Cart",
+    title: "Your cart",
+    loading: "Loading your cart…",
+    loadError: "We couldn't load your cart. Please try again.",
+    retry: "Try again",
+  },
 } as const;
 
 export type CommonTranslations = {

@@ -2,6 +2,7 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+import i18n from "../../i18n/i18n";
 import type { CartResponse } from "../../services/cartService/types";
 import { useCart } from "../../components/context/useCart";
 import BasketPage from "./Basket";
@@ -38,7 +39,8 @@ const cart: CartResponse = {
 describe("BasketPage", () => {
   const refreshCart = vi.fn();
 
-  beforeEach(() => {
+  beforeEach(async () => {
+    await i18n.changeLanguage("en");
     refreshCart.mockReset();
   });
 
@@ -96,5 +98,26 @@ describe("BasketPage", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "Try again" }));
     await waitFor(() => expect(refreshCart).toHaveBeenCalledOnce());
+    expect(screen.getByRole("alert")).not.toHaveTextContent("Network unavailable");
+  });
+
+  it("localizes the page and its error state", async () => {
+    await i18n.changeLanguage("ru");
+    vi.mocked(useCart).mockReturnValue({
+      cart: null,
+      cartError: "Network unavailable",
+      isCartLoading: false,
+      refreshCart,
+    } as never);
+    render(
+      <MemoryRouter>
+        <BasketPage />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByRole("heading", { name: "Ваша корзина" })).toBeVisible();
+    expect(screen.getByRole("navigation", { name: "Навигационная цепочка" })).toHaveTextContent("ГлавнаяКорзина");
+    expect(screen.getByRole("alert")).toHaveTextContent("Не удалось загрузить корзину");
+    expect(screen.getByRole("button", { name: "Попробовать снова" })).toBeVisible();
   });
 });

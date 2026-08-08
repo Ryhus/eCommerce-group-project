@@ -253,4 +253,11 @@ export const deCommon = {
     checkoutNote: "Die Kasse ist in dieser Demo noch nicht verfügbar.",
     continueShopping: "Weiter einkaufen",
   },
+  basketPage: {
+    breadcrumb: "Warenkorb",
+    title: "Dein Warenkorb",
+    loading: "Dein Warenkorb wird geladen…",
+    loadError: "Dein Warenkorb konnte nicht geladen werden. Bitte versuche es erneut.",
+    retry: "Erneut versuchen",
+  },
 } satisfies CommonTranslations;

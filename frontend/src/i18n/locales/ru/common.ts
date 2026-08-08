@@ -249,4 +249,11 @@ export const ruCommon = {
     checkoutNote: "Оформление заказа пока недоступно в демоверсии.",
     continueShopping: "Продолжить покупки",
   },
+  basketPage: {
+    breadcrumb: "Корзина",
+    title: "Ваша корзина",
+    loading: "Загружаем корзину…",
+    loadError: "Не удалось загрузить корзину. Попробуйте ещё раз.",
+    retry: "Попробовать снова",
+  },
 } satisfies CommonTranslations;

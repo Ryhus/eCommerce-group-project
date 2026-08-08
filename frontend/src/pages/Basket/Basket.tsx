@@ -7,25 +7,26 @@ import { useCart } from "../../components/context/useCart";
 import "./BasketPageStyles.scss";
 
 export default function BasketPage() {
+  const { t } = useTranslation("common");
   const { cart, cartError, isCartLoading, refreshCart } = useCart();
   const hasItems = Boolean(cart?.items.length);
 
   return (
     <PageContainer className="basket-page">
-      <Breadcrumbs crumbs={[{ name: "Cart", path: "/basket" }]} includeCatalog={false} />
+      <Breadcrumbs crumbs={[{ name: t("basketPage.breadcrumb"), path: "/basket" }]} includeCatalog={false} />
       <main aria-labelledby="cart-title" className="basket-page__main">
-        <h1 id="cart-title">Your cart</h1>
+        <h1 id="cart-title">{t("basketPage.title")}</h1>
 
         {isCartLoading ? (
           <div aria-live="polite" className="basket-page__status" role="status">
             <span className="basket-page__spinner" />
-            Loading your cart…
+            {t("basketPage.loading")}
           </div>
         ) : cartError ? (
           <div className="basket-page__status" role="alert">
-            <p>We couldn't load your cart. {cartError}</p>
+            <p>{t("basketPage.loadError")}</p>
             <button className="basket-page__retry" onClick={() => void refreshCart()} type="button">
-              Try again
+              {t("basketPage.retry")}
             </button>
           </div>
         ) : (
@@ -38,3 +39,4 @@ export default function BasketPage() {
     </PageContainer>
   );
 }
+import { useTranslation } from "react-i18next";
