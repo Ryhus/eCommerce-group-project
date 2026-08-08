@@ -139,4 +139,15 @@ export const deCommon = {
     sessionsDescription:
       "HttpOnly-Cookies, rotierende Refresh-Sitzungen und CSRF-Schutz halten Zugangsdaten vom Frontend-Code fern.",
   },
+  breadcrumbs: {
+    navigation: "Breadcrumb-Navigation",
+    home: "Startseite",
+    catalog: "Katalog",
+  },
+  catalogNavigation: {
+    categories: "Kategorien",
+    allProducts: "Alle Produkte",
+    options: "Katalogoptionen",
+    closeOptions: "Katalogoptionen schließen",
+  },
 } satisfies CommonTranslations;

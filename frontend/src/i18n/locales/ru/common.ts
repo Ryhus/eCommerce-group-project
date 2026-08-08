@@ -135,4 +135,15 @@ export const ruCommon = {
     sessionsDescription:
       "HttpOnly cookies, ротация refresh-сессий и CSRF-защита не допускают попадания данных авторизации во frontend-код.",
   },
+  breadcrumbs: {
+    navigation: "Навигационная цепочка",
+    home: "Главная",
+    catalog: "Каталог",
+  },
+  catalogNavigation: {
+    categories: "Категории",
+    allProducts: "Все товары",
+    options: "Параметры каталога",
+    closeOptions: "Закрыть параметры каталога",
+  },
 } satisfies CommonTranslations;

@@ -135,6 +135,17 @@ export const enCommon = {
     sessionsDescription:
       "HttpOnly cookies, rotating refresh sessions, and CSRF protection keep credentials out of frontend code.",
   },
+  breadcrumbs: {
+    navigation: "Breadcrumb",
+    home: "Home",
+    catalog: "Catalog",
+  },
+  catalogNavigation: {
+    categories: "Categories",
+    allProducts: "All products",
+    options: "Catalog options",
+    closeOptions: "Close catalog options",
+  },
 } as const;
 
 export type CommonTranslations = {
