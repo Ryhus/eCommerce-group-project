@@ -191,6 +191,12 @@ export const enCommon = {
     dialog: "{{name}} enlarged image",
     close: "Close enlarged image",
   },
+  quantity: {
+    region: "Product quantity",
+    decrease: "Decrease quantity",
+    value: "Quantity",
+    increase: "Increase quantity",
+  },
 } as const;
 
 export type CommonTranslations = {

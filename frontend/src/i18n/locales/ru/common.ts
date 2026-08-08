@@ -191,4 +191,10 @@ export const ruCommon = {
     dialog: "Увеличенное изображение {{name}}",
     close: "Закрыть увеличенное изображение",
   },
+  quantity: {
+    region: "Количество товара",
+    decrease: "Уменьшить количество",
+    value: "Количество",
+    increase: "Увеличить количество",
+  },
 } satisfies CommonTranslations;

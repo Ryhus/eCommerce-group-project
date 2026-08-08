@@ -195,4 +195,10 @@ export const deCommon = {
     dialog: "Vergrößertes Bild von {{name}}",
     close: "Vergrößertes Bild schließen",
   },
+  quantity: {
+    region: "Produktmenge",
+    decrease: "Menge verringern",
+    value: "Menge",
+    increase: "Menge erhöhen",
+  },
 } satisfies CommonTranslations;
