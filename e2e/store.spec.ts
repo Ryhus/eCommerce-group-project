@@ -1,5 +1,28 @@
 import { expect, test } from "@playwright/test";
 
+test("switches and persists the interface language", async ({ page }) => {
+  await page.goto("/");
+
+  await page.getByRole("button", { name: "Current language: English" }).click();
+  await page.getByRole("menuitemradio", { name: "DE Deutsch" }).click();
+
+  await expect(page.locator("html")).toHaveAttribute("lang", "de");
+  await expect(page).toHaveTitle("Sport Gear | Sportausrüstung");
+  await expect(page.getByRole("button", { name: "Aktuelle Sprache: Deutsch" })).toContainText("DE");
+
+  await page.reload();
+
+  await expect(page.locator("html")).toHaveAttribute("lang", "de");
+  await expect(page.getByRole("button", { name: "Aktuelle Sprache: Deutsch" })).toContainText("DE");
+
+  await page.getByRole("button", { name: "Aktuelle Sprache: Deutsch" }).click();
+  await page.getByRole("menuitemradio", { name: "RU Русский" }).click();
+
+  await expect(page.locator("html")).toHaveAttribute("lang", "ru");
+  await expect(page).toHaveTitle("Sport Gear | Спортивные товары");
+  await expect(page.getByRole("button", { name: "Текущий язык: Русский" })).toContainText("RU");
+});
+
 test("registers, shops with a promo code, opens profile and logs out", async ({ page }) => {
   const email = `playwright-${Date.now()}@example.com`;
 
