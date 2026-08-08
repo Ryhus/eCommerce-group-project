@@ -1,6 +1,7 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+import i18n from "../../../i18n/i18n";
 import type { Product } from "../../../services/productService/types";
 import { useCart } from "../../context/useCart";
 import { ProductPurchasePanel } from "./ProductPurchasePanel";
@@ -21,7 +22,8 @@ const product: Product = {
 describe("ProductPurchasePanel", () => {
   const addToCart = vi.fn();
 
-  beforeEach(() => {
+  beforeEach(async () => {
+    await i18n.changeLanguage("en");
     addToCart.mockReset();
     addToCart.mockResolvedValue(undefined);
     vi.mocked(useCart).mockReturnValue({ addToCart } as never);
@@ -50,5 +52,18 @@ describe("ProductPurchasePanel", () => {
 
     expect(await screen.findByRole("alert")).toHaveTextContent("couldn't add this product");
     expect(screen.getByRole("status", { name: "Quantity" })).toHaveTextContent("2");
+  });
+
+  it("localizes prices, actions, and successful feedback", async () => {
+    await i18n.changeLanguage("de");
+    render(<ProductPurchasePanel product={product} />);
+
+    expect(screen.getByLabelText("Produktpreis")).toHaveTextContent("34,99 €");
+    expect(screen.getByLabelText("Vorheriger Preis 44,99 €")).toBeVisible();
+
+    fireEvent.click(screen.getByRole("button", { name: "Menge erhöhen" }));
+    fireEvent.click(screen.getByRole("button", { name: "In den Warenkorb" }));
+
+    expect(await screen.findByText("2 × Match Football zum Warenkorb hinzugefügt.")).toBeVisible();
   });
 });

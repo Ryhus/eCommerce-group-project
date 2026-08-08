@@ -183,4 +183,36 @@ export const ruCommon = {
     noSearchResults: "По запросу «{{term}}» товары не найдены.",
     noCategoryProducts: "В этой категории товары не найдены.",
   },
+  productGallery: {
+    region: "Изображения {{name}}",
+    image: "{{name}}, изображение {{current}} из {{total}}",
+    viewImage: "Показать изображение {{index}} товара {{name}}",
+    expand: "Увеличить {{name}}, изображение {{current}} из {{total}}",
+    dialog: "Увеличенное изображение {{name}}",
+    close: "Закрыть увеличенное изображение",
+  },
+  quantity: {
+    region: "Количество товара",
+    decrease: "Уменьшить количество",
+    value: "Количество",
+    increase: "Увеличить количество",
+  },
+  productPurchase: {
+    price: "Цена товара",
+    previousPrice: "Предыдущая цена {{price}}",
+    detailsUnavailable: "Описание товара скоро появится.",
+    adding: "Добавляем…",
+    addToCart: "Добавить в корзину",
+    added: "{{quantity}} × {{name}} добавлено в корзину.",
+    addError: "Не удалось добавить товар. Попробуйте ещё раз.",
+  },
+  relatedProducts: {
+    heading: "Вам также может понравиться",
+  },
+  productPage: {
+    loading: "Загрузка товара",
+    loadingProduct: "Загружаем товар…",
+    loadError: "Не удалось загрузить товар. Попробуйте ещё раз.",
+    retry: "Попробовать снова",
+  },
 } satisfies CommonTranslations;

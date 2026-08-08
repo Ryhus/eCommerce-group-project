@@ -1,9 +1,15 @@
 import { fireEvent, render, screen } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
+
+import i18n from "../../../i18n/i18n";
 
 import { ProductGallery } from "./ProductGallery";
 
 describe("ProductGallery", () => {
+  beforeEach(async () => {
+    await i18n.changeLanguage("en");
+  });
+
   it("changes the active image from an accessible thumbnail", () => {
     render(<ProductGallery images={["front.jpg", "back.jpg"]} productName="Training shirt" />);
 
@@ -22,6 +28,20 @@ describe("ProductGallery", () => {
     expect(screen.getByRole("dialog", { name: "Training shirt enlarged image" })).toBeVisible();
 
     fireEvent.keyDown(document, { key: "Escape" });
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+  });
+
+  it("localizes gallery and dialog controls", async () => {
+    await i18n.changeLanguage("de");
+    render(<ProductGallery images={["front.jpg", "back.jpg"]} productName="Training shirt" />);
+
+    expect(screen.getByRole("region", { name: "Bilder von Training shirt" })).toBeVisible();
+    fireEvent.click(screen.getByRole("button", { name: "Bild 2 von Training shirt anzeigen" }));
+    expect(screen.getByRole("img", { name: "Training shirt, Bild 2 von 2" })).toHaveAttribute("src", "back.jpg");
+
+    fireEvent.click(screen.getByRole("button", { name: "Training shirt, Bild 2 von 2 vergrößern" }));
+    expect(screen.getByRole("dialog", { name: "Vergrößertes Bild von Training shirt" })).toBeVisible();
+    fireEvent.click(screen.getByRole("button", { name: "Vergrößertes Bild schließen" }));
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
   });
 });

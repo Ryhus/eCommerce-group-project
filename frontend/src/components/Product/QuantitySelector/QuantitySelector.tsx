@@ -1,4 +1,5 @@
 import { PiMinus, PiPlus } from "react-icons/pi";
+import { useTranslation } from "react-i18next";
 
 import "./QuantitySelector.scss";
 
@@ -19,23 +20,24 @@ export function QuantitySelector({
   disabled = false,
   className = "",
 }: QuantitySelectorProps) {
+  const { t } = useTranslation("common");
   const selectorClassName = `quantity-selector ${className}`.trim();
 
   return (
-    <div aria-label="Product quantity" className={selectorClassName} role="group">
+    <div aria-label={t("quantity.region")} className={selectorClassName} role="group">
       <button
-        aria-label="Decrease quantity"
+        aria-label={t("quantity.decrease")}
         disabled={disabled || value <= min}
         onClick={() => onChange(Math.max(min, value - 1))}
         type="button"
       >
         <PiMinus aria-hidden="true" />
       </button>
-      <output aria-live="polite" aria-label="Quantity">
+      <output aria-live="polite" aria-label={t("quantity.value")}>
         {value}
       </output>
       <button
-        aria-label="Increase quantity"
+        aria-label={t("quantity.increase")}
         disabled={disabled || value >= max}
         onClick={() => onChange(Math.min(max, value + 1))}
         type="button"

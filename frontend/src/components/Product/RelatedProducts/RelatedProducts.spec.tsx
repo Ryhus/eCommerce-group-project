@@ -1,6 +1,7 @@
 import { render, screen } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
+import i18n from "../../../i18n/i18n";
 import type { Product } from "../../../services/productService/types";
 import { RelatedProducts } from "./RelatedProducts";
 
@@ -27,6 +28,10 @@ function product(index: number): Product {
 }
 
 describe("RelatedProducts", () => {
+  beforeEach(async () => {
+    await i18n.changeLanguage("en");
+  });
+
   it("excludes the current product and limits the storefront row to four items", () => {
     render(
       <RelatedProducts currentProductId="product-1" products={Array.from({ length: 6 }, (_, i) => product(i + 1))} />
@@ -42,5 +47,13 @@ describe("RelatedProducts", () => {
     const { container } = render(<RelatedProducts currentProductId="product-1" products={[product(1)]} />);
 
     expect(container).toBeEmptyDOMElement();
+  });
+
+  it("localizes the recommendations heading", async () => {
+    await i18n.changeLanguage("ru");
+
+    render(<RelatedProducts currentProductId="product-1" products={[product(1), product(2)]} />);
+
+    expect(screen.getByRole("heading", { name: "Вам также может понравиться" })).toBeVisible();
   });
 });

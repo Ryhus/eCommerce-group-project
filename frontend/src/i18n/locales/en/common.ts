@@ -183,6 +183,38 @@ export const enCommon = {
     noSearchResults: "No products found for “{{term}}”.",
     noCategoryProducts: "No products found in this category.",
   },
+  productGallery: {
+    region: "{{name}} images",
+    image: "{{name}}, image {{current}} of {{total}}",
+    viewImage: "View {{name}} image {{index}}",
+    expand: "Expand {{name}}, image {{current}} of {{total}}",
+    dialog: "{{name}} enlarged image",
+    close: "Close enlarged image",
+  },
+  quantity: {
+    region: "Product quantity",
+    decrease: "Decrease quantity",
+    value: "Quantity",
+    increase: "Increase quantity",
+  },
+  productPurchase: {
+    price: "Product price",
+    previousPrice: "Previous price {{price}}",
+    detailsUnavailable: "Product details will be available soon.",
+    adding: "Adding…",
+    addToCart: "Add to Cart",
+    added: "{{quantity}} × {{name}} added to your cart.",
+    addError: "We couldn't add this product. Please try again.",
+  },
+  relatedProducts: {
+    heading: "You might also like",
+  },
+  productPage: {
+    loading: "Product loading",
+    loadingProduct: "Loading product…",
+    loadError: "We couldn't load this product. Please try again.",
+    retry: "Try again",
+  },
 } as const;
 
 export type CommonTranslations = {
