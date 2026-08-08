@@ -1,0 +1,18 @@
+.auth-form-field {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.auth-form-field label {
+  color: var(--color-ink);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-body);
+}
+
+.auth-form-field__error {
+  min-height: 3.4rem;
+  color: var(--color-danger);
+  font-size: var(--font-size-xs);
+  line-height: var(--line-height-body);
+}

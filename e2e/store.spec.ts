@@ -7,15 +7,19 @@ test("registers, shops with a promo code, opens profile and logs out", async ({ 
   await page.getByPlaceholder("John").fill("Playwright");
   await page.getByPlaceholder("Doe").fill("User");
   await page.getByPlaceholder("you@example.com").fill(email);
-  await page.getByPlaceholder("Enter your password", { exact: true }).fill("Strong!Pass1");
-  await page.getByPlaceholder("Re-enter your password").fill("Strong!Pass1");
-  await page.locator('input[type="date"]').fill("1990-01-01");
-  await page.getByPlaceholder("Enter street address").fill("Browser Street 1");
-  await page.getByPlaceholder("Brussels").fill("Berlin");
-  await page.getByPlaceholder(/Enter postal code/).fill("10115");
-  await page.locator("select").selectOption("DE");
-  await page.locator('input[type="checkbox"]').check();
-  await page.locator(".register-btn").click();
+  await page.getByPlaceholder("Create a password").fill("Strong!Pass1");
+  await page.getByPlaceholder("Repeat your password").fill("Strong!Pass1");
+  await page.getByRole("button", { name: "Continue" }).click();
+
+  await page.getByLabel("Date of birth").fill("1990-01-01");
+  await page.getByRole("button", { name: "Continue" }).click();
+
+  await page.getByLabel("Street address").fill("Browser Street 1");
+  await page.getByLabel("City").fill("Berlin");
+  await page.getByLabel("Postal code").fill("10115");
+  await page.getByLabel("Country").selectOption("DE");
+  await page.getByRole("checkbox", { name: "Use as default billing and shipping address" }).check();
+  await page.getByRole("button", { name: "Create account" }).click();
 
   await expect(page.getByRole("link", { name: "Open profile" })).toBeVisible();
   await page.getByRole("link", { name: "Catalog" }).click();
