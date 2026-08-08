@@ -535,7 +535,7 @@ test("keeps data-driven not found pages outside the app layout", async ({ page }
   await expect(page.getByRole("contentinfo")).toHaveCount(0);
   await expect(page.getByRole("button", { name: "Current language: English" })).toHaveCount(0);
 
-  await page.goto("/product/does-not-exist");
+  await page.goto("/product/00000000-0000-0000-0000-000000000000");
 
   await expect(page.getByRole("heading", { name: "This page doesn't exist" })).toBeVisible();
   await expect(page.getByRole("contentinfo")).toHaveCount(0);
