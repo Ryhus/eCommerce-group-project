@@ -201,4 +201,13 @@ export const deCommon = {
     value: "Menge",
     increase: "Menge erhöhen",
   },
+  productPurchase: {
+    price: "Produktpreis",
+    previousPrice: "Vorheriger Preis {{price}}",
+    detailsUnavailable: "Produktdetails sind bald verfügbar.",
+    adding: "Wird hinzugefügt…",
+    addToCart: "In den Warenkorb",
+    added: "{{quantity}} × {{name}} zum Warenkorb hinzugefügt.",
+    addError: "Dieses Produkt konnte nicht hinzugefügt werden. Bitte versuche es erneut.",
+  },
 } satisfies CommonTranslations;

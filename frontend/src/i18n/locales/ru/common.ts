@@ -197,4 +197,13 @@ export const ruCommon = {
     value: "Количество",
     increase: "Увеличить количество",
   },
+  productPurchase: {
+    price: "Цена товара",
+    previousPrice: "Предыдущая цена {{price}}",
+    detailsUnavailable: "Описание товара скоро появится.",
+    adding: "Добавляем…",
+    addToCart: "Добавить в корзину",
+    added: "{{quantity}} × {{name}} добавлено в корзину.",
+    addError: "Не удалось добавить товар. Попробуйте ещё раз.",
+  },
 } satisfies CommonTranslations;

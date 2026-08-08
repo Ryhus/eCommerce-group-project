@@ -197,6 +197,15 @@ export const enCommon = {
     value: "Quantity",
     increase: "Increase quantity",
   },
+  productPurchase: {
+    price: "Product price",
+    previousPrice: "Previous price {{price}}",
+    detailsUnavailable: "Product details will be available soon.",
+    adding: "Adding…",
+    addToCart: "Add to Cart",
+    added: "{{quantity}} × {{name}} added to your cart.",
+    addError: "We couldn't add this product. Please try again.",
+  },
 } as const;
 
 export type CommonTranslations = {
