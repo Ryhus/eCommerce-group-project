@@ -1,4 +1,5 @@
 import { FaGithub } from "react-icons/fa";
+import { useTranslation } from "react-i18next";
 
 import "./TeamMemberCard.scss";
 
@@ -9,10 +10,25 @@ export type TeamMember = {
   github: string;
   githubHandle: string;
   contributions: readonly string[];
+  contributionKeys?: readonly string[];
+  roleKey?: string;
   isLead?: boolean;
 };
 
-export function TeamMemberCard({ name, role, image, github, githubHandle, contributions, isLead = false }: TeamMember) {
+export function TeamMemberCard({
+  name,
+  role,
+  roleKey,
+  image,
+  github,
+  githubHandle,
+  contributions,
+  contributionKeys,
+  isLead = false,
+}: TeamMember) {
+  const { t } = useTranslation("common");
+  const translatedRole = roleKey ? t(roleKey as never) : role;
+
   return (
     <article className="team-member-card">
       <div className="team-member-card__portrait">
@@ -21,23 +37,23 @@ export function TeamMemberCard({ name, role, image, github, githubHandle, contri
 
       <div className="team-member-card__content">
         <h2 className="team-member-card__name">{name}</h2>
-        <p className={`team-member-card__role${isLead ? " team-member-card__role--lead" : ""}`}>{role}</p>
+        <p className={`team-member-card__role${isLead ? " team-member-card__role--lead" : ""}`}>{translatedRole}</p>
 
-        <ul className="team-member-card__contributions" aria-label={`${name}'s contributions`}>
-          {contributions.map((contribution) => (
-            <li key={contribution}>{contribution}</li>
+        <ul className="team-member-card__contributions" aria-label={t("about.contributions", { name })}>
+          {contributions.map((contribution, index) => (
+            <li key={contribution}>{contributionKeys?.[index] ? t(contributionKeys[index] as never) : contribution}</li>
           ))}
         </ul>
 
         <a
-          aria-label={`View ${name}'s GitHub profile`}
+          aria-label={t("about.githubProfile", { name })}
           className="team-member-card__github"
           href={github}
           rel="noopener noreferrer"
           target="_blank"
         >
           <FaGithub aria-hidden="true" />
-          <span>GitHub</span>
+          <span>{t("about.github")}</span>
           <strong>@{githubHandle}</strong>
         </a>
       </div>
