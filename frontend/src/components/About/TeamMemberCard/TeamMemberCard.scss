@@ -1,0 +1,142 @@
+@use "../../../assets/styles/tokens" as *;
+
+.team-member-card {
+  display: flex;
+  height: 100%;
+  overflow: hidden;
+  flex-direction: column;
+  border: var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+}
+
+.team-member-card__portrait {
+  overflow: hidden;
+  aspect-ratio: 1;
+  background: var(--color-surface-subtle);
+}
+
+.team-member-card__portrait img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.team-member-card__content {
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+  padding: var(--space-6);
+}
+
+.team-member-card__name {
+  color: var(--color-ink);
+  font-size: var(--font-size-xl);
+  line-height: var(--line-height-heading);
+}
+
+.team-member-card__role {
+  margin-top: var(--space-2);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-md);
+  line-height: var(--line-height-body);
+}
+
+.team-member-card__role--lead {
+  color: #d56a00;
+  font-weight: var(--font-weight-medium);
+}
+
+.team-member-card__contributions {
+  display: grid;
+  margin: var(--space-5) 0 0;
+  padding-left: var(--space-5);
+  gap: var(--space-2);
+  color: var(--color-ink);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-relaxed);
+}
+
+.team-member-card__github {
+  display: flex;
+  min-height: 4.4rem;
+  align-items: center;
+  justify-content: center;
+  margin-top: auto;
+  padding-top: var(--space-5);
+  border-top: var(--border-subtle);
+  color: var(--color-link);
+  gap: var(--space-2);
+  font-size: var(--font-size-sm);
+  text-decoration: none;
+
+  svg {
+    width: 2rem;
+    height: 2rem;
+    flex: 0 0 auto;
+  }
+
+  strong {
+    color: inherit;
+    font-weight: var(--font-weight-medium);
+  }
+
+  &:hover {
+    text-decoration: underline;
+  }
+
+  &:focus-visible {
+    border-radius: var(--radius-sm);
+    outline: none;
+    box-shadow: var(--shadow-focus);
+  }
+}
+
+@media (max-width: 900px) {
+  .team-member-card {
+    display: grid;
+    grid-template-columns: minmax(11rem, 36%) minmax(0, 1fr);
+  }
+
+  .team-member-card__portrait {
+    height: 100%;
+    min-height: 27rem;
+    align-self: stretch;
+    aspect-ratio: auto;
+  }
+
+  .team-member-card__content {
+    padding: var(--space-5);
+  }
+
+  .team-member-card__name {
+    font-size: var(--font-size-lg);
+  }
+
+  .team-member-card__role,
+  .team-member-card__contributions,
+  .team-member-card__github {
+    font-size: var(--font-size-xs);
+  }
+
+  .team-member-card__contributions {
+    margin-top: var(--space-4);
+    padding-left: var(--space-4);
+  }
+}
+
+@media (max-width: $breakpoint-mobile) {
+  .team-member-card {
+    display: flex;
+  }
+
+  .team-member-card__portrait {
+    height: auto;
+    min-height: 0;
+    align-self: stretch;
+    aspect-ratio: 1;
+  }
+}

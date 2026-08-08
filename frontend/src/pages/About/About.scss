@@ -1,103 +1,81 @@
-.about {
-  padding: 80px 20px;
-  min-height: 100vh;
-  font-family: "Roboto", sans-serif;
+@use "../../assets/styles/tokens" as *;
 
-  &__title {
-    font-size: 4rem;
-    font-weight: bold;
-    text-align: center;
-    margin-bottom: 40px;
-    color: #333;
+.about-page {
+  padding-bottom: var(--space-20);
+}
+
+.about-page .breadcrumbs {
+  margin-top: var(--space-6);
+}
+
+.about-page__intro {
+  max-width: 72rem;
+  margin: var(--space-10) auto 0;
+  text-align: center;
+}
+
+.about-page__intro h1 {
+  margin: 0;
+  color: var(--color-ink);
+  font-family: var(--font-family-heading);
+  font-size: var(--font-size-4xl);
+  line-height: var(--line-height-heading);
+  text-transform: uppercase;
+}
+
+.about-page__intro p {
+  margin-top: var(--space-4);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-md);
+  line-height: var(--line-height-relaxed);
+}
+
+.about-page__team {
+  display: grid;
+  margin: var(--space-8) 0 0;
+  padding: 0;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-6);
+  list-style: none;
+}
+
+.about-page__team-item {
+  min-width: 0;
+}
+
+@media (max-width: 900px) {
+  .about-page__team {
+    max-width: 78rem;
+    margin-inline: auto;
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: $breakpoint-mobile) {
+  .about-page {
+    padding-bottom: var(--space-16);
   }
 
-  &__team {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 32px;
+  .about-page .breadcrumbs {
+    margin-top: var(--space-5);
   }
 
-  &__card {
-    background: #fff;
-    padding: 24px;
-    border-radius: 16px;
-    width: 300px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    text-align: center;
-    transition: transform 0.3s ease;
-
-    &:hover {
-      transform: translateY(-5px);
-    }
+  .about-page__intro {
+    margin-top: var(--space-6);
+    text-align: left;
   }
 
-  &__photo {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    object-fit: cover;
-    margin-bottom: 16px;
+  .about-page__intro h1 {
+    font-size: var(--font-size-2xl);
   }
 
-  &__name {
-    font-size: 2.5rem;
-    font-weight: 600;
-    color: #222;
-    margin-bottom: 4px;
+  .about-page__intro p {
+    margin-top: var(--space-3);
+    font-size: var(--font-size-sm);
   }
 
-  &__lead-tag {
-    font-size: 1.75rem;
-    color: #d97706;
-    font-weight: bold;
-    margin-bottom: 10px;
-  }
-
-  &__bio {
-    font-size: 1.75rem;
-    color: #555;
-    margin-bottom: 8px;
-  }
-
-  &__contributions {
-    font-size: 1.5rem;
-    color: #999;
-    margin-bottom: 12px;
-  }
-
-  &__github {
-    font-size: 1rem;
-    color: #007bff;
-    text-decoration: none;
-
-    &:hover {
-      text-decoration: underline;
-    }
-  }
-
-  &__rss {
-    text-align: center;
-    margin-top: 60px;
-  }
-
-  &__rss-logo,
-  &__gh-logo {
-    width: 140px;
-    transition: transform 0.3s ease;
-
-    &:hover {
-      transform: scale(1.05);
-    }
-  }
-
-  &__gh-logo {
-    width: 50px;
-  }
-
-  &__rss-text {
-    margin-top: 8px;
-    font-size: 1.25rem;
-    color: #888;
+  .about-page__team {
+    margin-top: var(--space-6);
+    gap: var(--space-4);
   }
 }
