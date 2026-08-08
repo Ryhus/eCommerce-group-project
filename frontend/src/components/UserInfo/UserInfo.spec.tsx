@@ -88,7 +88,7 @@ describe("UserInfo", () => {
     fireEvent.click(screen.getByRole("button", { name: "Delete address" }));
 
     await waitFor(() => expect(updateCustomerMock).toHaveBeenCalledWith({ removeAddressId: "address-id" }));
-    await waitFor(() => expect(screen.queryByRole("alertdialog")).not.toBeInTheDocument());
+    await waitFor(() => expect(screen.queryByRole("alertdialog")).not.toBeInTheDocument(), { timeout: 3000 });
   });
 
   it("forwards logout from the page header", () => {

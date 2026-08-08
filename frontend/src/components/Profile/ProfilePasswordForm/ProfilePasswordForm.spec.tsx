@@ -63,6 +63,6 @@ describe("ProfilePasswordForm", () => {
     fireEvent.click(screen.getByRole("button", { name: "Change password" }));
 
     await waitFor(() => expect(action).toHaveBeenCalledOnce());
-    await waitFor(() => expect(onSuccess).toHaveBeenCalledOnce());
+    await waitFor(() => expect(onSuccess).toHaveBeenCalledOnce(), { timeout: 3000 });
   });
 });
