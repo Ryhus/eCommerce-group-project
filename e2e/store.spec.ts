@@ -307,6 +307,25 @@ test("registers, shops with a promo code, opens profile and logs out", async ({ 
 
   await accountLink.click();
   await expect(page.getByRole("heading", { level: 1, name: "My account" })).toBeVisible();
+
+  await page.getByRole("button", { name: "Current language: English" }).click();
+  await page.getByRole("menuitemradio", { name: "DE Deutsch" }).click();
+  await expect(page.getByRole("heading", { level: 1, name: "Mein Konto" })).toBeVisible();
+  await expect(page.getByRole("region", { name: "Persönliche Daten" })).toBeVisible();
+  await expect(page.getByRole("region", { name: "Sicherheit" })).toBeVisible();
+  await expect(page.getByRole("region", { name: "Gespeicherte Adressen" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Abmelden" })).toBeVisible();
+
+  await page.getByRole("button", { name: "Aktuelle Sprache: Deutsch" }).click();
+  await page.getByRole("menuitemradio", { name: "RU Русский" }).click();
+  await expect(page.getByRole("heading", { level: 1, name: "Мой аккаунт" })).toBeVisible();
+  await expect(page.getByRole("region", { name: "Личные данные" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Выйти" })).toBeVisible();
+
+  await page.getByRole("button", { name: "Текущий язык: Русский" }).click();
+  await page.getByRole("menuitemradio", { name: "EN English" }).click();
+  await expect(page.getByRole("heading", { level: 1, name: "My account" })).toBeVisible();
+
   const personalDetailsRegion = page.getByRole("region", { name: "Personal details" });
   await expect(personalDetailsRegion).toBeVisible();
   await expect(personalDetailsRegion.getByText(email)).toBeVisible();

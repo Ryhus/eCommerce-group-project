@@ -387,6 +387,8 @@ export const deCommon = {
     changingPassword: "Wird geändert…",
     savedAddresses: "Gespeicherte Adressen",
     savedAddressesCount_one: "{{count}} gespeicherte Adresse.",
+    savedAddressesCount_few: "{{count}} gespeicherte Adressen.",
+    savedAddressesCount_many: "{{count}} gespeicherte Adressen.",
     savedAddressesCount_other: "{{count}} gespeicherte Adressen.",
     savedAddressesEmptyDescription: "Füge eine Adresse für künftige Lieferungen und Rechnungen hinzu.",
     savedAddressesDescription: "Lege fest, wohin deine künftigen Einkäufe geliefert und berechnet werden.",

@@ -383,6 +383,8 @@ export const enCommon = {
     changingPassword: "Changing…",
     savedAddresses: "Saved addresses",
     savedAddressesCount_one: "{{count}} saved address.",
+    savedAddressesCount_few: "{{count}} saved addresses.",
+    savedAddressesCount_many: "{{count}} saved addresses.",
     savedAddressesCount_other: "{{count}} saved addresses.",
     savedAddressesEmptyDescription: "Add an address for future deliveries and billing.",
     savedAddressesDescription: "Set where you want your future purchases delivered and billed.",
