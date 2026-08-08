@@ -426,6 +426,26 @@ export const enCommon = {
     unableToSaveAddress: "Unable to save this address.",
     unableToDeleteAddress: "Unable to delete this address. Please try again.",
   },
+  about: {
+    breadcrumb: "About",
+    title: "Meet our team",
+    description: "The people behind Sport Gear and the work that brought the store to life.",
+    contributions: "{{name}}'s contributions",
+    githubProfile: "View {{name}}'s GitHub profile",
+    github: "GitHub",
+    leadRole: "Team Lead & Full-Stack Developer",
+    leadArchitecture: "Designed the frontend and backend architecture",
+    leadWorkflow: "Led workflow and reviewed pull requests",
+    leadIntegration: "Solved complex integration challenges",
+    nataliaRole: "Full-Stack Developer",
+    nataliaPages: "Built application pages and routing",
+    nataliaResponsive: "Implemented responsive interfaces",
+    nataliaApis: "Connected frontend features with backend APIs",
+    olhaRole: "Frontend Developer & QA",
+    olhaComponents: "Developed reusable UI components",
+    olhaAccessibility: "Improved accessibility and user experience",
+    olhaTesting: "Tested critical user flows and application quality",
+  },
 } as const;
 
 export type CommonTranslations = {

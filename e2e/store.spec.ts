@@ -486,3 +486,26 @@ test("opens the team page from the storefront navigation", async ({ page }) => {
     "https://github.com/ryhus"
   );
 });
+
+test("localizes the team page across supported languages", async ({ page }) => {
+  await page.goto("/about");
+
+  await page.getByRole("button", { name: "Current language: English" }).click();
+  await page.getByRole("menuitemradio", { name: "DE Deutsch" }).click();
+
+  await expect(page.getByRole("heading", { level: 1, name: "Unser Team" })).toBeVisible();
+  await expect(page.getByText("Teamleitung & Full-Stack-Entwicklung")).toBeVisible();
+  await expect(page.getByRole("list", { name: "Beiträge von Yevhen Ryhus" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "GitHub-Profil von Yevhen Ryhus ansehen" })).toHaveAttribute(
+    "href",
+    "https://github.com/ryhus"
+  );
+
+  await page.getByRole("button", { name: "Aktuelle Sprache: Deutsch" }).click();
+  await page.getByRole("menuitemradio", { name: "RU Русский" }).click();
+
+  await expect(page.getByRole("heading", { level: 1, name: "Наша команда" })).toBeVisible();
+  await expect(page.getByText("Frontend-разработчик и QA")).toBeVisible();
+  await expect(page.getByRole("list", { name: "Вклад Yevhen Ryhus" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Открыть GitHub-профиль Yevhen Ryhus" })).toBeVisible();
+});

@@ -1,10 +1,19 @@
 import { render, screen, within } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
-import { describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
+import i18n from "../../i18n/i18n";
 import AboutPage from "./About";
 
 describe("AboutPage", () => {
+  afterEach(async () => {
+    await i18n.changeLanguage("en");
+  });
+
+  beforeEach(async () => {
+    await i18n.changeLanguage("en");
+  });
+
   it("introduces the three team members with their current roles and contributions", () => {
     render(
       <MemoryRouter>
@@ -46,5 +55,30 @@ describe("AboutPage", () => {
       "href",
       "https://github.com/ola793"
     );
+  });
+
+  it("updates the page and team labels when the language changes", async () => {
+    render(
+      <MemoryRouter>
+        <AboutPage />
+      </MemoryRouter>
+    );
+
+    await i18n.changeLanguage("de");
+
+    expect(screen.getByRole("heading", { level: 1, name: "Unser Team" })).toBeVisible();
+    expect(
+      screen.getByText("Die Menschen hinter Sport Gear und die Arbeit, die diesen Shop zum Leben erweckt hat.")
+    ).toBeVisible();
+    expect(screen.getByText("Teamleitung & Full-Stack-Entwicklung")).toBeVisible();
+    expect(screen.getByRole("list", { name: "Beiträge von Yevhen Ryhus" })).toBeVisible();
+    expect(screen.getByRole("link", { name: "GitHub-Profil von Yevhen Ryhus ansehen" })).toBeVisible();
+
+    await i18n.changeLanguage("ru");
+
+    expect(screen.getByRole("heading", { level: 1, name: "Наша команда" })).toBeVisible();
+    expect(screen.getByText("Full-Stack разработчик")).toBeVisible();
+    expect(screen.getByRole("list", { name: "Вклад Yevhen Ryhus" })).toBeVisible();
+    expect(screen.getByRole("link", { name: "Открыть GitHub-профиль Yevhen Ryhus" })).toBeVisible();
   });
 });
