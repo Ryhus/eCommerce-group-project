@@ -1,15 +1,16 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { FaLock, FaEnvelope, FaEye, FaEyeSlash } from "react-icons/fa";
+import { type FormEvent, useEffect, useRef, useState } from "react";
+import { FaEnvelope, FaLock } from "react-icons/fa";
+import { Link, useNavigate } from "react-router-dom";
+
+import { AuthLayout } from "../../components/Auth/AuthLayout/AuthLayout";
+import { PasswordVisibilityButton } from "../../components/common/PasswordVisibilityButton/PasswordVisibilityButton";
 import Button from "../../components/common/button/button";
 import InputField from "../../components/common/inputField/inputField";
-import Paragraph from "../../components/common/paragraph/paragraph";
-import Link from "../../components/common/link/link";
-import { H2 } from "../../components/common/headings/H2";
-import { validateEmailFormat, validatePasswordStrength } from "../../utils/validation";
-import { signIn } from "../../services/customerService/customerService";
 import { useCart } from "../../components/context/useCart";
 import { useAuth } from "../../components/context/useAuth";
+import { signIn } from "../../services/customerService/customerService";
+import { validateEmailFormat } from "../../utils/validation";
+
 import "./Login.scss";
 
 export default function LoginPage() {
@@ -24,6 +25,7 @@ export default function LoginPage() {
 
   const { setNewCart } = useCart();
   const [authError, setAuthError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -32,6 +34,8 @@ export default function LoginPage() {
   const [passwordError, setPasswordError] = useState("");
 
   const [showPassword, setShowPassword] = useState(false);
+  const emailInputRef = useRef<HTMLInputElement>(null);
+  const passwordInputRef = useRef<HTMLInputElement>(null);
 
   const handleEmailChange = (value: string) => {
     setEmail(value);
@@ -43,25 +47,28 @@ export default function LoginPage() {
     if (passwordError) validatePassword(value);
   };
 
-  const toggleShowPassword = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.preventDefault();
-    setShowPassword((prev) => !prev);
-  };
-
-  const handleLogin = async () => {
+  const handleLogin = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
     const isEmailValid = validateEmail(email);
     const isPasswordValid = validatePassword(password);
 
-    if (!isEmailValid || !isPasswordValid) return;
+    if (!isEmailValid || !isPasswordValid) {
+      if (!isEmailValid) emailInputRef.current?.focus();
+      else passwordInputRef.current?.focus();
+      return;
+    }
 
     try {
       setAuthError("");
+      setIsSubmitting(true);
       const loginData = await signIn(email, password);
       setNewCart(loginData.cart);
       await refreshUser();
       navigate("/");
     } catch {
-      setAuthError("Wrong email or password. Pls try again");
+      setAuthError("Wrong email or password. Please try again.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -72,59 +79,91 @@ export default function LoginPage() {
   };
 
   const validatePassword = (value: string) => {
-    const error = validatePasswordStrength(value);
-    setPasswordError(error || "");
+    const error = value ? "" : "Enter your password.";
+    setPasswordError(error);
     return !error;
   };
 
   return (
-    <div className="login-wrapper">
-      <H2 text="Login" />
+    <AuthLayout panelDescription="Pick up where you left off." panelTitle="KEEP MOVING.">
+      <form aria-label="Login" className="login-form" noValidate onSubmit={handleLogin}>
+        <header className="login-form__header">
+          <h1>Welcome back</h1>
+          <p>Sign in to continue your journey.</p>
+        </header>
 
-      <div className="field-group">
-        <Paragraph text="Enter your email address." />
-        <InputField
-          value={email}
-          onChange={handleEmailChange}
-          isValid={!emailError}
-          placeholder="you@example.com"
-          icon={<FaEnvelope />}
-        />
-        {emailError && <Paragraph text={emailError} isError className="email-error-msg" />}
-      </div>
+        <div className="login-form__fields">
+          <div className="login-form__field">
+            <label htmlFor="login-email">Email address</label>
+            <InputField
+              aria-describedby={emailError ? "login-email-error" : undefined}
+              autoComplete="email"
+              icon={<FaEnvelope />}
+              id="login-email"
+              inputMode="email"
+              inputRef={emailInputRef}
+              isValid={!emailError}
+              name="email"
+              onBlur={() => validateEmail(email)}
+              onChange={handleEmailChange}
+              placeholder="you@example.com"
+              type="email"
+              value={email}
+            />
+            {emailError && (
+              <p className="login-form__error" id="login-email-error">
+                {emailError}
+              </p>
+            )}
+          </div>
 
-      <div className="field-group">
-        <div className="password-label">
-          <Paragraph text="Enter your password." />
+          <div className="login-form__field">
+            <label htmlFor="login-password">Password</label>
+            <InputField
+              aria-describedby={passwordError ? "login-password-error" : undefined}
+              autoComplete="current-password"
+              icon={<FaLock />}
+              id="login-password"
+              inputRef={passwordInputRef}
+              isValid={!passwordError}
+              name="password"
+              onBlur={() => validatePassword(password)}
+              onChange={handlePasswordChange}
+              placeholder="Enter your password"
+              rightIcon={
+                <PasswordVisibilityButton
+                  isVisible={showPassword}
+                  onToggle={() => setShowPassword((isVisible) => !isVisible)}
+                />
+              }
+              type={showPassword ? "text" : "password"}
+              value={password}
+            />
+            {passwordError && (
+              <p className="login-form__error" id="login-password-error">
+                {passwordError}
+              </p>
+            )}
+          </div>
         </div>
-        <InputField
-          value={password}
-          onChange={handlePasswordChange}
-          isValid={!passwordError}
-          placeholder="Enter your password"
-          type={showPassword ? "text" : "password"}
-          icon={<FaLock />}
-          rightIcon={
-            <span onClick={toggleShowPassword} style={{ cursor: "pointer" }}>
-              {showPassword ? <FaEyeSlash /> : <FaEye />}
-            </span>
-          }
+
+        {authError && (
+          <p className="login-form__auth-error" role="alert">
+            {authError}
+          </p>
+        )}
+
+        <Button
+          className="login-form__submit"
+          disabled={isSubmitting}
+          text={isSubmitting ? "Logging in…" : "Log in"}
+          type="submit"
         />
-        {passwordError && <Paragraph text={passwordError} isError className="email-error-msg" />}
-      </div>
 
-      <Button className="login-btn" text="Log in" onClick={handleLogin} />
-      {authError && <Paragraph text={authError} isError className="auth-error-msg" />}
-
-      <Link
-        className="registration-link"
-        text="Don’t have an account? Sign up"
-        onClick={(e) => {
-          e.preventDefault();
-          navigate("/sign-up");
-        }}
-        href={"/sign-up"}
-      />
-    </div>
+        <p className="login-form__registration">
+          <span>New to Sport Gear?</span> <Link to="/sign-up">Create an account</Link>
+        </p>
+      </form>
+    </AuthLayout>
   );
 }
