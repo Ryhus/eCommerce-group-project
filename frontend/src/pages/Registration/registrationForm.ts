@@ -27,6 +27,39 @@ export type RegistrationField = keyof RegistrationFormData;
 export type RegistrationErrors = Partial<Record<RegistrationField, string>>;
 export type RegistrationStep = 0 | 1 | 2;
 
+const REGISTRATION_ERROR_KEYS: Record<string, string> = {
+  "First name is required.": "registrationValidation.firstNameRequired",
+  "First name contains invalid characters.": "registrationValidation.firstNameInvalidCharacters",
+  "Last name is required.": "registrationValidation.lastNameRequired",
+  "Last name contains invalid characters.": "registrationValidation.lastNameInvalidCharacters",
+  "Email address must not contain leading or trailing whitespace.": "emailValidation.whitespace",
+  "Email address must contain an '@' symbol separating local part and domain name.": "emailValidation.atSymbol",
+  "Email address must contain a local part and a domain name.": "emailValidation.parts",
+  "Email address must not contain spaces in the local or domain part.": "emailValidation.spaces",
+  "Email address must contain a domain name (e.g., example.com).": "emailValidation.domain",
+  "Email address must be properly formatted (e.g., user@example.com).": "emailValidation.format",
+  "Password must be at least 8 characters.": "registrationValidation.passwordLength",
+  "Password must include at least one uppercase letter.": "registrationValidation.passwordUppercase",
+  "Password must include at least one lowercase letter.": "registrationValidation.passwordLowercase",
+  "Password must include at least one digit.": "registrationValidation.passwordDigit",
+  "Password must include at least one special character.": "registrationValidation.passwordSpecial",
+  "Password contains invalid characters.": "registrationValidation.passwordCharacters",
+  "Passwords do not match.": "registrationValidation.passwordMatch",
+  "Date of birth is required.": "registrationValidation.dateRequired",
+  "Invalid date format.": "registrationValidation.dateInvalid",
+  "You must be at least 13 years old.": "registrationValidation.dateTooYoung",
+  "Street is required.": "registrationValidation.streetRequired",
+  "City is required.": "registrationValidation.cityRequired",
+  "City contains invalid characters.": "registrationValidation.cityInvalidCharacters",
+  "Postal code is required.": "registrationValidation.postalRequired",
+  "Invalid postal code format.": "registrationValidation.postalInvalid",
+  "Please select a country.": "registrationValidation.countryRequired",
+};
+
+export function getRegistrationErrorKey(error?: string) {
+  return error ? (REGISTRATION_ERROR_KEYS[error] ?? error) : "";
+}
+
 export const INITIAL_REGISTRATION_FORM: RegistrationFormData = {
   firstName: "",
   lastName: "",

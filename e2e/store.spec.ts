@@ -202,6 +202,65 @@ test("localizes login validation and authentication states", async ({ page }) =>
   ).toHaveAttribute("href", "/sign-up");
 });
 
+test("localizes the three-step signup flow and API error", async ({ page }) => {
+  await page.route("**/api/v1/auth/register", async (route) => {
+    await route.fulfill({
+      body: JSON.stringify({
+        statusCode: 409,
+        code: "EMAIL_EXISTS",
+        message: "Email is already registered",
+        requestId: "playwright-signup",
+      }),
+      contentType: "application/json",
+      status: 409,
+    });
+  });
+
+  await page.goto("/sign-up");
+  await page.getByRole("button", { name: "Current language: English" }).click();
+  await page.getByRole("menuitemradio", { name: "DE Deutsch" }).click();
+
+  const signupForm = page.getByRole("form", { exact: true, name: "Dein Sport Gear Konto erstellen" });
+  await expect(page.getByRole("heading", { level: 1, name: "Erstelle dein Konto" })).toBeVisible();
+  await expect(signupForm.getByRole("navigation", { name: "Registrierungsfortschritt" })).toContainText("Konto");
+
+  await signupForm.getByRole("textbox", { name: "Vorname" }).fill("Max");
+  await signupForm.getByRole("textbox", { name: "Nachname" }).fill("Mustermann");
+  await signupForm.getByRole("textbox", { name: "E-Mail-Adresse" }).fill("max@example.com");
+  await signupForm.getByPlaceholder("Passwort erstellen").fill("Password1!");
+  await signupForm.getByPlaceholder("Passwort wiederholen").fill("Password1!");
+  await signupForm.getByRole("button", { name: "Weiter" }).click();
+
+  await expect(signupForm.getByRole("heading", { name: "Ein bisschen über dich" })).toBeVisible();
+  await signupForm.getByLabel("Geburtsdatum").fill("1990-01-01");
+  await signupForm.getByRole("button", { name: "Weiter" }).click();
+
+  await expect(signupForm.getByRole("heading", { name: "Deine Adresse" })).toBeVisible();
+  await signupForm.getByRole("textbox", { name: "Straße und Hausnummer" }).fill("Hauptstraße 10");
+  await signupForm.getByRole("textbox", { name: "Ort" }).fill("Berlin");
+  await signupForm.getByRole("textbox", { name: "Postleitzahl" }).fill("10115");
+  await signupForm.getByRole("combobox", { name: "Land" }).selectOption("DE");
+  await signupForm
+    .getByRole("checkbox", { name: "Als Standardadresse für Rechnungen und Lieferungen verwenden" })
+    .check();
+  await signupForm.getByRole("button", { name: "Konto erstellen" }).click();
+
+  await expect(signupForm.getByRole("alert")).toHaveText(
+    "Dein Konto konnte nicht erstellt werden. Bitte prüfe deine Angaben und versuche es erneut."
+  );
+  await expect(signupForm.getByRole("heading", { name: "Deine Adresse" })).toBeVisible();
+
+  await page.getByRole("button", { name: "Aktuelle Sprache: Deutsch" }).click();
+  await page.getByRole("menuitemradio", { name: "RU Русский" }).click();
+
+  const russianSignupForm = page.getByRole("form", { exact: true, name: "Создание аккаунта Sport Gear" });
+  await expect(russianSignupForm.getByRole("heading", { name: "Ваш адрес" })).toBeVisible();
+  await expect(russianSignupForm.getByRole("alert")).toHaveText(
+    "Не удалось создать аккаунт. Проверьте данные и попробуйте ещё раз."
+  );
+  await expect(russianSignupForm.getByRole("button", { name: "Создать аккаунт" })).toBeVisible();
+});
+
 test("registers, shops with a promo code, opens profile and logs out", async ({ page }) => {
   const email = `playwright-${Date.now()}@example.com`;
 

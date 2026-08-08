@@ -2,6 +2,7 @@ import { act, fireEvent, render, screen, waitFor } from "@testing-library/react"
 import { MemoryRouter, useLocation } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+import i18n from "../../i18n/i18n";
 import { useAuth } from "../../components/context/useAuth";
 import { useCart } from "../../components/context/useCart";
 import { signUp } from "../../services/customerService/customerService";
@@ -60,7 +61,8 @@ function fillAddressStep() {
 }
 
 describe("RegistrationPage", () => {
-  beforeEach(() => {
+  beforeEach(async () => {
+    await i18n.changeLanguage("en");
     vi.clearAllMocks();
     vi.mocked(useAuth).mockReturnValue({ isAuthenticated: false, refreshUser } as never);
     vi.mocked(useCart).mockReturnValue({ setNewCart } as never);
@@ -175,5 +177,37 @@ describe("RegistrationPage", () => {
     );
     expect(screen.getByText("Step 3 of 3")).toBeVisible();
     expect(screen.getByRole("button", { name: "Create account" })).toBeEnabled();
+  });
+
+  it("localizes all registration steps and country options", async () => {
+    await i18n.changeLanguage("de");
+    renderRegistration();
+
+    expect(screen.getByRole("heading", { name: "Erstelle dein Konto" })).toBeVisible();
+    expect(screen.getByRole("form", { name: "Dein Sport Gear Konto erstellen" })).toBeVisible();
+    expect(screen.getByRole("navigation", { name: "Registrierungsfortschritt" })).toHaveTextContent("Konto");
+
+    fireEvent.change(screen.getByRole("textbox", { name: "Vorname" }), { target: { value: "Max" } });
+    fireEvent.change(screen.getByRole("textbox", { name: "Nachname" }), { target: { value: "Mustermann" } });
+    fireEvent.change(screen.getByRole("textbox", { name: "E-Mail-Adresse" }), {
+      target: { value: "max@example.com" },
+    });
+    fireEvent.change(screen.getByPlaceholderText("Passwort erstellen"), { target: { value: "Password1!" } });
+    fireEvent.change(screen.getByPlaceholderText("Passwort wiederholen"), {
+      target: { value: "Password1!" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Weiter" }));
+
+    expect(screen.getByRole("heading", { name: "Ein bisschen über dich" })).toBeVisible();
+    fireEvent.change(screen.getByLabelText("Geburtsdatum"), { target: { value: "1990-01-01" } });
+    fireEvent.click(screen.getByRole("button", { name: "Weiter" }));
+
+    expect(screen.getByRole("heading", { name: "Deine Adresse" })).toBeVisible();
+    expect(screen.getByRole("combobox", { name: "Land" })).toBeVisible();
+    expect(screen.getByRole("option", { name: "Deutschland" })).toBeVisible();
+    expect(
+      screen.getByRole("checkbox", { name: "Als Standardadresse für Rechnungen und Lieferungen verwenden" })
+    ).toBeVisible();
+    expect(screen.getByRole("button", { name: "Konto erstellen" })).toBeVisible();
   });
 });

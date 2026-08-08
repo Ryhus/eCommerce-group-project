@@ -1,4 +1,5 @@
 import { FaCalendar, FaEnvelope, FaLock, FaMapMarkerAlt, FaUser } from "react-icons/fa";
+import { useTranslation } from "react-i18next";
 
 import { AuthFormField } from "../../components/Auth/AuthFormField/AuthFormField";
 import { PasswordVisibilityButton } from "../../components/common/PasswordVisibilityButton/PasswordVisibilityButton";
@@ -10,6 +11,7 @@ import {
   type RegistrationField,
   type RegistrationFormData,
 } from "./registrationForm";
+import { getRegistrationErrorKey } from "./registrationForm";
 
 export type RegistrationUpdate = <Field extends RegistrationField>(
   field: Field,
@@ -42,10 +44,16 @@ export function RegistrationAccountStep({
   onTogglePassword,
   passwordVisible,
 }: AccountStepProps) {
+  const { t } = useTranslation("common");
+
   return (
     <div className="registration-form__step registration-form__step--account">
       <div className="registration-form__name-fields">
-        <AuthFormField error={errors.firstName} inputId={REGISTRATION_FIELD_IDS.firstName} label="First name">
+        <AuthFormField
+          error={t(getRegistrationErrorKey(errors.firstName) as never)}
+          inputId={REGISTRATION_FIELD_IDS.firstName}
+          label={t("registration.firstName")}
+        >
           <InputField
             aria-describedby={describedBy("firstName")}
             autoComplete="given-name"
@@ -54,12 +62,16 @@ export function RegistrationAccountStep({
             isValid={!errors.firstName}
             name="firstName"
             onChange={(value) => onChange("firstName", value)}
-            placeholder="John"
+            placeholder={t("registration.firstNamePlaceholder")}
             value={data.firstName}
           />
         </AuthFormField>
 
-        <AuthFormField error={errors.lastName} inputId={REGISTRATION_FIELD_IDS.lastName} label="Last name">
+        <AuthFormField
+          error={t(getRegistrationErrorKey(errors.lastName) as never)}
+          inputId={REGISTRATION_FIELD_IDS.lastName}
+          label={t("registration.lastName")}
+        >
           <InputField
             aria-describedby={describedBy("lastName")}
             autoComplete="family-name"
@@ -68,13 +80,17 @@ export function RegistrationAccountStep({
             isValid={!errors.lastName}
             name="lastName"
             onChange={(value) => onChange("lastName", value)}
-            placeholder="Doe"
+            placeholder={t("registration.lastNamePlaceholder")}
             value={data.lastName}
           />
         </AuthFormField>
       </div>
 
-      <AuthFormField error={errors.email} inputId={REGISTRATION_FIELD_IDS.email} label="Email address">
+      <AuthFormField
+        error={t(getRegistrationErrorKey(errors.email) as never)}
+        inputId={REGISTRATION_FIELD_IDS.email}
+        label={t("registration.email")}
+      >
         <InputField
           aria-describedby={describedBy("email")}
           autoComplete="email"
@@ -84,13 +100,17 @@ export function RegistrationAccountStep({
           isValid={!errors.email}
           name="email"
           onChange={(value) => onChange("email", value)}
-          placeholder="you@example.com"
+          placeholder={t("registration.emailPlaceholder")}
           type="email"
           value={data.email}
         />
       </AuthFormField>
 
-      <AuthFormField error={errors.password} inputId={REGISTRATION_FIELD_IDS.password} label="Password">
+      <AuthFormField
+        error={t(getRegistrationErrorKey(errors.password) as never)}
+        inputId={REGISTRATION_FIELD_IDS.password}
+        label={t("registration.password")}
+      >
         <InputField
           aria-describedby={`${describedBy("password")} registration-password-help`}
           autoComplete="new-password"
@@ -99,20 +119,20 @@ export function RegistrationAccountStep({
           isValid={!errors.password}
           name="password"
           onChange={(value) => onChange("password", value)}
-          placeholder="Create a password"
+          placeholder={t("registration.passwordPlaceholder")}
           rightIcon={<PasswordVisibilityButton isVisible={passwordVisible} onToggle={onTogglePassword} />}
           type={passwordVisible ? "text" : "password"}
           value={data.password}
         />
         <p className="registration-form__help" id="registration-password-help">
-          At least 8 characters with uppercase, lowercase, number and special character.
+          {t("registration.passwordHelp")}
         </p>
       </AuthFormField>
 
       <AuthFormField
-        error={errors.confirmPassword}
+        error={t(getRegistrationErrorKey(errors.confirmPassword) as never)}
         inputId={REGISTRATION_FIELD_IDS.confirmPassword}
-        label="Confirm password"
+        label={t("registration.confirmPassword")}
       >
         <InputField
           aria-describedby={describedBy("confirmPassword")}
@@ -122,7 +142,7 @@ export function RegistrationAccountStep({
           isValid={!errors.confirmPassword}
           name="confirmPassword"
           onChange={(value) => onChange("confirmPassword", value)}
-          placeholder="Repeat your password"
+          placeholder={t("registration.confirmPasswordPlaceholder")}
           rightIcon={<PasswordVisibilityButton isVisible={confirmPasswordVisible} onToggle={onToggleConfirmPassword} />}
           type={confirmPasswordVisible ? "text" : "password"}
           value={data.confirmPassword}
@@ -133,14 +153,19 @@ export function RegistrationAccountStep({
 }
 
 export function RegistrationPersonalStep({ data, errors, onChange }: RegistrationStepProps) {
+  const { t } = useTranslation("common");
   return (
     <div className="registration-form__step registration-form__step--personal">
       <div className="registration-form__step-intro">
-        <h2>A little about you</h2>
-        <p>We use your date of birth only to confirm that you meet the minimum age requirement.</p>
+        <h2>{t("registration.personalTitle")}</h2>
+        <p>{t("registration.personalDescription")}</p>
       </div>
 
-      <AuthFormField error={errors.dateOfBirth} inputId={REGISTRATION_FIELD_IDS.dateOfBirth} label="Date of birth">
+      <AuthFormField
+        error={t(getRegistrationErrorKey(errors.dateOfBirth) as never)}
+        inputId={REGISTRATION_FIELD_IDS.dateOfBirth}
+        label={t("registration.dateOfBirth")}
+      >
         <InputField
           aria-describedby={describedBy("dateOfBirth")}
           autoComplete="bday"
@@ -158,14 +183,22 @@ export function RegistrationPersonalStep({ data, errors, onChange }: Registratio
 }
 
 export function RegistrationAddressStep({ data, errors, onChange }: RegistrationStepProps) {
+  const { t, i18n } = useTranslation("common");
+  const countryLocale = i18n.resolvedLanguage ?? i18n.language;
+  const countryNames = new Intl.DisplayNames([countryLocale], { type: "region" });
+
   return (
     <div className="registration-form__step registration-form__step--address">
       <div className="registration-form__step-intro">
-        <h2>Your address</h2>
-        <p>Add the address you want to use for future deliveries and billing.</p>
+        <h2>{t("registration.addressTitle")}</h2>
+        <p>{t("registration.addressDescription")}</p>
       </div>
 
-      <AuthFormField error={errors.street} inputId={REGISTRATION_FIELD_IDS.street} label="Street address">
+      <AuthFormField
+        error={t(getRegistrationErrorKey(errors.street) as never)}
+        inputId={REGISTRATION_FIELD_IDS.street}
+        label={t("registration.street")}
+      >
         <InputField
           aria-describedby={describedBy("street")}
           autoComplete="street-address"
@@ -174,13 +207,17 @@ export function RegistrationAddressStep({ data, errors, onChange }: Registration
           isValid={!errors.street}
           name="street"
           onChange={(value) => onChange("street", value)}
-          placeholder="10 Main Street"
+          placeholder={t("registration.streetPlaceholder")}
           value={data.street}
         />
       </AuthFormField>
 
       <div className="registration-form__address-row">
-        <AuthFormField error={errors.city} inputId={REGISTRATION_FIELD_IDS.city} label="City">
+        <AuthFormField
+          error={t(getRegistrationErrorKey(errors.city) as never)}
+          inputId={REGISTRATION_FIELD_IDS.city}
+          label={t("registration.city")}
+        >
           <InputField
             aria-describedby={describedBy("city")}
             autoComplete="address-level2"
@@ -188,12 +225,16 @@ export function RegistrationAddressStep({ data, errors, onChange }: Registration
             isValid={!errors.city}
             name="city"
             onChange={(value) => onChange("city", value)}
-            placeholder="Berlin"
+            placeholder={t("registration.cityPlaceholder")}
             value={data.city}
           />
         </AuthFormField>
 
-        <AuthFormField error={errors.postalCode} inputId={REGISTRATION_FIELD_IDS.postalCode} label="Postal code">
+        <AuthFormField
+          error={t(getRegistrationErrorKey(errors.postalCode) as never)}
+          inputId={REGISTRATION_FIELD_IDS.postalCode}
+          label={t("registration.postalCode")}
+        >
           <InputField
             aria-describedby={describedBy("postalCode")}
             autoComplete="postal-code"
@@ -201,13 +242,17 @@ export function RegistrationAddressStep({ data, errors, onChange }: Registration
             isValid={!errors.postalCode}
             name="postalCode"
             onChange={(value) => onChange("postalCode", value)}
-            placeholder="10115"
+            placeholder={t("registration.postalCodePlaceholder")}
             value={data.postalCode}
           />
         </AuthFormField>
       </div>
 
-      <AuthFormField error={errors.country} inputId={REGISTRATION_FIELD_IDS.country} label="Country">
+      <AuthFormField
+        error={t(getRegistrationErrorKey(errors.country) as never)}
+        inputId={REGISTRATION_FIELD_IDS.country}
+        label={t("registration.country")}
+      >
         <select
           aria-describedby={describedBy("country")}
           aria-invalid={Boolean(errors.country)}
@@ -220,7 +265,7 @@ export function RegistrationAddressStep({ data, errors, onChange }: Registration
         >
           {COUNTRY_OPTIONS.map(([value, label]) => (
             <option key={value || "placeholder"} value={value}>
-              {label}
+              {value ? (countryNames.of(value) ?? label) : t("registration.countryPlaceholder")}
             </option>
           ))}
         </select>
@@ -233,7 +278,7 @@ export function RegistrationAddressStep({ data, errors, onChange }: Registration
           onChange={(event) => onChange("useAsDefaultAddress", event.currentTarget.checked)}
           type="checkbox"
         />
-        <span>Use as default billing and shipping address</span>
+        <span>{t("registration.defaultAddress")}</span>
       </label>
     </div>
   );
