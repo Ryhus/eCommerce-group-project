@@ -65,7 +65,7 @@ export default function CategoryPage() {
   const [categoryItems, setCategoryItems] = useState<CategoryFilterItem[]>([]);
   const [currentCategory, setCurrentCategory] = useState<Category | null>(null);
   const [productPage, setProductPage] = useState<ProductPage>(EMPTY_PAGE);
-  const [isLoading, setIsLoading] = useState(true);
+  const [resolvedRequestKey, setResolvedRequestKey] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [categoryNotFound, setCategoryNotFound] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -76,12 +76,13 @@ export default function CategoryPage() {
   const currentPage = readPage(searchParams.get("page"));
   const currentSort = readSort(searchParams.get("sort"));
   const searchTerm = searchParams.get("search")?.trim() ?? "";
+  const requestKey = `${location.pathname}?${searchParams.toString()}#${reloadKey}`;
+  const isLoading = resolvedRequestKey !== requestKey;
 
   useEffect(() => {
     let cancelled = false;
 
     const loadCatalog = async () => {
-      setIsLoading(true);
       setError(null);
       setCategoryNotFound(false);
 
@@ -139,7 +140,7 @@ export default function CategoryPage() {
         if (loadError instanceof CategoryNotFoundError) setCategoryNotFound(true);
         else setError(loadError instanceof Error ? loadError.message : "Unable to load the catalog.");
       } finally {
-        if (!cancelled) setIsLoading(false);
+        if (!cancelled) setResolvedRequestKey(requestKey);
       }
     };
 
@@ -148,7 +149,7 @@ export default function CategoryPage() {
     return () => {
       cancelled = true;
     };
-  }, [currentPage, currentSort, reloadKey, searchTerm, segments]);
+  }, [currentPage, currentSort, requestKey, searchTerm, segments]);
 
   const updatePage = (page: number) => {
     const nextParams = new URLSearchParams(searchParams);
@@ -165,17 +166,23 @@ export default function CategoryPage() {
     setSearchParams(nextParams);
   };
 
-  if (categoryNotFound) return <NotFoundPage />;
+  if (!isLoading && categoryNotFound) return <NotFoundPage />;
 
-  const title = searchTerm ? `Search results for “${searchTerm}”` : (currentCategory?.name ?? "All products");
+  const title = searchTerm
+    ? `Search results for “${searchTerm}”`
+    : isLoading
+      ? "Catalog"
+      : (currentCategory?.name ?? "All products");
+  const visibleBreadcrumbs = isLoading ? [] : breadcrumbs;
+  const visibleCategoryItems = isLoading ? [] : categoryItems;
 
   return (
     <PageContainer className="category-page">
-      <Breadcrumbs crumbs={breadcrumbs} />
+      <Breadcrumbs crumbs={visibleBreadcrumbs} />
 
       <div className="category-page__layout">
         <aside className="category-page__sidebar">
-          <CategoryFilter items={categoryItems} />
+          <CategoryFilter items={visibleCategoryItems} />
         </aside>
 
         <main aria-labelledby="catalog-title" className="category-page__main">
@@ -199,7 +206,7 @@ export default function CategoryPage() {
           </header>
 
           {isLoading ? (
-            <div aria-live="polite" className="category-page__status" role="status">
+            <div aria-label="Catalog loading" aria-live="polite" className="category-page__status" role="status">
               <span className="category-page__spinner" />
               Loading products…
             </div>
@@ -232,7 +239,7 @@ export default function CategoryPage() {
       <div id="catalog-options">
         <FilterDrawer isOpen={isDrawerOpen} onClose={() => setIsDrawerOpen(false)}>
           <Sorting currentSort={currentSort} onSortChange={updateSort} />
-          <CategoryFilter items={categoryItems} onNavigate={() => setIsDrawerOpen(false)} />
+          <CategoryFilter items={visibleCategoryItems} onNavigate={() => setIsDrawerOpen(false)} />
         </FilterDrawer>
       </div>
     </PageContainer>

@@ -90,6 +90,28 @@ describe("CategoryPage", () => {
     expect(fetchProductPage).toHaveBeenLastCalledWith(expect.objectContaining({ limit: 6, offset: 6 }));
   });
 
+  it("hides results from the previous URL while the next page is loading", async () => {
+    let resolveNextPage!: (page: Awaited<ReturnType<typeof fetchProductPage>>) => void;
+    const nextPage = new Promise<Awaited<ReturnType<typeof fetchProductPage>>>((resolve) => {
+      resolveNextPage = resolve;
+    });
+
+    vi.mocked(fetchProductPage)
+      .mockResolvedValueOnce({ items: [product(1)], offset: 0, limit: 6, total: 8 })
+      .mockReturnValueOnce(nextPage);
+
+    renderCatalog();
+    expect(await screen.findByText("Product 1")).toBeVisible();
+
+    fireEvent.click(screen.getByRole("button", { name: "Next page" }));
+
+    expect(screen.getByRole("status", { name: "Catalog loading" })).toBeVisible();
+    expect(screen.queryByText("Product 1")).not.toBeInTheDocument();
+
+    resolveNextPage({ items: [product(7)], offset: 6, limit: 6, total: 8 });
+    expect(await screen.findByText("Product 7")).toBeVisible();
+  });
+
   it("stores sorting in the URL and exposes categories in the mobile drawer", async () => {
     renderCatalog();
 
