@@ -26,7 +26,7 @@ import {
 import "./Registration.scss";
 
 export default function RegistrationPage() {
-  const { isAuthenticated, refreshUser } = useAuth();
+  const { refreshUser } = useAuth();
   const { setNewCart } = useCart();
   const navigate = useNavigate();
   const stepHeadingRef = useRef<HTMLHeadingElement>(null);
@@ -39,10 +39,6 @@ export default function RegistrationPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
-
-  useEffect(() => {
-    if (isAuthenticated) navigate("/");
-  }, [isAuthenticated, navigate]);
 
   useEffect(() => {
     if (hasChangedStep.current) stepHeadingRef.current?.focus();

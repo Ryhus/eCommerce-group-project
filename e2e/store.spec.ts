@@ -24,6 +24,15 @@ test("registers, shops with a promo code, opens profile and logs out", async ({ 
   const accountLink = page.getByRole("link", { name: "Open Playwright's account" });
   await expect(accountLink).toContainText("PU");
   await expect(accountLink).toContainText("Hi, Playwright");
+
+  await page.goto("/login");
+  await expect(page).toHaveURL(/\/$/);
+  await expect(page.getByRole("heading", { name: "Welcome back" })).toHaveCount(0);
+
+  await page.goto("/sign-up");
+  await expect(page).toHaveURL(/\/$/);
+  await expect(page.getByRole("heading", { name: "Create your account" })).toHaveCount(0);
+
   await page.getByRole("link", { name: "Catalog" }).click();
   await page.getByRole("button", { name: "Add to Cart" }).first().click();
 
