@@ -1,11 +1,12 @@
 import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { Link, MemoryRouter, Route, Routes } from "react-router-dom";
+import { createMemoryRouter, Link, MemoryRouter, Outlet, Route, RouterProvider, Routes } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import i18n from "../../i18n/i18n";
 import { fetchCategoryTrail } from "../../services/categoryService/categoryService";
 import { fetchProductById, fetchProductPage } from "../../services/productService/productService";
 import type { Product } from "../../services/productService/types";
+import NotFoundPage from "../NotFound/NotFound";
 import ProductPage from "./Product";
 
 vi.mock("../../services/categoryService/categoryService", () => ({ fetchCategoryTrail: vi.fn() }));
@@ -59,6 +60,28 @@ function renderProduct() {
   );
 }
 
+function renderProductWithRouteErrorBoundary() {
+  const router = createMemoryRouter(
+    [
+      {
+        path: "/",
+        element: (
+          <>
+            <header>Store header</header>
+            <Outlet />
+            <footer>Store footer</footer>
+          </>
+        ),
+        errorElement: <NotFoundPage />,
+        children: [{ path: "product/:id", Component: ProductPage }],
+      },
+    ],
+    { initialEntries: ["/product/product-id"] }
+  );
+
+  render(<RouterProvider router={router} />);
+}
+
 describe("ProductPage", () => {
   beforeEach(async () => {
     await i18n.changeLanguage("en");
@@ -108,10 +131,12 @@ describe("ProductPage", () => {
 
   it("shows the not-found page for an unknown product", async () => {
     vi.mocked(fetchProductById).mockResolvedValue(null);
-    renderProduct();
+    renderProductWithRouteErrorBoundary();
 
     expect(await screen.findByRole("heading", { name: "This page doesn't exist" })).toBeVisible();
     expect(screen.getByRole("button", { name: "Browse gear" })).toBeVisible();
+    expect(screen.queryByText("Store header")).not.toBeInTheDocument();
+    expect(screen.queryByText("Store footer")).not.toBeInTheDocument();
     expect(fetchCategoryTrail).not.toHaveBeenCalled();
   });
 
