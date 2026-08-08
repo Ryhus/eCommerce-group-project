@@ -45,8 +45,11 @@ const router = createBrowserRouter(
           path: "basket",
           Component: BasketPage,
         },
-        { path: "*", Component: NotFoundPage },
       ],
+    },
+    {
+      path: "*",
+      Component: NotFoundPage,
     },
   ],
   {

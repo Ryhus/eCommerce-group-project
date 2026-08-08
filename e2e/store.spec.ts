@@ -511,19 +511,17 @@ test("localizes the team page across supported languages", async ({ page }) => {
 });
 
 test("localizes the not found recovery page", async ({ page }) => {
-  await page.goto("/missing-page");
-
-  await expect(page).toHaveURL(/\/missing-page$/);
-  await expect(page.getByRole("heading", { name: "This page doesn't exist" })).toBeVisible();
-  await expect(page.getByRole("button", { name: "Back to home" })).toBeVisible();
-  await expect(page.getByRole("button", { name: "Browse gear" })).toBeVisible();
-  await expect(page.getByRole("contentinfo")).toBeVisible();
-
+  await page.goto("/");
   await page.getByRole("button", { name: "Current language: English" }).click();
   await page.getByRole("menuitemradio", { name: "DE Deutsch" }).click();
 
+  await page.goto("/missing-page");
+
+  await expect(page).toHaveURL(/\/missing-page$/);
   await expect(page.getByRole("heading", { name: "Diese Seite existiert nicht" })).toBeVisible();
   await expect(page.getByRole("button", { name: "Ausrüstung entdecken" })).toBeVisible();
+  await expect(page.getByRole("contentinfo")).not.toBeInTheDocument();
+  await expect(page.getByRole("button", { name: "Aktuelle Sprache: Deutsch" })).not.toBeInTheDocument();
 
   await page.getByRole("button", { name: "Zur Startseite" }).click();
   await expect(page).toHaveURL(/\/$/);
