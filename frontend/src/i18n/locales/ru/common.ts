@@ -209,4 +209,10 @@ export const ruCommon = {
   relatedProducts: {
     heading: "Вам также может понравиться",
   },
+  productPage: {
+    loading: "Загрузка товара",
+    loadingProduct: "Загружаем товар…",
+    loadError: "Не удалось загрузить товар. Попробуйте ещё раз.",
+    retry: "Попробовать снова",
+  },
 } satisfies CommonTranslations;

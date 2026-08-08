@@ -1,7 +1,8 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { Link, MemoryRouter, Route, Routes } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+import i18n from "../../i18n/i18n";
 import { fetchCategoryTrail } from "../../services/categoryService/categoryService";
 import { fetchProductById, fetchProductPage } from "../../services/productService/productService";
 import type { Product } from "../../services/productService/types";
@@ -59,7 +60,8 @@ function renderProduct() {
 }
 
 describe("ProductPage", () => {
-  beforeEach(() => {
+  beforeEach(async () => {
+    await i18n.changeLanguage("en");
     vi.mocked(fetchProductById).mockReset();
     vi.mocked(fetchCategoryTrail).mockReset();
     vi.mocked(fetchProductPage).mockReset();
@@ -116,10 +118,25 @@ describe("ProductPage", () => {
     vi.mocked(fetchProductById).mockRejectedValueOnce(new Error("Network unavailable")).mockResolvedValueOnce(product);
     renderProduct();
 
-    expect(await screen.findByRole("alert")).toHaveTextContent("Network unavailable");
+    expect(await screen.findByRole("alert")).toHaveTextContent("We couldn't load this product");
     fireEvent.click(screen.getByRole("button", { name: "Try again" }));
 
     expect(await screen.findByRole("heading", { name: "Match Football" })).toBeVisible();
     expect(fetchProductById).toHaveBeenCalledTimes(2);
+  });
+
+  it("updates an existing load error when the language changes", async () => {
+    vi.mocked(fetchProductById).mockRejectedValue(new Error("Unavailable"));
+    renderProduct();
+
+    expect(await screen.findByRole("alert")).toHaveTextContent("We couldn't load this product");
+
+    await act(async () => {
+      await i18n.changeLanguage("ru");
+    });
+
+    expect(screen.getByRole("alert")).toHaveTextContent("Не удалось загрузить товар");
+    expect(screen.getByRole("button", { name: "Попробовать снова" })).toBeVisible();
+    expect(fetchProductById).toHaveBeenCalledTimes(1);
   });
 });

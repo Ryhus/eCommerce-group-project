@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 
 import Breadcrumbs, { type Crumb } from "../../components/Breadcrumbs/Breadcrumbs";
@@ -23,13 +24,14 @@ function categoryCrumbs(categories: Category[]): Crumb[] {
 }
 
 export default function ProductPage() {
+  const { t } = useTranslation("common");
   const { id } = useParams<{ id: string }>();
   const [product, setProduct] = useState<Product | null>(null);
   const [categoryTrail, setCategoryTrail] = useState<Category[]>([]);
   const [recommendations, setRecommendations] = useState<Product[]>([]);
   const [resolvedRequestKey, setResolvedRequestKey] = useState<string | null>(null);
   const [notFound, setNotFound] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [hasError, setHasError] = useState(false);
   const [reloadKey, setReloadKey] = useState(0);
   const requestKey = `${id ?? "missing"}#${reloadKey}`;
   const isLoading = resolvedRequestKey !== requestKey;
@@ -43,7 +45,7 @@ export default function ProductPage() {
       setCategoryTrail([]);
       setRecommendations([]);
       setNotFound(false);
-      setError(null);
+      setHasError(false);
 
       if (!id) {
         setNotFound(true);
@@ -54,9 +56,9 @@ export default function ProductPage() {
       let nextProduct: Product | null;
       try {
         nextProduct = await fetchProductById(id);
-      } catch (loadError) {
+      } catch {
         if (!cancelled) {
-          setError(loadError instanceof Error ? loadError.message : "Unable to load this product.");
+          setHasError(true);
           setResolvedRequestKey(requestKey);
         }
         return;
@@ -104,15 +106,15 @@ export default function ProductPage() {
   return (
     <PageContainer className="product-page">
       {isLoading ? (
-        <div aria-label="Product loading" aria-live="polite" className="product-page__status" role="status">
+        <div aria-label={t("productPage.loading")} aria-live="polite" className="product-page__status" role="status">
           <span className="product-page__spinner" />
-          Loading product…
+          {t("productPage.loadingProduct")}
         </div>
-      ) : error ? (
+      ) : hasError ? (
         <div className="product-page__status" role="alert">
-          <p>We couldn't load this product. {error}</p>
+          <p>{t("productPage.loadError")}</p>
           <button className="product-page__retry" onClick={() => setReloadKey((key) => key + 1)} type="button">
-            Try again
+            {t("productPage.retry")}
           </button>
         </div>
       ) : visibleProduct ? (

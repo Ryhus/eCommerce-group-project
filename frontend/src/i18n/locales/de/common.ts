@@ -213,4 +213,10 @@ export const deCommon = {
   relatedProducts: {
     heading: "Das könnte dir auch gefallen",
   },
+  productPage: {
+    loading: "Produkt wird geladen",
+    loadingProduct: "Produkt wird geladen…",
+    loadError: "Dieses Produkt konnte nicht geladen werden. Bitte versuche es erneut.",
+    retry: "Erneut versuchen",
+  },
 } satisfies CommonTranslations;

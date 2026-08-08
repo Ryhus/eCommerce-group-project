@@ -209,6 +209,12 @@ export const enCommon = {
   relatedProducts: {
     heading: "You might also like",
   },
+  productPage: {
+    loading: "Product loading",
+    loadingProduct: "Loading product…",
+    loadError: "We couldn't load this product. Please try again.",
+    retry: "Try again",
+  },
 } as const;
 
 export type CommonTranslations = {
