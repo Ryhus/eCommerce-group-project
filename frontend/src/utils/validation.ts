@@ -40,8 +40,8 @@ export const validatePasswordStrength = (value: string): string | null => {
   if (!/[A-Z]/.test(value)) return "Password must include at least one uppercase letter.";
   if (!/[a-z]/.test(value)) return "Password must include at least one lowercase letter.";
   if (!/[0-9]/.test(value)) return "Password must include at least one digit.";
-  if (!/[!@#$%^&*(),.?":{}|<>]/.test(value)) return "Password must include at least one special character.";
-  if (!/^[A-Za-z0-9!@#$%^&*(),.?":{}|<>]+$/.test(value)) return "Password contains invalid characters.";
+  if (!/[!@#$%^&*(),.?":{}|<>_]/.test(value)) return "Password must include at least one special character.";
+  if (!/^[A-Za-z0-9!@#$%^&*(),.?":{}|<>_]+$/.test(value)) return "Password contains invalid characters.";
   return null;
 };
 
