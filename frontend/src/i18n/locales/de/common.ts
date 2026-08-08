@@ -290,4 +290,10 @@ export const deCommon = {
   authRoute: {
     checkingAccount: "Dein Konto wird geprüft…",
   },
+  registrationProgress: {
+    navigation: "Registrierungsfortschritt",
+    account: "Konto",
+    personalDetails: "Persönliche Daten",
+    address: "Adresse",
+  },
 } satisfies CommonTranslations;

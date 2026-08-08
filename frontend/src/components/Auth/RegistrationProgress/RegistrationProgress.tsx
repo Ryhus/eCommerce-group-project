@@ -1,16 +1,23 @@
-import "./RegistrationProgress.scss";
+import { useTranslation } from "react-i18next";
 
-const REGISTRATION_STEPS = ["Account", "Personal details", "Address"] as const;
+import "./RegistrationProgress.scss";
 
 type RegistrationProgressProps = {
   currentStep: number;
 };
 
 export function RegistrationProgress({ currentStep }: RegistrationProgressProps) {
+  const { t } = useTranslation("common");
+  const registrationSteps = [
+    t("registrationProgress.account"),
+    t("registrationProgress.personalDetails"),
+    t("registrationProgress.address"),
+  ];
+
   return (
-    <nav aria-label="Registration progress" className="registration-progress">
+    <nav aria-label={t("registrationProgress.navigation")} className="registration-progress">
       <ol>
-        {REGISTRATION_STEPS.map((step, index) => {
+        {registrationSteps.map((step, index) => {
           const state = index < currentStep ? "completed" : index === currentStep ? "current" : "upcoming";
 
           return (

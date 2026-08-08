@@ -286,6 +286,12 @@ export const enCommon = {
   authRoute: {
     checkingAccount: "Checking your account…",
   },
+  registrationProgress: {
+    navigation: "Registration progress",
+    account: "Account",
+    personalDetails: "Personal details",
+    address: "Address",
+  },
 } as const;
 
 export type CommonTranslations = {

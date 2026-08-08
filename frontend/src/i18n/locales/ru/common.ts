@@ -286,4 +286,10 @@ export const ruCommon = {
   authRoute: {
     checkingAccount: "Проверяем ваш аккаунт…",
   },
+  registrationProgress: {
+    navigation: "Этапы регистрации",
+    account: "Аккаунт",
+    personalDetails: "Личные данные",
+    address: "Адрес",
+  },
 } satisfies CommonTranslations;
