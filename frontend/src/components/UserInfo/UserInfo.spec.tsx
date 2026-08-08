@@ -78,12 +78,17 @@ describe("UserInfo", () => {
     expect(screen.getByRole("region", { name: "Add address" })).toBeVisible();
   });
 
-  it("deletes an address through the existing customer service", async () => {
+  it("requires confirmation before deleting through the customer service", async () => {
     renderProfile();
 
     fireEvent.click(screen.getByRole("button", { name: "Delete 10 Main Street" }));
+    expect(screen.getByRole("alertdialog", { name: "Delete address?" })).toBeVisible();
+    expect(updateCustomerMock).not.toHaveBeenCalled();
+
+    fireEvent.click(screen.getByRole("button", { name: "Delete address" }));
 
     await waitFor(() => expect(updateCustomerMock).toHaveBeenCalledWith({ removeAddressId: "address-id" }));
+    await waitFor(() => expect(screen.queryByRole("alertdialog")).not.toBeInTheDocument());
   });
 
   it("forwards logout from the page header", () => {

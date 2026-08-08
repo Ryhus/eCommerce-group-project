@@ -5,6 +5,7 @@ import { useRevalidator } from "react-router-dom";
 import type { Address } from "../../services/customerService/types";
 import { updateCustomer } from "../../services/customerService/customerService";
 import Breadcrumbs from "../Breadcrumbs/Breadcrumbs";
+import { DeleteAddressDialog } from "../Profile/DeleteAddressDialog/DeleteAddressDialog";
 import { ProfileAddressForm } from "../Profile/ProfileAddressForm/ProfileAddressForm";
 import { ProfileAddresses } from "../Profile/ProfileAddresses/ProfileAddresses";
 import { ProfileDetails } from "../Profile/ProfileDetails/ProfileDetails";
@@ -48,6 +49,9 @@ export function UserInfo({
   const revalidator = useRevalidator();
   const [activeEditor, setActiveEditor] = useState<ActiveEditor>(null);
   const [editingAddress, setEditingAddress] = useState<Address | null>(null);
+  const [addressToDelete, setAddressToDelete] = useState<Address | null>(null);
+  const [deleteError, setDeleteError] = useState("");
+  const [isDeletingAddress, setIsDeletingAddress] = useState(false);
 
   const closeEditor = () => {
     setActiveEditor(null);
@@ -77,10 +81,30 @@ export function UserInfo({
     setActiveEditor("address");
   };
 
-  const deleteAddress = async (address: Address) => {
-    if (!address.id) return;
-    await updateCustomer({ removeAddressId: address.id });
-    await revalidator.revalidate();
+  const requestAddressDeletion = (address: Address) => {
+    setDeleteError("");
+    setAddressToDelete(address);
+  };
+
+  const cancelAddressDeletion = () => {
+    setDeleteError("");
+    setAddressToDelete(null);
+  };
+
+  const confirmAddressDeletion = async () => {
+    if (!addressToDelete?.id) return;
+
+    try {
+      setDeleteError("");
+      setIsDeletingAddress(true);
+      await updateCustomer({ removeAddressId: addressToDelete.id });
+      await revalidator.revalidate();
+      setAddressToDelete(null);
+    } catch {
+      setDeleteError("Unable to delete this address. Please try again.");
+    } finally {
+      setIsDeletingAddress(false);
+    }
   };
 
   return (
@@ -158,13 +182,23 @@ export function UserInfo({
               defaultBillingAddressId={defaultBillingAddressId}
               defaultShippingAddressId={defaultShippingAddressId}
               onAdd={() => openAddressEditor()}
-              onDelete={(address) => void deleteAddress(address)}
+              onDelete={requestAddressDeletion}
               onEdit={openAddressEditor}
               shippingAddressIds={shippingAddressIds}
             />
           )}
         </div>
       </div>
+
+      {addressToDelete && (
+        <DeleteAddressDialog
+          addressName={addressToDelete.streetName || "This address"}
+          error={deleteError}
+          isDeleting={isDeletingAddress}
+          onCancel={cancelAddressDeletion}
+          onConfirm={() => void confirmAddressDeletion()}
+        />
+      )}
     </PageContainer>
   );
 }
