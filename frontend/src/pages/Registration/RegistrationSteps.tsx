@@ -50,7 +50,7 @@ export function RegistrationAccountStep({
     <div className="registration-form__step registration-form__step--account">
       <div className="registration-form__name-fields">
         <AuthFormField
-          error={t(getRegistrationErrorKey(errors.firstName))}
+          error={t(getRegistrationErrorKey(errors.firstName) as never)}
           inputId={REGISTRATION_FIELD_IDS.firstName}
           label={t("registration.firstName")}
         >
@@ -68,7 +68,7 @@ export function RegistrationAccountStep({
         </AuthFormField>
 
         <AuthFormField
-          error={t(getRegistrationErrorKey(errors.lastName))}
+          error={t(getRegistrationErrorKey(errors.lastName) as never)}
           inputId={REGISTRATION_FIELD_IDS.lastName}
           label={t("registration.lastName")}
         >
@@ -87,7 +87,7 @@ export function RegistrationAccountStep({
       </div>
 
       <AuthFormField
-        error={t(getRegistrationErrorKey(errors.email))}
+        error={t(getRegistrationErrorKey(errors.email) as never)}
         inputId={REGISTRATION_FIELD_IDS.email}
         label={t("registration.email")}
       >
@@ -107,7 +107,7 @@ export function RegistrationAccountStep({
       </AuthFormField>
 
       <AuthFormField
-        error={t(getRegistrationErrorKey(errors.password))}
+        error={t(getRegistrationErrorKey(errors.password) as never)}
         inputId={REGISTRATION_FIELD_IDS.password}
         label={t("registration.password")}
       >
@@ -130,7 +130,7 @@ export function RegistrationAccountStep({
       </AuthFormField>
 
       <AuthFormField
-        error={t(getRegistrationErrorKey(errors.confirmPassword))}
+        error={t(getRegistrationErrorKey(errors.confirmPassword) as never)}
         inputId={REGISTRATION_FIELD_IDS.confirmPassword}
         label={t("registration.confirmPassword")}
       >
@@ -162,7 +162,7 @@ export function RegistrationPersonalStep({ data, errors, onChange }: Registratio
       </div>
 
       <AuthFormField
-        error={t(getRegistrationErrorKey(errors.dateOfBirth))}
+        error={t(getRegistrationErrorKey(errors.dateOfBirth) as never)}
         inputId={REGISTRATION_FIELD_IDS.dateOfBirth}
         label={t("registration.dateOfBirth")}
       >
@@ -195,7 +195,7 @@ export function RegistrationAddressStep({ data, errors, onChange }: Registration
       </div>
 
       <AuthFormField
-        error={t(getRegistrationErrorKey(errors.street))}
+        error={t(getRegistrationErrorKey(errors.street) as never)}
         inputId={REGISTRATION_FIELD_IDS.street}
         label={t("registration.street")}
       >
@@ -214,7 +214,7 @@ export function RegistrationAddressStep({ data, errors, onChange }: Registration
 
       <div className="registration-form__address-row">
         <AuthFormField
-          error={t(getRegistrationErrorKey(errors.city))}
+          error={t(getRegistrationErrorKey(errors.city) as never)}
           inputId={REGISTRATION_FIELD_IDS.city}
           label={t("registration.city")}
         >
@@ -231,7 +231,7 @@ export function RegistrationAddressStep({ data, errors, onChange }: Registration
         </AuthFormField>
 
         <AuthFormField
-          error={t(getRegistrationErrorKey(errors.postalCode))}
+          error={t(getRegistrationErrorKey(errors.postalCode) as never)}
           inputId={REGISTRATION_FIELD_IDS.postalCode}
           label={t("registration.postalCode")}
         >
@@ -249,7 +249,7 @@ export function RegistrationAddressStep({ data, errors, onChange }: Registration
       </div>
 
       <AuthFormField
-        error={t(getRegistrationErrorKey(errors.country))}
+        error={t(getRegistrationErrorKey(errors.country) as never)}
         inputId={REGISTRATION_FIELD_IDS.country}
         label={t("registration.country")}
       >
