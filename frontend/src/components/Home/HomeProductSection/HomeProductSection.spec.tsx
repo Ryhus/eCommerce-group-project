@@ -1,8 +1,9 @@
 import { render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import type { Product } from "../../../services/productService/types";
+import i18n from "../../../i18n/i18n";
 
 import HomeProductSection from "./HomeProductSection";
 
@@ -27,6 +28,10 @@ const products: Product[] = [
 ];
 
 describe("HomeProductSection", () => {
+  beforeEach(async () => {
+    await i18n.changeLanguage("en");
+  });
+
   it("labels the section and presents showcase products with a catalog link", () => {
     render(
       <MemoryRouter>
@@ -38,5 +43,17 @@ describe("HomeProductSection", () => {
     expect(screen.getByTestId("product-list")).toHaveAttribute("data-variant", "showcase");
     expect(screen.getByText("Running Shoes")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "View all" })).toHaveAttribute("href", "/catalog");
+  });
+
+  it("localizes the catalog action", async () => {
+    await i18n.changeLanguage("de");
+
+    render(
+      <MemoryRouter>
+        <HomeProductSection products={products} title="Neu eingetroffen" />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByRole("link", { name: "Alle ansehen" })).toHaveAttribute("href", "/catalog");
   });
 });

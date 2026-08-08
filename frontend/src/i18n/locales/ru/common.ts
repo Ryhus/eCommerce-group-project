@@ -105,4 +105,19 @@ export const ruCommon = {
     recover: "Восстановление",
     explore: "Активный отдых",
   },
+  home: {
+    loading: "Загружаем новые товары...",
+    loadError: "Не удалось загрузить подборку товаров. Попробуйте ещё раз.",
+    retry: "Попробовать снова",
+    newArrivals: "Новинки",
+    moreGear: "Экипировка для любых целей",
+    viewAll: "Смотреть все",
+  },
+  categories: {
+    heading: "ВЫБЕРИТЕ ВИД СПОРТА",
+    football: "Футбол",
+    running: "Бег",
+    strength: "Силовые тренировки",
+    yoga: "Йога",
+  },
 } satisfies CommonTranslations;

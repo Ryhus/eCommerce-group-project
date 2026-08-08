@@ -1,4 +1,5 @@
 import { useId, type ComponentPropsWithoutRef } from "react";
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 
 import type { Product } from "../../../services/productService/types";
@@ -21,6 +22,7 @@ const HomeProductSection = ({
   className = "",
   ...props
 }: HomeProductSectionProps) => {
+  const { t } = useTranslation("common");
   const titleId = useId();
   const sectionClassName = `home-product-section ${className}`.trim();
 
@@ -30,7 +32,7 @@ const HomeProductSection = ({
         <H2 className="home-product-section__title" id={titleId} text={title} />
         <ProductList className="home-product-section__list" products={products} variant="showcase" />
         <Link className="home-product-section__view-all" to={viewAllHref}>
-          View all
+          {t("home.viewAll")}
         </Link>
       </PageContainer>
     </section>

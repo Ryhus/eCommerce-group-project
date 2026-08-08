@@ -106,4 +106,19 @@ export const deCommon = {
     recover: "Regenerieren",
     explore: "Entdecken",
   },
+  home: {
+    loading: "Die neuesten Produkte werden geladen...",
+    loadError: "Die Produktauswahl konnte nicht geladen werden. Bitte versuche es erneut.",
+    retry: "Erneut versuchen",
+    newArrivals: "Neu eingetroffen",
+    moreGear: "Ausrüstung für jedes Ziel",
+    viewAll: "Alle ansehen",
+  },
+  categories: {
+    heading: "NACH SPORTART ENTDECKEN",
+    football: "Fußball",
+    running: "Laufen",
+    strength: "Krafttraining",
+    yoga: "Yoga",
+  },
 } satisfies CommonTranslations;

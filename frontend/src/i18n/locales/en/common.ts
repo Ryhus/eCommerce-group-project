@@ -103,6 +103,21 @@ export const enCommon = {
     recover: "Recover",
     explore: "Explore",
   },
+  home: {
+    loading: "Loading the latest gear...",
+    loadError: "We couldn't load the product selection. Please try again.",
+    retry: "Try again",
+    newArrivals: "New arrivals",
+    moreGear: "Gear for every goal",
+    viewAll: "View all",
+  },
+  categories: {
+    heading: "BROWSE BY SPORT",
+    football: "Football",
+    running: "Running",
+    strength: "Strength",
+    yoga: "Yoga",
+  },
 } as const;
 
 export type CommonTranslations = {
