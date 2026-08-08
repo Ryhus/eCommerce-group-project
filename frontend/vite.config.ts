@@ -10,10 +10,12 @@ const apiProxy = {
 };
 
 // https://vite.dev/config/
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   // base: "/eCommerce-group-project/", // gh-page
   base: "/", // for Netify
-  plugins: [react(), eslint()],
+  // Production builds are linted by CI before deployment. Skipping the Vite
+  // lint transform keeps standalone service builds independent of root config.
+  plugins: [react(), ...(mode === "production" ? [] : [eslint()])],
   server: {
     proxy: apiProxy,
   },
@@ -32,4 +34,4 @@ export default defineConfig({
       provider: "v8",
     },
   },
-});
+}));

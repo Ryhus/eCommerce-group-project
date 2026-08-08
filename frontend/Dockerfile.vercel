@@ -5,7 +5,9 @@ COPY package.json ./
 RUN npm install
 
 COPY . .
-RUN npm run build
+RUN npx tsc --noEmit -p tsconfig.app.json \
+  && npx tsc --noEmit -p tsconfig.node.json \
+  && NODE_ENV=production npx vite build
 
 FROM nginx:1.29-alpine
 
