@@ -1,9 +1,10 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { AuthContext, type AuthContextValue } from "../context/AuthContext";
 import { CartContext, type CartContextType } from "../context/CartContext";
+import i18n from "../../i18n/i18n";
 import Header from "./Header";
 
 const authValue: AuthContextValue = {
@@ -45,6 +46,10 @@ function renderHeader() {
 afterEach(() => document.body.classList.remove("no-scroll"));
 
 describe("Header", () => {
+  beforeEach(async () => {
+    await i18n.changeLanguage("en");
+  });
+
   it("composes the storefront logo, navigation, search and actions", () => {
     renderHeader();
 
@@ -72,5 +77,18 @@ describe("Header", () => {
     expect(screen.getByRole("button", { name: "Open menu" })).toHaveAttribute("aria-expanded", "false");
     expect(document.body).not.toHaveClass("no-scroll");
     expect(screen.getAllByRole("search", { name: "Product search" })).toHaveLength(2);
+  });
+
+  it("renders navigation, search and account actions in Russian", async () => {
+    await i18n.changeLanguage("ru");
+    renderHeader();
+
+    expect(screen.getByRole("link", { name: "Главная Sport Gear" })).toBeInTheDocument();
+    expect(screen.getByRole("navigation", { name: "Основная навигация" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Магазин" })).toHaveAttribute("href", "/catalog");
+    expect(screen.getByRole("search", { name: "Поиск товаров" })).toBeInTheDocument();
+    expect(screen.getByRole("searchbox", { name: "Поиск товаров" })).toHaveAttribute("placeholder", "Найти товары...");
+    expect(screen.getByRole("link", { name: "Корзина пуста" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Войти" })).toHaveTextContent("ВойтиВаш аккаунт");
   });
 });

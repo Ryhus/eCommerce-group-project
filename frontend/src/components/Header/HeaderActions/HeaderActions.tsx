@@ -1,5 +1,6 @@
 import type { ComponentPropsWithoutRef } from "react";
 import { PiShoppingCartSimple, PiUserCircle } from "react-icons/pi";
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 
 import { useAuth } from "../../context/useAuth";
@@ -10,14 +11,20 @@ import "./HeaderActions.scss";
 type HeaderActionsProps = Omit<ComponentPropsWithoutRef<"div">, "children">;
 
 export function HeaderActions({ className = "", ...props }: HeaderActionsProps) {
+  const { t } = useTranslation("common");
   const { isAuthenticated, loading, user } = useAuth();
   const { calculateTotalQuantity } = useCart();
   const totalQuantity = calculateTotalQuantity();
-  const cartLabel = totalQuantity > 0 ? `Shopping cart, ${totalQuantity} items` : "Shopping cart, empty";
+  const cartLabel =
+    totalQuantity > 0 ? t("headerActions.cartItems", { count: totalQuantity }) : t("headerActions.cartEmpty");
   const firstName = user?.firstName?.trim() ?? "";
   const lastName = user?.lastName?.trim() ?? "";
   const initials = `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase() || user?.email.charAt(0).toUpperCase();
-  const accountLabel = isAuthenticated ? (firstName ? `Open ${firstName}'s account` : "Open your account") : "Sign in";
+  const accountLabel = isAuthenticated
+    ? firstName
+      ? t("headerActions.openNamedAccount", { name: firstName })
+      : t("headerActions.openAccount")
+    : t("headerActions.signIn");
   const classes = `header-actions ${className}`.trim();
 
   return (
@@ -34,7 +41,7 @@ export function HeaderActions({ className = "", ...props }: HeaderActionsProps) 
       </Link>
       {loading ? (
         <span
-          aria-label="Checking account status"
+          aria-label={t("headerActions.checkingAccount")}
           className="header-actions__account header-actions__account--loading"
           role="status"
         >
@@ -60,8 +67,14 @@ export function HeaderActions({ className = "", ...props }: HeaderActionsProps) 
             </span>
           )}
           <span className="header-actions__account-copy">
-            <strong>{isAuthenticated ? (firstName ? `Hi, ${firstName}` : "My account") : "Sign in"}</strong>
-            <span>{isAuthenticated ? "My account" : "Your account"}</span>
+            <strong>
+              {isAuthenticated
+                ? firstName
+                  ? t("headerActions.greeting", { name: firstName })
+                  : t("headerActions.myAccount")
+                : t("headerActions.signIn")}
+            </strong>
+            <span>{isAuthenticated ? t("headerActions.myAccount") : t("headerActions.yourAccount")}</span>
           </span>
         </Link>
       )}
