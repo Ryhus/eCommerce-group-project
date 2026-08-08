@@ -86,6 +86,55 @@ export const enCommon = {
     emailRequired: "Enter your email address.",
     invalidEmail: "Enter a valid email address, for example user@example.com.",
   },
+  homeHero: {
+    title: "FIND GEAR THAT MATCHES YOUR GOALS",
+    description: "Explore dependable equipment for the field, court, gym, and every training session in between.",
+    cta: "Shop now",
+    imageAlt: "Athlete running stadium steps",
+    demoProducts: "Demo products",
+    gearCategories: "Gear categories",
+    serverPriced: "Server-priced",
+  },
+  activities: {
+    region: "Sport Gear activities",
+    run: "Run",
+    train: "Train",
+    play: "Play",
+    recover: "Recover",
+    explore: "Explore",
+  },
+  home: {
+    loading: "Loading the latest gear...",
+    loadError: "We couldn't load the product selection. Please try again.",
+    retry: "Try again",
+    newArrivals: "New arrivals",
+    moreGear: "Gear for every goal",
+    viewAll: "View all",
+  },
+  categories: {
+    heading: "BROWSE BY SPORT",
+    football: "Football",
+    running: "Running",
+    strength: "Strength",
+    yoga: "Yoga",
+  },
+  highlights: {
+    heading: "WHY SPORT GEAR",
+    list: "Store advantages",
+    previous: "Previous advantages",
+    next: "Next advantages",
+    serverTitle: "Server-priced catalog",
+    serverDescription:
+      "Product prices, discounts, and availability come from the NestJS API instead of browser storage.",
+    cartTitle: "A cart that follows you",
+    cartDescription: "Start shopping anonymously and keep the same items when you create an account or sign in.",
+    responsiveTitle: "Responsive by design",
+    responsiveDescription:
+      "The storefront is structured for phones, tablets, and desktop screens using one accessible interface.",
+    sessionsTitle: "Secure account sessions",
+    sessionsDescription:
+      "HttpOnly cookies, rotating refresh sessions, and CSRF protection keep credentials out of frontend code.",
+  },
 } as const;
 
 export type CommonTranslations = {

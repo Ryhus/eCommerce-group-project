@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 import ActivityStrip from "../../components/Home/ActivityStrip/ActivityStrip";
 import CategoryShowcase from "../../components/Home/CategoryShowcase/CategoryShowcase";
@@ -16,9 +17,10 @@ const HOME_PRODUCT_LIMIT = 8;
 const HOME_SECTION_SIZE = 4;
 
 export default function HomePage() {
+  const { t } = useTranslation("common");
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [hasError, setHasError] = useState(false);
   const [reloadKey, setReloadKey] = useState(0);
 
   useEffect(() => {
@@ -26,13 +28,13 @@ export default function HomePage() {
 
     const loadProducts = async () => {
       setIsLoading(true);
-      setError(null);
+      setHasError(false);
 
       try {
         const nextProducts = await fetchProducts({ limit: HOME_PRODUCT_LIMIT });
         if (!cancelled) setProducts(nextProducts);
       } catch {
-        if (!cancelled) setError("We couldn't load the product selection. Please try again.");
+        if (!cancelled) setHasError(true);
       } finally {
         if (!cancelled) setIsLoading(false);
       }
@@ -56,25 +58,25 @@ export default function HomePage() {
       {isLoading && (
         <PageContainer aria-live="polite" className="home-page__feedback" role="status">
           <span className="home-page__loader" />
-          Loading the latest gear...
+          {t("home.loading")}
         </PageContainer>
       )}
 
-      {!isLoading && error && (
+      {!isLoading && hasError && (
         <PageContainer className="home-page__feedback home-page__feedback--error" role="alert">
-          <p>{error}</p>
+          <p>{t("home.loadError")}</p>
           <Button
             className="btn-medium home-page__retry"
             onClick={() => setReloadKey((current) => current + 1)}
-            text="Try again"
+            text={t("home.retry")}
           />
         </PageContainer>
       )}
 
-      {!isLoading && !error && (
+      {!isLoading && !hasError && (
         <>
-          {newArrivals.length > 0 && <HomeProductSection products={newArrivals} title="New arrivals" />}
-          {moreGear.length > 0 && <HomeProductSection products={moreGear} title="Gear for every goal" />}
+          {newArrivals.length > 0 && <HomeProductSection products={newArrivals} title={t("home.newArrivals")} />}
+          {moreGear.length > 0 && <HomeProductSection products={moreGear} title={t("home.moreGear")} />}
         </>
       )}
 

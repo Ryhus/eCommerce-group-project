@@ -16,6 +16,14 @@ test("switches and persists the interface language", async ({ page }) => {
   await expect(page.getByRole("search", { name: "Produktsuche" })).toBeVisible();
   await expect(page.getByRole("navigation", { name: "Unternehmen" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "VERPASSE KEINE UNSERER NEUESTEN ANGEBOTE" })).toBeVisible();
+  await expect(
+    page.getByRole("heading", { level: 1, name: "FINDE AUSRÜSTUNG, DIE ZU DEINEN ZIELEN PASST" })
+  ).toBeVisible();
+  await expect(page.getByRole("link", { name: "Jetzt shoppen" })).toHaveAttribute("href", "/catalog");
+  await expect(page.getByRole("group", { name: "Sportarten bei Sport Gear" })).toContainText("Regenerieren");
+  await expect(page.getByRole("region", { name: "Neu eingetroffen" })).toBeVisible();
+  await expect(page.getByRole("region", { name: "NACH SPORTART ENTDECKEN" })).toContainText("Krafttraining");
+  await expect(page.getByRole("region", { name: "WARUM SPORT GEAR" })).toContainText("Preise direkt vom Server");
 
   await page.reload();
 
@@ -36,6 +44,11 @@ test("switches and persists the interface language", async ({ page }) => {
   );
   await expect(page.getByRole("navigation", { name: "Компания" })).toBeVisible();
   await expect(page.getByText("Демонстрационный магазин · Платежи не проводятся")).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1, name: "НАЙДИ ЭКИПИРОВКУ ДЛЯ СВОИХ ЦЕЛЕЙ" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Перейти в магазин" })).toHaveAttribute("href", "/catalog");
+  await expect(page.getByRole("region", { name: "Новинки" })).toBeVisible();
+  await expect(page.getByRole("region", { name: "ВЫБЕРИТЕ ВИД СПОРТА" })).toContainText("Силовые тренировки");
+  await expect(page.getByRole("region", { name: "ПОЧЕМУ SPORT GEAR" })).toContainText("Безопасные сессии");
 });
 
 test("switches the language from mobile navigation", async ({ page }) => {

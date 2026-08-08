@@ -88,4 +88,55 @@ export const deCommon = {
     emailRequired: "Gib deine E-Mail-Adresse ein.",
     invalidEmail: "Gib eine gültige E-Mail-Adresse ein, zum Beispiel user@example.com.",
   },
+  homeHero: {
+    title: "FINDE AUSRÜSTUNG, DIE ZU DEINEN ZIELEN PASST",
+    description:
+      "Entdecke zuverlässige Ausrüstung für Sportplatz, Halle, Fitnessstudio und jede Trainingseinheit dazwischen.",
+    cta: "Jetzt shoppen",
+    imageAlt: "Athletin läuft Stadiontreppen hinauf",
+    demoProducts: "Demo-Produkte",
+    gearCategories: "Ausrüstungskategorien",
+    serverPriced: "Serverbasierte Preise",
+  },
+  activities: {
+    region: "Sportarten bei Sport Gear",
+    run: "Laufen",
+    train: "Trainieren",
+    play: "Spielen",
+    recover: "Regenerieren",
+    explore: "Entdecken",
+  },
+  home: {
+    loading: "Die neuesten Produkte werden geladen...",
+    loadError: "Die Produktauswahl konnte nicht geladen werden. Bitte versuche es erneut.",
+    retry: "Erneut versuchen",
+    newArrivals: "Neu eingetroffen",
+    moreGear: "Ausrüstung für jedes Ziel",
+    viewAll: "Alle ansehen",
+  },
+  categories: {
+    heading: "NACH SPORTART ENTDECKEN",
+    football: "Fußball",
+    running: "Laufen",
+    strength: "Krafttraining",
+    yoga: "Yoga",
+  },
+  highlights: {
+    heading: "WARUM SPORT GEAR",
+    list: "Vorteile des Shops",
+    previous: "Vorherige Vorteile",
+    next: "Nächste Vorteile",
+    serverTitle: "Preise direkt vom Server",
+    serverDescription:
+      "Produktpreise, Rabatte und Verfügbarkeit kommen aus der NestJS API und nicht aus dem Browser-Speicher.",
+    cartTitle: "Ein Warenkorb, der dich begleitet",
+    cartDescription:
+      "Beginne anonym einzukaufen und behalte deine Artikel, wenn du ein Konto erstellst oder dich anmeldest.",
+    responsiveTitle: "Responsiv entwickelt",
+    responsiveDescription:
+      "Der Shop bietet auf Smartphones, Tablets und Desktop-Geräten eine einheitliche, barrierearme Oberfläche.",
+    sessionsTitle: "Sichere Kontositzungen",
+    sessionsDescription:
+      "HttpOnly-Cookies, rotierende Refresh-Sitzungen und CSRF-Schutz halten Zugangsdaten vom Frontend-Code fern.",
+  },
 } satisfies CommonTranslations;

@@ -1,8 +1,9 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { fetchProducts } from "../../services/productService/productService";
 import type { Product } from "../../services/productService/types";
+import i18n from "../../i18n/i18n";
 
 import HomePage from "./Home";
 
@@ -28,7 +29,8 @@ const products: Product[] = Array.from({ length: 8 }, (_, index) => ({
 }));
 
 describe("HomePage", () => {
-  beforeEach(() => {
+  beforeEach(async () => {
+    await i18n.changeLanguage("en");
     vi.mocked(fetchProducts).mockReset();
   });
 
@@ -52,5 +54,20 @@ describe("HomePage", () => {
 
     await waitFor(() => expect(fetchProducts).toHaveBeenCalledTimes(2));
     expect(await screen.findByText("New arrivals")).toBeInTheDocument();
+  });
+
+  it("updates an existing error message when the language changes", async () => {
+    vi.mocked(fetchProducts).mockRejectedValue(new Error("Unavailable"));
+    render(<HomePage />);
+
+    expect(await screen.findByRole("alert")).toHaveTextContent("couldn't load the product selection");
+
+    await act(async () => {
+      await i18n.changeLanguage("de");
+    });
+
+    expect(screen.getByRole("alert")).toHaveTextContent("Die Produktauswahl konnte nicht geladen werden");
+    expect(screen.getByRole("button", { name: "Erneut versuchen" })).toBeInTheDocument();
+    expect(fetchProducts).toHaveBeenCalledTimes(1);
   });
 });
