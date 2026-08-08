@@ -1,0 +1,67 @@
+.registration-progress ol {
+  display: grid;
+  padding: 0;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  list-style: none;
+}
+
+.registration-progress li {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: var(--space-2);
+  color: var(--color-text-subtle);
+  font-size: var(--font-size-xs);
+  text-align: center;
+}
+
+.registration-progress li:not(:last-child)::after {
+  position: absolute;
+  z-index: 0;
+  top: 1.5rem;
+  right: calc(-50% + 2.2rem);
+  left: calc(50% + 2.2rem);
+  height: 1px;
+  background: var(--color-border);
+  content: "";
+}
+
+.registration-progress__number {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  width: 3.2rem;
+  height: 3.2rem;
+  align-items: center;
+  justify-content: center;
+  border: var(--border-subtle);
+  border-radius: 50%;
+  background: var(--color-surface);
+  font-weight: var(--font-weight-medium);
+}
+
+.registration-progress__current,
+.registration-progress__completed {
+  color: var(--color-ink);
+}
+
+.registration-progress__current .registration-progress__number,
+.registration-progress__completed .registration-progress__number {
+  border-color: var(--color-ink);
+  background: var(--color-ink);
+  color: var(--color-surface);
+}
+
+.registration-progress__current .registration-progress__label {
+  font-weight: var(--font-weight-medium);
+}
+
+@media (max-width: 480px) {
+  .registration-progress li {
+    gap: var(--space-1);
+  }
+
+  .registration-progress__label {
+    font-size: 1.1rem;
+  }
+}
