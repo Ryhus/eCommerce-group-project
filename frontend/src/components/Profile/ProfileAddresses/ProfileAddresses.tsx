@@ -1,4 +1,5 @@
 import { HiOutlineLocationMarker, HiPencilAlt, HiTrash } from "react-icons/hi";
+import { useTranslation } from "react-i18next";
 
 import type { Address } from "../../../services/customerService/types";
 import { IconButton } from "../../common/IconButton/IconButton";
@@ -18,9 +19,9 @@ type ProfileAddressesProps = {
   shippingAddressIds?: string[] | null;
 };
 
-function getCountryName(countryCode: string) {
+function getCountryName(countryCode: string, language: string) {
   try {
-    return new Intl.DisplayNames(["en"], { type: "region" }).of(countryCode) ?? countryCode;
+    return new Intl.DisplayNames([language], { type: "region" }).of(countryCode) ?? countryCode;
   } catch {
     return countryCode;
   }
@@ -39,9 +40,9 @@ function getAddressRoles(
   const isShipping = address.isShipping || (address.id ? shippingAddressIds.includes(address.id) : false);
 
   return [
-    isDefaultShipping ? "Default shipping" : isShipping ? "Shipping" : null,
-    isDefaultBilling ? "Default billing" : isBilling ? "Billing" : null,
-  ].filter(Boolean) as string[];
+    isDefaultShipping ? "defaultShipping" : isShipping ? "shipping" : null,
+    isDefaultBilling ? "defaultBilling" : isBilling ? "billing" : null,
+  ].filter(Boolean) as Array<"defaultShipping" | "shipping" | "defaultBilling" | "billing">;
 }
 
 export function ProfileAddresses({
@@ -54,16 +55,17 @@ export function ProfileAddresses({
   onEdit,
   shippingAddressIds = [],
 }: ProfileAddressesProps) {
+  const { i18n, t } = useTranslation("common");
   const savedAddresses = addresses ?? [];
   const description = savedAddresses.length
-    ? `${savedAddresses.length} saved ${savedAddresses.length === 1 ? "address" : "addresses"}.`
-    : "Add an address for future deliveries and billing.";
+    ? t("profile.savedAddressesCount", { count: savedAddresses.length })
+    : t("profile.savedAddressesEmptyDescription");
 
   return (
     <ProfileSection
-      action={<Button onClick={onAdd} text="Add address" />}
+      action={<Button onClick={onAdd} text={t("profile.addAddress")} />}
       description={description}
-      title="Saved addresses"
+      title={t("profile.savedAddresses")}
     >
       {savedAddresses.length ? (
         <ul className="profile-addresses">
@@ -75,7 +77,7 @@ export function ProfileAddresses({
               defaultBillingAddressId,
               defaultShippingAddressId
             );
-            const addressName = address.streetName || `Address ${index + 1}`;
+            const addressName = address.streetName || t("profile.addressFallback", { number: index + 1 });
 
             return (
               <li className="profile-addresses__item" key={address.id ?? `${address.streetName}-${index}`}>
@@ -85,12 +87,15 @@ export function ProfileAddresses({
                 <div className="profile-addresses__content">
                   <h3>{addressName}</h3>
                   <p>
-                    {address.postalCode} {address.city}, {getCountryName(address.country)}
+                    {address.postalCode} {address.city}, {getCountryName(address.country, i18n.language)}
                   </p>
                   {roles.length > 0 && (
-                    <div className="profile-addresses__roles" aria-label={`Roles for ${addressName}`}>
+                    <div
+                      aria-label={t("profile.rolesFor", { address: addressName })}
+                      className="profile-addresses__roles"
+                    >
                       {roles.map((role) => (
-                        <span key={role}>{role}</span>
+                        <span key={role}>{t(`profile.${role}` as never)}</span>
                       ))}
                     </div>
                   )}
@@ -98,7 +103,7 @@ export function ProfileAddresses({
                 <div className="profile-addresses__actions">
                   <IconButton
                     icon={<HiPencilAlt />}
-                    label={`Edit ${addressName}`}
+                    label={`${t("profile.editAddress")} ${addressName}`}
                     onClick={() => onEdit(address)}
                     size="small"
                     variant="subtle"
@@ -106,7 +111,7 @@ export function ProfileAddresses({
                   <IconButton
                     className="profile-addresses__delete"
                     icon={<HiTrash />}
-                    label={`Delete ${addressName}`}
+                    label={`${t("profile.deleteAddressAction")} ${addressName}`}
                     onClick={() => onDelete(address)}
                     size="small"
                     variant="subtle"
@@ -121,8 +126,8 @@ export function ProfileAddresses({
           <span aria-hidden="true">
             <HiOutlineLocationMarker />
           </span>
-          <h3>No saved addresses yet</h3>
-          <p>Add your first address to make future shopping faster.</p>
+          <h3>{t("profile.noAddressesTitle")}</h3>
+          <p>{t("profile.noAddressesDescription")}</p>
         </div>
       )}
     </ProfileSection>

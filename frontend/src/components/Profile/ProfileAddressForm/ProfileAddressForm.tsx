@@ -1,9 +1,10 @@
 import { type FormEvent, useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useFetcher } from "react-router-dom";
 
 import type { Address, CustomerResponse } from "../../../services/customerService/types";
+import { getRegistrationErrorKey, COUNTRY_OPTIONS } from "../../../pages/Registration/registrationForm";
 import { validateCity, validateCountry, validatePostalCode, validateStreet } from "../../../utils/validation";
-import { COUNTRY_OPTIONS } from "../../../pages/Registration/registrationForm";
 import { AuthFormField } from "../../Auth/AuthFormField/AuthFormField";
 import Button from "../../common/button/button";
 import InputField from "../../common/inputField/inputField";
@@ -31,6 +32,7 @@ function isSuccessfulAddressAction(data: ProfileActionData | undefined): data is
 }
 
 export function ProfileAddressForm({ address, onCancel, onSuccess }: ProfileAddressFormProps) {
+  const { i18n, t } = useTranslation("common");
   const fetcher = useFetcher<ProfileActionData>();
   const submitted = useRef(false);
   const [values, setValues] = useState({
@@ -47,7 +49,7 @@ export function ProfileAddressForm({ address, onCancel, onSuccess }: ProfileAddr
   const isSubmitting = fetcher.state !== "idle";
   const serverError =
     fetcher.data && !isSuccessfulAddressAction(fetcher.data)
-      ? fetcher.data.message || "Unable to save this address."
+      ? fetcher.data.message || t("profile.unableToSaveAddress")
       : "";
 
   useEffect(() => {
@@ -64,10 +66,10 @@ export function ProfileAddressForm({ address, onCancel, onSuccess }: ProfileAddr
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     const nextErrors: AddressErrors = {
-      streetName: validateStreet(values.streetName) ?? undefined,
-      city: validateCity(values.city) ?? undefined,
-      postalCode: validatePostalCode(values.postalCode) ?? undefined,
-      country: validateCountry(values.country) ?? undefined,
+      streetName: getTranslatedError(validateStreet(values.streetName)),
+      city: getTranslatedError(validateCity(values.city)),
+      postalCode: getTranslatedError(validatePostalCode(values.postalCode)),
+      country: getTranslatedError(validateCountry(values.country)),
     };
     setErrors(nextErrors);
 
@@ -83,12 +85,30 @@ export function ProfileAddressForm({ address, onCancel, onSuccess }: ProfileAddr
     submitted.current = true;
   };
 
+  function getTranslatedError(error: string | null) {
+    return error ? t(getRegistrationErrorKey(error) as never) : undefined;
+  }
+
+  function getCountryLabel(value: string, fallback: string) {
+    if (!value) return t("profile.countryPlaceholder");
+
+    try {
+      return new Intl.DisplayNames([i18n.language], { type: "region" }).of(value) ?? fallback;
+    } catch {
+      return fallback;
+    }
+  }
+
   return (
     <fetcher.Form className="profile-address-form" method="post" noValidate onSubmit={handleSubmit}>
       <input name="actionType" type="hidden" value={isEditing ? "changeAddress" : "addAddress"} />
       <input name="addressId" type="hidden" value={address?.id ?? ""} />
 
-      <AuthFormField error={errors.streetName} inputId={ADDRESS_FIELD_IDS.streetName} label="Street address">
+      <AuthFormField
+        error={errors.streetName}
+        inputId={ADDRESS_FIELD_IDS.streetName}
+        label={t("profile.streetAddress")}
+      >
         <InputField
           aria-describedby={`${ADDRESS_FIELD_IDS.streetName}-error`}
           autoComplete="street-address"
@@ -96,13 +116,13 @@ export function ProfileAddressForm({ address, onCancel, onSuccess }: ProfileAddr
           isValid={!errors.streetName}
           name="street"
           onChange={(value) => updateValue("streetName", value)}
-          placeholder="10 Main Street"
+          placeholder={t("profile.streetPlaceholder")}
           value={values.streetName}
         />
       </AuthFormField>
 
       <div className="profile-address-form__location-row">
-        <AuthFormField error={errors.city} inputId={ADDRESS_FIELD_IDS.city} label="City">
+        <AuthFormField error={errors.city} inputId={ADDRESS_FIELD_IDS.city} label={t("profile.city")}>
           <InputField
             aria-describedby={`${ADDRESS_FIELD_IDS.city}-error`}
             autoComplete="address-level2"
@@ -110,12 +130,12 @@ export function ProfileAddressForm({ address, onCancel, onSuccess }: ProfileAddr
             isValid={!errors.city}
             name="city"
             onChange={(value) => updateValue("city", value)}
-            placeholder="Berlin"
+            placeholder={t("profile.cityPlaceholder")}
             value={values.city}
           />
         </AuthFormField>
 
-        <AuthFormField error={errors.postalCode} inputId={ADDRESS_FIELD_IDS.postalCode} label="Postal code">
+        <AuthFormField error={errors.postalCode} inputId={ADDRESS_FIELD_IDS.postalCode} label={t("profile.postalCode")}>
           <InputField
             aria-describedby={`${ADDRESS_FIELD_IDS.postalCode}-error`}
             autoComplete="postal-code"
@@ -123,13 +143,13 @@ export function ProfileAddressForm({ address, onCancel, onSuccess }: ProfileAddr
             isValid={!errors.postalCode}
             name="postalCode"
             onChange={(value) => updateValue("postalCode", value)}
-            placeholder="10115"
+            placeholder={t("profile.postalCodePlaceholder")}
             value={values.postalCode}
           />
         </AuthFormField>
       </div>
 
-      <AuthFormField error={errors.country} inputId={ADDRESS_FIELD_IDS.country} label="Country">
+      <AuthFormField error={errors.country} inputId={ADDRESS_FIELD_IDS.country} label={t("profile.country")}>
         <select
           aria-describedby={`${ADDRESS_FIELD_IDS.country}-error`}
           aria-invalid={Boolean(errors.country)}
@@ -142,14 +162,14 @@ export function ProfileAddressForm({ address, onCancel, onSuccess }: ProfileAddr
         >
           {COUNTRY_OPTIONS.map(([value, label]) => (
             <option key={value || "placeholder"} value={value}>
-              {label}
+              {getCountryLabel(value, label)}
             </option>
           ))}
         </select>
       </AuthFormField>
 
       <fieldset className="profile-address-form__defaults">
-        <legend>Address preferences</legend>
+        <legend>{t("profile.addressPreferences")}</legend>
         <label>
           <input
             checked={isDefaultShipping}
@@ -158,7 +178,7 @@ export function ProfileAddressForm({ address, onCancel, onSuccess }: ProfileAddr
             type="checkbox"
             value="default"
           />
-          <span>Use as default shipping address</span>
+          <span>{t("profile.defaultShippingAddress")}</span>
         </label>
         <label>
           <input
@@ -168,7 +188,7 @@ export function ProfileAddressForm({ address, onCancel, onSuccess }: ProfileAddr
             type="checkbox"
             value="default"
           />
-          <span>Use as default billing address</span>
+          <span>{t("profile.defaultBillingAddress")}</span>
         </label>
       </fieldset>
 
@@ -177,8 +197,12 @@ export function ProfileAddressForm({ address, onCancel, onSuccess }: ProfileAddr
       </div>
 
       <div className="profile-address-form__actions">
-        <Button disabled={isSubmitting} onClick={onCancel} text="Cancel" variant="light" />
-        <Button disabled={isSubmitting} text={isSubmitting ? "Saving…" : "Save address"} type="submit" />
+        <Button disabled={isSubmitting} onClick={onCancel} text={t("profile.cancel")} variant="light" />
+        <Button
+          disabled={isSubmitting}
+          text={isSubmitting ? t("profile.saving") : t("profile.saveAddress")}
+          type="submit"
+        />
       </div>
     </fetcher.Form>
   );
