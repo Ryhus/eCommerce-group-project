@@ -21,7 +21,9 @@ test("registers, shops with a promo code, opens profile and logs out", async ({ 
   await page.getByRole("checkbox", { name: "Use as default billing and shipping address" }).check();
   await page.getByRole("button", { name: "Create account" }).click();
 
-  await expect(page.getByRole("link", { name: "Open profile" })).toBeVisible();
+  const accountLink = page.getByRole("link", { name: "Open Playwright's account" });
+  await expect(accountLink).toContainText("PU");
+  await expect(accountLink).toContainText("Hi, Playwright");
   await page.getByRole("link", { name: "Catalog" }).click();
   await page.getByRole("button", { name: "Add to Cart" }).first().click();
 
@@ -33,7 +35,7 @@ test("registers, shops with a promo code, opens profile and logs out", async ({ 
   await expect(page.getByLabel("Applied promo code")).toContainText("WELCOME10");
   await expect(page.getByText("Discount", { exact: true })).toBeVisible();
 
-  await page.getByRole("link", { name: "Open profile" }).click();
+  await accountLink.click();
   await expect(page.getByRole("heading", { level: 1, name: "My account" })).toBeVisible();
   const personalDetailsRegion = page.getByRole("region", { name: "Personal details" });
   await expect(personalDetailsRegion).toBeVisible();
@@ -55,6 +57,14 @@ test("registers, shops with a promo code, opens profile and logs out", async ({ 
   await page.getByRole("button", { name: "Log out" }).click();
   await expect(page).toHaveURL(/\/login$/);
   await expect(page.getByRole("heading", { name: "Welcome back" })).toBeVisible();
+
+  const signedOutAccountLink = page.getByLabel("Sign in", { exact: true });
+  await expect(signedOutAccountLink).toContainText("Your account");
+
+  const emptyCartLink = page.getByRole("link", { name: "Shopping cart, empty" });
+  await expect(emptyCartLink).toBeVisible();
+  await emptyCartLink.click();
+  await expect(page.getByRole("heading", { name: "Your cart is empty" })).toBeVisible();
 });
 
 test("manages product quantity and a promo code in the cart", async ({ page }) => {

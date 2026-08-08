@@ -6,11 +6,20 @@ import { AuthContext, type AuthContextValue } from "../../context/AuthContext";
 import { CartContext, type CartContextType } from "../../context/CartContext";
 import { HeaderActions } from "./HeaderActions";
 
-function renderActions({ isAuthenticated = false, quantity = 0 } = {}) {
+const customer = {
+  id: "customer-id",
+  email: "yevhen@example.com",
+  firstName: "Yevhen",
+  lastName: "Ryhus",
+  dateOfBirth: "1993-05-14",
+  addresses: [],
+};
+
+function renderActions({ isAuthenticated = false, loading = false, quantity = 0 } = {}) {
   const authValue: AuthContextValue = {
-    user: null,
+    user: isAuthenticated ? customer : null,
     isAuthenticated,
-    loading: false,
+    loading,
     refreshUser: vi.fn(),
     logout: vi.fn(),
   };
@@ -46,13 +55,22 @@ describe("HeaderActions", () => {
     renderActions();
 
     expect(screen.getByRole("link", { name: "Shopping cart, empty" })).toHaveAttribute("href", "/basket");
-    expect(screen.getByRole("link", { name: "Log in" })).toHaveAttribute("href", "/login");
+    expect(screen.getByRole("link", { name: "Sign in" })).toHaveAttribute("href", "/login");
+    expect(screen.getByRole("link", { name: "Sign in" })).toHaveTextContent("Sign inYour account");
   });
 
-  it("links authenticated users to profile and displays the cart quantity", () => {
+  it("shows the authenticated customer identity and cart quantity", () => {
     renderActions({ isAuthenticated: true, quantity: 3 });
 
     expect(screen.getByRole("link", { name: "Shopping cart, 3 items" })).toHaveTextContent("3");
-    expect(screen.getByRole("link", { name: "Open profile" })).toHaveAttribute("href", "/profile");
+    expect(screen.getByRole("link", { name: "Open Yevhen's account" })).toHaveAttribute("href", "/profile");
+    expect(screen.getByRole("link", { name: "Open Yevhen's account" })).toHaveTextContent("YRHi, YevhenMy account");
+  });
+
+  it("does not expose the wrong account destination while authentication is loading", () => {
+    renderActions({ loading: true });
+
+    expect(screen.getByRole("status", { name: "Checking account status" })).toBeVisible();
+    expect(screen.queryByRole("link", { name: "Sign in" })).not.toBeInTheDocument();
   });
 });
