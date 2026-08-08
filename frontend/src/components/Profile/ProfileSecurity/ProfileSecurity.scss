@@ -1,0 +1,65 @@
+.profile-security {
+  display: flex;
+  min-height: 10.2rem;
+  padding: var(--space-5);
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.profile-security__copy {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.profile-security__icon {
+  display: grid;
+  width: 4rem;
+  height: 4rem;
+  place-items: center;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: var(--color-surface-subtle);
+  color: var(--color-ink);
+}
+
+.profile-security__icon svg {
+  width: 2.2rem;
+  height: 2.2rem;
+}
+
+.profile-security h3 {
+  color: var(--color-ink);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-heading);
+}
+
+.profile-security p {
+  margin-top: var(--space-1);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+  line-height: var(--line-height-body);
+}
+
+.profile-security .btn {
+  width: auto;
+  height: 4rem;
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-sm);
+}
+
+@media (max-width: 480px) {
+  .profile-security {
+    padding: var(--space-4);
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .profile-security .btn {
+    width: 100%;
+  }
+}
