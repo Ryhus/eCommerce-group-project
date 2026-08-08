@@ -127,6 +127,34 @@ test("localizes product purchase and gallery controls", async ({ page }) => {
   await expect(galleryDialog).toHaveCount(0);
 });
 
+test("localizes basket items, promo code and order summary", async ({ page }) => {
+  await page.goto("/catalog");
+
+  await page.getByRole("button", { name: "Current language: English" }).click();
+  await page.getByRole("menuitemradio", { name: "DE Deutsch" }).click();
+  await page.getByRole("button", { name: "In den Warenkorb" }).first().click();
+  await page.getByRole("link", { name: "Warenkorb, 1 Artikel" }).click();
+
+  await expect(page.getByRole("heading", { level: 1, name: "Dein Warenkorb" })).toBeVisible();
+  await expect(page.getByRole("navigation", { name: "Breadcrumb-Navigation" })).toContainText("StartseiteWarenkorb");
+  await expect(page.getByRole("region", { name: "Artikel im Warenkorb" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Bestellübersicht" })).toBeVisible();
+  await expect(page.getByText("Gesamtsumme").locator("..")).toContainText(/\d+,\d{2}\s€/);
+
+  await page.getByPlaceholder("Aktionscode hinzufügen").fill("welcome10");
+  await page.getByRole("button", { name: "Anwenden" }).click();
+  await expect(page.getByLabel("Angewendeter Aktionscode")).toContainText("WELCOME10");
+  await expect(page.getByText("Rabatt", { exact: true })).toBeVisible();
+
+  await page.getByRole("button", { name: "Aktuelle Sprache: Deutsch" }).click();
+  await page.getByRole("menuitemradio", { name: "RU Русский" }).click();
+
+  await expect(page.getByRole("heading", { level: 1, name: "Ваша корзина" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Сумма заказа" })).toBeVisible();
+  await expect(page.getByLabel("Применённый промокод")).toContainText("Промокод применён");
+  await expect(page.getByRole("button", { name: "Удалить промокод WELCOME10" })).toBeVisible();
+});
+
 test("registers, shops with a promo code, opens profile and logs out", async ({ page }) => {
   const email = `playwright-${Date.now()}@example.com`;
 
