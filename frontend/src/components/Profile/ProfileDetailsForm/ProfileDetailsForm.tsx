@@ -1,7 +1,9 @@
 import { type FormEvent, useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useFetcher } from "react-router-dom";
 
 import type { CustomerResponse } from "../../../services/customerService/types";
+import { getRegistrationErrorKey } from "../../../pages/Registration/registrationForm";
 import { validateDateOfBirth, validateEmailFormat, validateName } from "../../../utils/validation";
 import { AuthFormField } from "../../Auth/AuthFormField/AuthFormField";
 import Button from "../../common/button/button";
@@ -40,6 +42,7 @@ export function ProfileDetailsForm({
   onCancel,
   onSuccess,
 }: ProfileDetailsFormProps) {
+  const { t } = useTranslation("common");
   const fetcher = useFetcher<ProfileActionData>();
   const submitted = useRef(false);
   const [values, setValues] = useState({
@@ -52,7 +55,9 @@ export function ProfileDetailsForm({
 
   const isSubmitting = fetcher.state !== "idle";
   const serverError =
-    fetcher.data && !isSuccessfulProfileAction(fetcher.data) ? fetcher.data.message || "Unable to save changes." : "";
+    fetcher.data && !isSuccessfulProfileAction(fetcher.data)
+      ? fetcher.data.message || t("profile.unableToSaveDetails")
+      : "";
 
   useEffect(() => {
     if (submitted.current && fetcher.state === "idle" && isSuccessfulProfileAction(fetcher.data)) {
@@ -68,10 +73,10 @@ export function ProfileDetailsForm({
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     const nextErrors: ProfileDetailsErrors = {
-      firstName: validateName(values.firstName, "First name") ?? undefined,
-      lastName: validateName(values.lastName, "Last name") ?? undefined,
-      email: validateEmailFormat(values.email) ?? undefined,
-      dateOfBirth: validateDateOfBirth(values.dateOfBirth) ?? undefined,
+      firstName: getTranslatedError(validateName(values.firstName, "First name")),
+      lastName: getTranslatedError(validateName(values.lastName, "Last name")),
+      email: getTranslatedError(validateEmailFormat(values.email)),
+      dateOfBirth: getTranslatedError(validateDateOfBirth(values.dateOfBirth)),
     };
     setErrors(nextErrors);
 
@@ -87,12 +92,16 @@ export function ProfileDetailsForm({
     submitted.current = true;
   };
 
+  function getTranslatedError(error: string | null) {
+    return error ? t(getRegistrationErrorKey(error) as never) : undefined;
+  }
+
   return (
     <fetcher.Form className="profile-details-form" method="post" noValidate onSubmit={handleSubmit}>
       <input name="actionType" type="hidden" value="changePersonal" />
 
       <div className="profile-details-form__name-row">
-        <AuthFormField error={errors.firstName} inputId={PROFILE_FIELD_IDS.firstName} label="First name">
+        <AuthFormField error={errors.firstName} inputId={PROFILE_FIELD_IDS.firstName} label={t("profile.firstName")}>
           <InputField
             aria-describedby={`${PROFILE_FIELD_IDS.firstName}-error`}
             autoComplete="given-name"
@@ -104,7 +113,7 @@ export function ProfileDetailsForm({
           />
         </AuthFormField>
 
-        <AuthFormField error={errors.lastName} inputId={PROFILE_FIELD_IDS.lastName} label="Last name">
+        <AuthFormField error={errors.lastName} inputId={PROFILE_FIELD_IDS.lastName} label={t("profile.lastName")}>
           <InputField
             aria-describedby={`${PROFILE_FIELD_IDS.lastName}-error`}
             autoComplete="family-name"
@@ -117,7 +126,7 @@ export function ProfileDetailsForm({
         </AuthFormField>
       </div>
 
-      <AuthFormField error={errors.email} inputId={PROFILE_FIELD_IDS.email} label="Email address">
+      <AuthFormField error={errors.email} inputId={PROFILE_FIELD_IDS.email} label={t("profile.emailAddress")}>
         <InputField
           aria-describedby={`${PROFILE_FIELD_IDS.email}-error`}
           autoComplete="email"
@@ -131,7 +140,11 @@ export function ProfileDetailsForm({
         />
       </AuthFormField>
 
-      <AuthFormField error={errors.dateOfBirth} inputId={PROFILE_FIELD_IDS.dateOfBirth} label="Date of birth">
+      <AuthFormField
+        error={errors.dateOfBirth}
+        inputId={PROFILE_FIELD_IDS.dateOfBirth}
+        label={t("profile.dateOfBirth")}
+      >
         <InputField
           aria-describedby={`${PROFILE_FIELD_IDS.dateOfBirth}-error`}
           autoComplete="bday"
@@ -149,8 +162,12 @@ export function ProfileDetailsForm({
       </div>
 
       <div className="profile-details-form__actions">
-        <Button disabled={isSubmitting} onClick={onCancel} text="Cancel" variant="light" />
-        <Button disabled={isSubmitting} text={isSubmitting ? "Saving…" : "Save changes"} type="submit" />
+        <Button disabled={isSubmitting} onClick={onCancel} text={t("profile.cancel")} variant="light" />
+        <Button
+          disabled={isSubmitting}
+          text={isSubmitting ? t("profile.saving") : t("profile.saveChanges")}
+          type="submit"
+        />
       </div>
     </fetcher.Form>
   );

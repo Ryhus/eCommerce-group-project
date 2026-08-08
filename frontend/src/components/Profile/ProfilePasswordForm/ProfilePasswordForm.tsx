@@ -1,7 +1,9 @@
 import { type FormEvent, useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useFetcher } from "react-router-dom";
 
 import type { CustomerResponse } from "../../../services/customerService/types";
+import { getRegistrationErrorKey } from "../../../pages/Registration/registrationForm";
 import { validatePasswordStrength } from "../../../utils/validation";
 import { AuthFormField } from "../../Auth/AuthFormField/AuthFormField";
 import { PasswordVisibilityButton } from "../../common/PasswordVisibilityButton/PasswordVisibilityButton";
@@ -26,6 +28,7 @@ function isSuccessfulPasswordAction(data: ProfileActionData | undefined): data i
 }
 
 export function ProfilePasswordForm({ onCancel, onSuccess }: ProfilePasswordFormProps) {
+  const { t } = useTranslation("common");
   const fetcher = useFetcher<ProfileActionData>();
   const submitted = useRef(false);
   const [currentPassword, setCurrentPassword] = useState("");
@@ -37,7 +40,7 @@ export function ProfilePasswordForm({ onCancel, onSuccess }: ProfilePasswordForm
   const isSubmitting = fetcher.state !== "idle";
   const serverError =
     fetcher.data && !isSuccessfulPasswordAction(fetcher.data)
-      ? fetcher.data.message || "Unable to change your password."
+      ? fetcher.data.message || t("profile.unableToChangePassword")
       : "";
 
   useEffect(() => {
@@ -49,8 +52,8 @@ export function ProfilePasswordForm({ onCancel, onSuccess }: ProfilePasswordForm
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     const nextErrors: PasswordErrors = {
-      currentPassword: currentPassword ? undefined : "Enter your current password.",
-      newPassword: validatePasswordStrength(newPassword) ?? undefined,
+      currentPassword: currentPassword ? undefined : t("profile.currentPasswordRequired"),
+      newPassword: getTranslatedError(validatePasswordStrength(newPassword)),
     };
     setErrors(nextErrors);
 
@@ -68,11 +71,15 @@ export function ProfilePasswordForm({ onCancel, onSuccess }: ProfilePasswordForm
     submitted.current = true;
   };
 
+  function getTranslatedError(error: string | null) {
+    return error ? t(getRegistrationErrorKey(error) as never) : undefined;
+  }
+
   return (
     <fetcher.Form className="profile-password-form" method="post" noValidate onSubmit={handleSubmit}>
       <input name="actionType" type="hidden" value="changePassword" />
 
-      <AuthFormField error={errors.currentPassword} inputId={CURRENT_PASSWORD_ID} label="Current password">
+      <AuthFormField error={errors.currentPassword} inputId={CURRENT_PASSWORD_ID} label={t("profile.currentPassword")}>
         <InputField
           aria-describedby={`${CURRENT_PASSWORD_ID}-error`}
           autoComplete="current-password"
@@ -94,7 +101,7 @@ export function ProfilePasswordForm({ onCancel, onSuccess }: ProfilePasswordForm
         />
       </AuthFormField>
 
-      <AuthFormField error={errors.newPassword} inputId={NEW_PASSWORD_ID} label="New password">
+      <AuthFormField error={errors.newPassword} inputId={NEW_PASSWORD_ID} label={t("profile.newPassword")}>
         <InputField
           aria-describedby={`${NEW_PASSWORD_ID}-error profile-new-password-help`}
           autoComplete="new-password"
@@ -115,7 +122,7 @@ export function ProfilePasswordForm({ onCancel, onSuccess }: ProfilePasswordForm
           value={newPassword}
         />
         <p className="profile-password-form__help" id="profile-new-password-help">
-          At least 8 characters with uppercase, lowercase, number and special character.
+          {t("profile.newPasswordHelp")}
         </p>
       </AuthFormField>
 
@@ -124,8 +131,12 @@ export function ProfilePasswordForm({ onCancel, onSuccess }: ProfilePasswordForm
       </div>
 
       <div className="profile-password-form__actions">
-        <Button disabled={isSubmitting} onClick={onCancel} text="Cancel" variant="light" />
-        <Button disabled={isSubmitting} text={isSubmitting ? "Changing…" : "Change password"} type="submit" />
+        <Button disabled={isSubmitting} onClick={onCancel} text={t("profile.cancel")} variant="light" />
+        <Button
+          disabled={isSubmitting}
+          text={isSubmitting ? t("profile.changingPassword") : t("profile.changePassword")}
+          type="submit"
+        />
       </div>
     </fetcher.Form>
   );
