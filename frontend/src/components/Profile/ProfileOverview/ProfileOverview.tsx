@@ -1,4 +1,5 @@
 import { HiOutlineKey, HiPencilAlt } from "react-icons/hi";
+import { useTranslation } from "react-i18next";
 
 import Button from "../../common/button/button";
 
@@ -22,7 +23,8 @@ function getInitials(firstName?: string | null, lastName?: string | null) {
 }
 
 export function ProfileOverview({ email, firstName, lastName, onChangePassword, onEditProfile }: ProfileOverviewProps) {
-  const fullName = [firstName, lastName].filter(Boolean).join(" ") || "Sport Gear customer";
+  const { t } = useTranslation("common");
+  const fullName = [firstName, lastName].filter(Boolean).join(" ") || t("profile.fallbackName");
 
   return (
     <section aria-labelledby="profile-overview-title" className="profile-overview">
@@ -39,10 +41,10 @@ export function ProfileOverview({ email, firstName, lastName, onChangePassword, 
         <Button
           icon={<HiOutlineKey aria-hidden="true" />}
           onClick={onChangePassword}
-          text="Change password"
+          text={t("profile.changePassword")}
           variant="light"
         />
-        <Button icon={<HiPencilAlt aria-hidden="true" />} onClick={onEditProfile} text="Edit profile" />
+        <Button icon={<HiPencilAlt aria-hidden="true" />} onClick={onEditProfile} text={t("profile.editProfile")} />
       </div>
     </section>
   );
