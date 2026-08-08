@@ -1,4 +1,5 @@
 import { type FormEvent, useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
 
 import { AuthLayout } from "../../components/Auth/AuthLayout/AuthLayout";
@@ -26,6 +27,7 @@ import {
 import "./Registration.scss";
 
 export default function RegistrationPage() {
+  const { t } = useTranslation("common");
   const { refreshUser } = useAuth();
   const { setNewCart } = useCart();
   const navigate = useNavigate();
@@ -35,7 +37,7 @@ export default function RegistrationPage() {
   const [currentStep, setCurrentStep] = useState<RegistrationStep>(0);
   const [data, setData] = useState(INITIAL_REGISTRATION_FORM);
   const [errors, setErrors] = useState<RegistrationErrors>({});
-  const [authError, setAuthError] = useState("");
+  const [hasAuthError, setHasAuthError] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
@@ -48,7 +50,7 @@ export default function RegistrationPage() {
   const updateField: RegistrationUpdate = (field, value) => {
     setData((currentData) => ({ ...currentData, [field]: value }));
     setErrors((currentErrors) => ({ ...currentErrors, [field]: undefined }));
-    setAuthError("");
+    setHasAuthError(false);
   };
 
   const validateCurrentStep = () => {
@@ -67,7 +69,7 @@ export default function RegistrationPage() {
   const goBack = () => {
     if (currentStep === 0) return;
     setErrors({});
-    setAuthError("");
+    setHasAuthError(false);
     setCurrentStep((currentStep - 1) as RegistrationStep);
   };
 
@@ -82,7 +84,7 @@ export default function RegistrationPage() {
     }
 
     try {
-      setAuthError("");
+      setHasAuthError(false);
       setIsSubmitting(true);
       const customer = await signUp(
         data.email,
@@ -97,7 +99,7 @@ export default function RegistrationPage() {
       await refreshUser();
       navigate("/");
     } catch {
-      setAuthError("We couldn't create your account. Please review your details and try again.");
+      setHasAuthError(true);
     } finally {
       setIsSubmitting(false);
     }
@@ -105,18 +107,13 @@ export default function RegistrationPage() {
 
   return (
     <AuthLayout>
-      <form
-        aria-label="Create your Sport Gear account"
-        className="registration-form"
-        noValidate
-        onSubmit={handleSubmit}
-      >
+      <form aria-label={t("registration.form")} className="registration-form" noValidate onSubmit={handleSubmit}>
         <header className="registration-form__header">
-          <p className="registration-form__step-count">Step {currentStep + 1} of 3</p>
+          <p className="registration-form__step-count">{t("registration.stepCount", { step: currentStep + 1 })}</p>
           <h1 ref={stepHeadingRef} tabIndex={-1}>
-            Create your account
+            {t("registration.title")}
           </h1>
-          <p>Join Sport Gear in three quick steps.</p>
+          <p>{t("registration.description")}</p>
         </header>
 
         <RegistrationProgress currentStep={currentStep} />
@@ -135,19 +132,29 @@ export default function RegistrationPage() {
         {currentStep === 1 && <RegistrationPersonalStep data={data} errors={errors} onChange={updateField} />}
         {currentStep === 2 && <RegistrationAddressStep data={data} errors={errors} onChange={updateField} />}
 
-        <div className="registration-form__server-error">{authError && <p role="alert">{authError}</p>}</div>
+        <div className="registration-form__server-error">
+          {hasAuthError && <p role="alert">{t("registration.authError")}</p>}
+        </div>
 
         <div className="registration-form__actions">
-          {currentStep > 0 && <Button disabled={isSubmitting} onClick={goBack} text="Back" variant="light" />}
+          {currentStep > 0 && (
+            <Button disabled={isSubmitting} onClick={goBack} text={t("registration.back")} variant="light" />
+          )}
           <Button
             disabled={isSubmitting}
-            text={currentStep === 2 ? (isSubmitting ? "Creating account…" : "Create account") : "Continue"}
+            text={
+              currentStep === 2
+                ? isSubmitting
+                  ? t("registration.creating")
+                  : t("registration.createAccount")
+                : t("registration.continue")
+            }
             type="submit"
           />
         </div>
 
         <p className="registration-form__login-link">
-          <span>Already have an account?</span> <Link to="/login">Log in</Link>
+          <span>{t("registration.existingCustomer")}</span> <Link to="/login">{t("registration.login")}</Link>
         </p>
       </form>
     </AuthLayout>
