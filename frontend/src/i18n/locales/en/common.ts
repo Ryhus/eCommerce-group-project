@@ -275,6 +275,14 @@ export const enCommon = {
     newCustomer: "New to Sport Gear?",
     createAccount: "Create an account",
   },
+  emailValidation: {
+    whitespace: "Email address must not contain leading or trailing whitespace.",
+    atSymbol: "Email address must contain an '@' symbol separating local part and domain name.",
+    parts: "Email address must contain a local part and a domain name.",
+    spaces: "Email address must not contain spaces in the local or domain part.",
+    domain: "Email address must contain a domain name (e.g., example.com).",
+    format: "Email address must be properly formatted (e.g., user@example.com).",
+  },
 } as const;
 
 export type CommonTranslations = {

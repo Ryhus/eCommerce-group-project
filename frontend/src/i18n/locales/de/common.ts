@@ -279,4 +279,12 @@ export const deCommon = {
     newCustomer: "Neu bei Sport Gear?",
     createAccount: "Konto erstellen",
   },
+  emailValidation: {
+    whitespace: "Die E-Mail-Adresse darf keine Leerzeichen am Anfang oder Ende enthalten.",
+    atSymbol: "Die E-Mail-Adresse muss genau ein '@' zwischen lokalem Teil und Domain enthalten.",
+    parts: "Die E-Mail-Adresse muss einen lokalen Teil und eine Domain enthalten.",
+    spaces: "Die E-Mail-Adresse darf keine Leerzeichen im lokalen Teil oder in der Domain enthalten.",
+    domain: "Die E-Mail-Adresse muss eine Domain enthalten, zum Beispiel beispiel.de.",
+    format: "Gib eine gültige E-Mail-Adresse ein, zum Beispiel user@beispiel.de.",
+  },
 } satisfies CommonTranslations;

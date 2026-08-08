@@ -140,4 +140,21 @@ describe("LoginPage", () => {
     );
     expect(screen.getByRole("link", { name: "Konto erstellen" })).toHaveAttribute("href", "/sign-up");
   });
+
+  it("localizes email validation and updates an existing message after a language change", async () => {
+    const { rerender } = renderLogin();
+    fireEvent.submit(screen.getByRole("form", { name: "Login" }));
+    expect(screen.getByText(/must contain an '@' symbol/i)).toBeVisible();
+
+    await i18n.changeLanguage("ru");
+    rerender(
+      <MemoryRouter initialEntries={["/login"]}>
+        <LoginPage />
+      </MemoryRouter>
+    );
+
+    expect(
+      screen.getByText("Электронная почта должна содержать один символ '@' между именем и доменом.")
+    ).toBeVisible();
+  });
 });

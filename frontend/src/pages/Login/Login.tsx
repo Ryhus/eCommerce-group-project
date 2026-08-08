@@ -10,7 +10,7 @@ import InputField from "../../components/common/inputField/inputField";
 import { useCart } from "../../components/context/useCart";
 import { useAuth } from "../../components/context/useAuth";
 import { signIn } from "../../services/customerService/customerService";
-import { validateEmailFormat } from "../../utils/validation";
+import { getEmailValidationErrorCode, type EmailValidationErrorCode } from "../../utils/validation";
 
 import "./Login.scss";
 
@@ -26,7 +26,7 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const [emailError, setEmailError] = useState("");
+  const [emailError, setEmailError] = useState<EmailValidationErrorCode | null>(null);
   const [hasPasswordError, setHasPasswordError] = useState(false);
 
   const [showPassword, setShowPassword] = useState(false);
@@ -69,8 +69,8 @@ export default function LoginPage() {
   };
 
   const validateEmail = (value: string) => {
-    const error = validateEmailFormat(value);
-    setEmailError(error || "");
+    const error = getEmailValidationErrorCode(value);
+    setEmailError(error);
     return !error;
   };
 
@@ -107,7 +107,7 @@ export default function LoginPage() {
               value={email}
             />
             <p aria-live="polite" className="login-form__error" id="login-email-error">
-              {emailError}
+              {emailError ? t(`emailValidation.${emailError}`) : ""}
             </p>
           </div>
 
