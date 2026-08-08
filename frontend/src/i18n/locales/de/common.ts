@@ -121,4 +121,22 @@ export const deCommon = {
     strength: "Krafttraining",
     yoga: "Yoga",
   },
+  highlights: {
+    heading: "WARUM SPORT GEAR",
+    list: "Vorteile des Shops",
+    previous: "Vorherige Vorteile",
+    next: "Nächste Vorteile",
+    serverTitle: "Preise direkt vom Server",
+    serverDescription:
+      "Produktpreise, Rabatte und Verfügbarkeit kommen aus der NestJS API und nicht aus dem Browser-Speicher.",
+    cartTitle: "Ein Warenkorb, der dich begleitet",
+    cartDescription:
+      "Beginne anonym einzukaufen und behalte deine Artikel, wenn du ein Konto erstellst oder dich anmeldest.",
+    responsiveTitle: "Responsiv entwickelt",
+    responsiveDescription:
+      "Der Shop bietet auf Smartphones, Tablets und Desktop-Geräten eine einheitliche, barrierearme Oberfläche.",
+    sessionsTitle: "Sichere Kontositzungen",
+    sessionsDescription:
+      "HttpOnly-Cookies, rotierende Refresh-Sitzungen und CSRF-Schutz halten Zugangsdaten vom Frontend-Code fern.",
+  },
 } satisfies CommonTranslations;

@@ -120,4 +120,19 @@ export const ruCommon = {
     strength: "Силовые тренировки",
     yoga: "Йога",
   },
+  highlights: {
+    heading: "ПОЧЕМУ SPORT GEAR",
+    list: "Преимущества магазина",
+    previous: "Предыдущие преимущества",
+    next: "Следующие преимущества",
+    serverTitle: "Цены рассчитывает сервер",
+    serverDescription: "Цены, скидки и доступность товаров поступают из NestJS API, а не из хранилища браузера.",
+    cartTitle: "Корзина всегда с вами",
+    cartDescription: "Начните покупки без регистрации и сохраните товары после создания аккаунта или входа.",
+    responsiveTitle: "Адаптивный интерфейс",
+    responsiveDescription: "Единый доступный интерфейс магазина работает на телефонах, планшетах и компьютерах.",
+    sessionsTitle: "Безопасные сессии",
+    sessionsDescription:
+      "HttpOnly cookies, ротация refresh-сессий и CSRF-защита не допускают попадания данных авторизации во frontend-код.",
+  },
 } satisfies CommonTranslations;

@@ -118,6 +118,23 @@ export const enCommon = {
     strength: "Strength",
     yoga: "Yoga",
   },
+  highlights: {
+    heading: "WHY SPORT GEAR",
+    list: "Store advantages",
+    previous: "Previous advantages",
+    next: "Next advantages",
+    serverTitle: "Server-priced catalog",
+    serverDescription:
+      "Product prices, discounts, and availability come from the NestJS API instead of browser storage.",
+    cartTitle: "A cart that follows you",
+    cartDescription: "Start shopping anonymously and keep the same items when you create an account or sign in.",
+    responsiveTitle: "Responsive by design",
+    responsiveDescription:
+      "The storefront is structured for phones, tablets, and desktop screens using one accessible interface.",
+    sessionsTitle: "Secure account sessions",
+    sessionsDescription:
+      "HttpOnly cookies, rotating refresh sessions, and CSRF protection keep credentials out of frontend code.",
+  },
 } as const;
 
 export type CommonTranslations = {
