@@ -1,51 +1,61 @@
-.error-page {
+@use "../../assets/styles/tokens" as tokens;
+
+.not-found-page {
   display: flex;
+  flex: 1;
   align-items: center;
   justify-content: center;
-  height: 100vh;
-  background: #f8f9fa;
-  font-family: Arial, sans-serif;
+  padding-block: var(--space-20);
+}
 
-  .error-content {
-    text-align: center;
-    padding: 20px;
-    border: 2px solid #dee2e6;
-    border-radius: 12px;
-    background: #fff;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+.not-found-page__content {
+  width: 100%;
+  max-width: 70rem;
+  text-align: center;
+}
 
-    .error-code {
-      font-size: 96px;
-      font-weight: bold;
-      color: #007bff;
-      margin: 0;
-    }
+.not-found-page__code {
+  margin-bottom: var(--space-6);
+  color: var(--color-ink);
+  font-size: clamp(12rem, 20vw, 24rem);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: -0.08em;
+  line-height: 0.78;
+}
 
-    .error-message {
-      font-size: 24px;
-      color: #495057;
-    }
+.not-found-page__title {
+  margin-inline: auto;
+  max-width: 60rem;
+  font-size: clamp(var(--font-size-2xl), 5vw, var(--font-size-4xl));
+}
 
-    .error-description {
-      font-size: 16px;
-      color: #868e96;
-      margin-bottom: 20px;
-    }
+.not-found-page__description {
+  max-width: 52rem;
+  margin: var(--space-6) auto 0;
+}
 
-    .home-button {
-      padding: 10px 20px;
-      font-size: 16px;
-      color: #fff;
-      justify-self: center;
-      background-color: #007bff;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
+.not-found-page__actions {
+  display: flex;
+  max-width: 54rem;
+  margin: var(--space-10) auto 0;
+  justify-content: center;
+  gap: var(--space-4);
+}
 
-    .home-button:hover {
-      background-color: #0056b3;
-    }
+.not-found-page__actions .btn {
+  max-width: 25rem;
+}
+
+@media (max-width: tokens.$breakpoint-mobile) {
+  .not-found-page {
+    padding-block: var(--space-16);
+  }
+
+  .not-found-page__actions {
+    flex-direction: column;
+  }
+
+  .not-found-page__actions .btn {
+    max-width: none;
   }
 }
