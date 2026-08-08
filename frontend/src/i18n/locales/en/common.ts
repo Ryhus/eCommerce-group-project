@@ -256,6 +256,10 @@ export const enCommon = {
     loadError: "We couldn't load your cart. Please try again.",
     retry: "Try again",
   },
+  passwordVisibility: {
+    show: "Show password",
+    hide: "Hide password",
+  },
 } as const;
 
 export type CommonTranslations = {

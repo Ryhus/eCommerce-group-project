@@ -1,4 +1,5 @@
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { useTranslation } from "react-i18next";
 
 import "./PasswordVisibilityButton.scss";
 
@@ -8,7 +9,8 @@ type PasswordVisibilityButtonProps = {
 };
 
 export function PasswordVisibilityButton({ isVisible, onToggle }: PasswordVisibilityButtonProps) {
-  const label = isVisible ? "Hide password" : "Show password";
+  const { t } = useTranslation("common");
+  const label = isVisible ? t("passwordVisibility.hide") : t("passwordVisibility.show");
 
   return (
     <button

@@ -256,4 +256,8 @@ export const ruCommon = {
     loadError: "Не удалось загрузить корзину. Попробуйте ещё раз.",
     retry: "Попробовать снова",
   },
+  passwordVisibility: {
+    show: "Показать пароль",
+    hide: "Скрыть пароль",
+  },
 } satisfies CommonTranslations;

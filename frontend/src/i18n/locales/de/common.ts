@@ -260,4 +260,8 @@ export const deCommon = {
     loadError: "Dein Warenkorb konnte nicht geladen werden. Bitte versuche es erneut.",
     retry: "Erneut versuchen",
   },
+  passwordVisibility: {
+    show: "Passwort anzeigen",
+    hide: "Passwort ausblenden",
+  },
 } satisfies CommonTranslations;
