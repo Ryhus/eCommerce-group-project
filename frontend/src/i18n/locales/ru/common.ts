@@ -283,4 +283,7 @@ export const ruCommon = {
     domain: "Электронная почта должна содержать домен, например example.com.",
     format: "Введите корректную электронную почту, например user@example.com.",
   },
+  authRoute: {
+    checkingAccount: "Проверяем ваш аккаунт…",
+  },
 } satisfies CommonTranslations;

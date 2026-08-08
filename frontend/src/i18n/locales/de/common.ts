@@ -287,4 +287,7 @@ export const deCommon = {
     domain: "Die E-Mail-Adresse muss eine Domain enthalten, zum Beispiel beispiel.de.",
     format: "Gib eine gültige E-Mail-Adresse ein, zum Beispiel user@beispiel.de.",
   },
+  authRoute: {
+    checkingAccount: "Dein Konto wird geprüft…",
+  },
 } satisfies CommonTranslations;

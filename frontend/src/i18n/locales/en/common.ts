@@ -283,6 +283,9 @@ export const enCommon = {
     domain: "Email address must contain a domain name (e.g., example.com).",
     format: "Email address must be properly formatted (e.g., user@example.com).",
   },
+  authRoute: {
+    checkingAccount: "Checking your account…",
+  },
 } as const;
 
 export type CommonTranslations = {

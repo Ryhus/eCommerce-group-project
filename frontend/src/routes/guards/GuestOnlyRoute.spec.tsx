@@ -2,6 +2,7 @@ import { render, screen } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { useAuth } from "../../components/context/useAuth";
+import i18n from "../../i18n/i18n";
 import { GuestOnlyRoute } from "./GuestOnlyRoute";
 
 vi.mock("../../components/context/useAuth", () => ({ useAuth: vi.fn() }));
@@ -20,7 +21,8 @@ function renderRoute() {
 }
 
 describe("GuestOnlyRoute", () => {
-  beforeEach(() => {
+  beforeEach(async () => {
+    await i18n.changeLanguage("en");
     vi.mocked(useAuth).mockReturnValue({ isAuthenticated: false, loading: false } as never);
   });
 
@@ -46,5 +48,14 @@ describe("GuestOnlyRoute", () => {
 
     expect(screen.getByRole("heading", { name: "Storefront" })).toBeVisible();
     expect(screen.queryByRole("heading", { name: "Login form" })).not.toBeInTheDocument();
+  });
+
+  it("localizes the account check", async () => {
+    await i18n.changeLanguage("de");
+    vi.mocked(useAuth).mockReturnValue({ isAuthenticated: false, loading: true } as never);
+
+    renderRoute();
+
+    expect(screen.getByRole("status")).toHaveTextContent("Dein Konto wird geprüft…");
   });
 });
