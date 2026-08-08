@@ -65,6 +65,6 @@ describe("ProfileAddressForm", () => {
     fireEvent.click(screen.getByRole("button", { name: "Save address" }));
 
     await waitFor(() => expect(action).toHaveBeenCalledOnce());
-    await waitFor(() => expect(onSuccess).toHaveBeenCalledOnce(), { timeout: 3000 });
+    await waitFor(() => expect(onSuccess).toHaveBeenCalledOnce());
   });
 });
