@@ -20,7 +20,7 @@
   display: block;
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  object-fit: cover;
   object-position: center;
 }
 
@@ -102,9 +102,10 @@
   }
 
   .team-member-card__portrait {
-    height: 100%;
-    min-height: 27rem;
-    aspect-ratio: auto;
+    height: auto;
+    min-height: 0;
+    align-self: start;
+    aspect-ratio: 1;
   }
 
   .team-member-card__content {
@@ -135,6 +136,7 @@
   .team-member-card__portrait {
     height: auto;
     min-height: 0;
-    aspect-ratio: 1.45;
+    align-self: stretch;
+    aspect-ratio: 1;
   }
 }
