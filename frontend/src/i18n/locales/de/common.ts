@@ -450,4 +450,10 @@ export const deCommon = {
     olhaAccessibility: "Barrierefreiheit und Benutzererlebnis verbessert",
     olhaTesting: "Kritische Nutzerabläufe und Anwendungsqualität getestet",
   },
+  notFound: {
+    title: "Diese Seite existiert nicht",
+    description: "Wir konnten die gesuchte Seite nicht finden. Entdecke unsere Ausrüstung für dein nächstes Ziel.",
+    backHome: "Zur Startseite",
+    browseGear: "Ausrüstung entdecken",
+  },
 } satisfies CommonTranslations;

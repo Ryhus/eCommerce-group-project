@@ -14,7 +14,6 @@ import { fetchCategoryBySlug, fetchChildCategories } from "../../services/catego
 import type { Category } from "../../services/categoryService/types";
 import { fetchProductPage } from "../../services/productService/productService";
 import type { ProductPage } from "../../services/productService/types";
-import NotFoundPage from "../NotFound/NotFound";
 
 import "./Category.scss";
 
@@ -168,7 +167,9 @@ export default function CategoryPage() {
     setSearchParams(nextParams);
   };
 
-  if (!isLoading && categoryNotFound) return <NotFoundPage />;
+  if (!isLoading && categoryNotFound) {
+    throw new Response(null, { status: 404, statusText: "Category not found" });
+  }
 
   const title = searchTerm
     ? t("catalog.searchResults", { term: searchTerm })

@@ -11,7 +11,6 @@ import { fetchCategoryTrail } from "../../services/categoryService/categoryServi
 import type { Category } from "../../services/categoryService/types";
 import { fetchProductById, fetchProductPage } from "../../services/productService/productService";
 import type { Product } from "../../services/productService/types";
-import NotFoundPage from "../NotFound/NotFound";
 
 import "./Product.scss";
 
@@ -101,7 +100,9 @@ export default function ProductPage() {
     return [...categoryCrumbs(categoryTrail), { name: product.name, path: `/product/${product.id}` }];
   }, [categoryTrail, product]);
 
-  if (!isLoading && notFound) return <NotFoundPage />;
+  if (!isLoading && notFound) {
+    throw new Response(null, { status: 404, statusText: "Product not found" });
+  }
 
   return (
     <PageContainer className="product-page">

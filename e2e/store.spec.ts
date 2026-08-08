@@ -509,3 +509,35 @@ test("localizes the team page across supported languages", async ({ page }) => {
   await expect(page.getByRole("list", { name: "Вклад Yevhen Ryhus" })).toBeVisible();
   await expect(page.getByRole("link", { name: "Открыть GitHub-профиль Yevhen Ryhus" })).toBeVisible();
 });
+
+test("localizes the not found recovery page", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "Current language: English" }).click();
+  await page.getByRole("menuitemradio", { name: "DE Deutsch" }).click();
+
+  await page.goto("/missing-page");
+
+  await expect(page).toHaveURL(/\/missing-page$/);
+  await expect(page.getByRole("heading", { name: "Diese Seite existiert nicht" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Ausrüstung entdecken" })).toBeVisible();
+  await expect(page.getByRole("contentinfo")).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Aktuelle Sprache: Deutsch" })).toHaveCount(0);
+
+  await page.getByRole("button", { name: "Zur Startseite" }).click();
+  await expect(page).toHaveURL(/\/$/);
+});
+
+test("keeps data-driven not found pages outside the app layout", async ({ page }) => {
+  await page.goto("/catalog/does-not-exist");
+
+  await expect(page.getByRole("heading", { name: "This page doesn't exist" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Browse gear" })).toBeVisible();
+  await expect(page.getByRole("contentinfo")).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Current language: English" })).toHaveCount(0);
+
+  await page.goto("/product/00000000-0000-0000-0000-000000000000");
+
+  await expect(page.getByRole("heading", { name: "This page doesn't exist" })).toBeVisible();
+  await expect(page.getByRole("contentinfo")).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Current language: English" })).toHaveCount(0);
+});

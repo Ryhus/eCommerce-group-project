@@ -1,11 +1,12 @@
 import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { MemoryRouter, Route, Routes, useLocation } from "react-router-dom";
+import { createMemoryRouter, MemoryRouter, Outlet, Route, RouterProvider, Routes, useLocation } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import i18n from "../../i18n/i18n";
-import { fetchChildCategories } from "../../services/categoryService/categoryService";
+import { fetchCategoryBySlug, fetchChildCategories } from "../../services/categoryService/categoryService";
 import { fetchProductPage } from "../../services/productService/productService";
 import type { Product } from "../../services/productService/types";
+import NotFoundPage from "../NotFound/NotFound";
 import CategoryPage from "./Category";
 
 vi.mock("../../services/categoryService/categoryService", () => ({
@@ -63,10 +64,33 @@ function renderCatalog(initialEntry = "/catalog") {
   );
 }
 
+function renderCatalogWithRouteErrorBoundary(initialEntry = "/catalog/missing-category") {
+  const router = createMemoryRouter(
+    [
+      {
+        path: "/",
+        element: (
+          <>
+            <header>Store header</header>
+            <Outlet />
+            <footer>Store footer</footer>
+          </>
+        ),
+        errorElement: <NotFoundPage />,
+        children: [{ path: "catalog/*", Component: CategoryPage }],
+      },
+    ],
+    { initialEntries: [initialEntry] }
+  );
+
+  render(<RouterProvider router={router} />);
+}
+
 describe("CategoryPage", () => {
   beforeEach(async () => {
     await i18n.changeLanguage("en");
     vi.mocked(fetchChildCategories).mockReset();
+    vi.mocked(fetchCategoryBySlug).mockReset();
     vi.mocked(fetchProductPage).mockReset();
     vi.mocked(fetchChildCategories).mockResolvedValue([{ id: "balls", name: "Balls", slug: "balls", parentId: null }]);
     vi.mocked(fetchProductPage).mockImplementation(async (query = {}) => {
@@ -156,5 +180,16 @@ describe("CategoryPage", () => {
     expect(screen.getByRole("alert")).toHaveTextContent("Der Katalog konnte nicht geladen werden");
     expect(screen.getByRole("button", { name: "Erneut versuchen" })).toBeVisible();
     expect(fetchProductPage).toHaveBeenCalledTimes(1);
+  });
+
+  it("renders an unknown category through the standalone route error page", async () => {
+    vi.mocked(fetchCategoryBySlug).mockResolvedValue(null);
+    renderCatalogWithRouteErrorBoundary();
+
+    expect(await screen.findByRole("heading", { name: "This page doesn't exist" })).toBeVisible();
+    expect(screen.getByRole("button", { name: "Browse gear" })).toBeVisible();
+    expect(screen.queryByText("Store header")).not.toBeInTheDocument();
+    expect(screen.queryByText("Store footer")).not.toBeInTheDocument();
+    expect(fetchChildCategories).not.toHaveBeenCalled();
   });
 });
