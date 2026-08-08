@@ -95,6 +95,38 @@ test("localizes catalog controls across desktop and mobile layouts", async ({ pa
   await expect(drawer).toHaveCount(0);
 });
 
+test("localizes product purchase and gallery controls", async ({ page }) => {
+  await page.goto("/catalog");
+
+  await page.getByRole("button", { name: "Current language: English" }).click();
+  await page.getByRole("menuitemradio", { name: "DE Deutsch" }).click();
+  await page.getByRole("link", { name: "Control Tennis Racket ansehen" }).click();
+
+  await expect(page.getByRole("heading", { level: 1, name: "Control Tennis Racket" })).toBeVisible();
+  await expect(page.getByRole("navigation", { name: "Breadcrumb-Navigation" })).toContainText("StartseiteKatalog");
+  await expect(page.getByRole("region", { name: "Bilder von Control Tennis Racket" })).toBeVisible();
+  await expect(page.getByLabel("Produktpreis")).toContainText("89,99 €");
+  await expect(page.getByLabel(/Vorheriger Preis 109,99\s€/)).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Das könnte dir auch gefallen" })).toBeVisible();
+
+  await page.getByRole("button", { name: "Menge erhöhen" }).click();
+  await page.getByRole("button", { name: "In den Warenkorb" }).click();
+  await expect(page.getByText("2 × Control Tennis Racket zum Warenkorb hinzugefügt.")).toBeVisible();
+
+  await page.getByRole("button", { name: "Aktuelle Sprache: Deutsch" }).click();
+  await page.getByRole("menuitemradio", { name: "RU Русский" }).click();
+  await page.setViewportSize({ width: 390, height: 844 });
+
+  await expect(page.getByLabel("Цена товара")).toContainText("89,99 €");
+  await expect(page.getByRole("group", { name: "Количество товара" })).toBeVisible();
+  await page.getByRole("button", { name: "Увеличить Control Tennis Racket, изображение 1 из 1" }).click();
+
+  const galleryDialog = page.getByRole("dialog", { name: "Увеличенное изображение Control Tennis Racket" });
+  await expect(galleryDialog).toBeVisible();
+  await galleryDialog.getByRole("button", { name: "Закрыть увеличенное изображение" }).click();
+  await expect(galleryDialog).toHaveCount(0);
+});
+
 test("registers, shops with a promo code, opens profile and logs out", async ({ page }) => {
   const email = `playwright-${Date.now()}@example.com`;
 
