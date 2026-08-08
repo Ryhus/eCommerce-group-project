@@ -88,4 +88,22 @@ export const deCommon = {
     emailRequired: "Gib deine E-Mail-Adresse ein.",
     invalidEmail: "Gib eine gültige E-Mail-Adresse ein, zum Beispiel user@example.com.",
   },
+  homeHero: {
+    title: "FINDE AUSRÜSTUNG, DIE ZU DEINEN ZIELEN PASST",
+    description:
+      "Entdecke zuverlässige Ausrüstung für Sportplatz, Halle, Fitnessstudio und jede Trainingseinheit dazwischen.",
+    cta: "Jetzt shoppen",
+    imageAlt: "Athletin läuft Stadiontreppen hinauf",
+    demoProducts: "Demo-Produkte",
+    gearCategories: "Ausrüstungskategorien",
+    serverPriced: "Serverbasierte Preise",
+  },
+  activities: {
+    region: "Sportarten bei Sport Gear",
+    run: "Laufen",
+    train: "Trainieren",
+    play: "Spielen",
+    recover: "Regenerieren",
+    explore: "Entdecken",
+  },
 } satisfies CommonTranslations;

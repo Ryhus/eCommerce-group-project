@@ -1,13 +1,23 @@
+import { useTranslation } from "react-i18next";
+
 import "./ActivityStrip.scss";
 
-const activities = ["Run", "Train", "Play", "Recover", "Explore"];
+const activityKeys = [
+  "activities.run",
+  "activities.train",
+  "activities.play",
+  "activities.recover",
+  "activities.explore",
+] as const;
 
 const ActivityStrip = () => {
+  const { t } = useTranslation("common");
+
   return (
-    <div aria-label="Sport Gear activities" className="activity-strip" role="group">
+    <div aria-label={t("activities.region")} className="activity-strip" role="group">
       <ul>
-        {activities.map((activity) => (
-          <li key={activity}>{activity}</li>
+        {activityKeys.map((activityKey) => (
+          <li key={activityKey}>{t(activityKey)}</li>
         ))}
       </ul>
     </div>

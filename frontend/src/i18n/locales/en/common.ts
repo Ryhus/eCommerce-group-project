@@ -86,6 +86,23 @@ export const enCommon = {
     emailRequired: "Enter your email address.",
     invalidEmail: "Enter a valid email address, for example user@example.com.",
   },
+  homeHero: {
+    title: "FIND GEAR THAT MATCHES YOUR GOALS",
+    description: "Explore dependable equipment for the field, court, gym, and every training session in between.",
+    cta: "Shop now",
+    imageAlt: "Athlete running stadium steps",
+    demoProducts: "Demo products",
+    gearCategories: "Gear categories",
+    serverPriced: "Server-priced",
+  },
+  activities: {
+    region: "Sport Gear activities",
+    run: "Run",
+    train: "Train",
+    play: "Play",
+    recover: "Recover",
+    explore: "Explore",
+  },
 } as const;
 
 export type CommonTranslations = {

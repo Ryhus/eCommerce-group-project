@@ -88,4 +88,21 @@ export const ruCommon = {
     emailRequired: "Введите электронную почту.",
     invalidEmail: "Введите корректный адрес, например user@example.com.",
   },
+  homeHero: {
+    title: "НАЙДИ ЭКИПИРОВКУ ДЛЯ СВОИХ ЦЕЛЕЙ",
+    description: "Надёжная экипировка для поля, корта, тренажёрного зала и любых тренировок.",
+    cta: "Перейти в магазин",
+    imageAlt: "Спортсменка поднимается по ступеням стадиона",
+    demoProducts: "Демо-товаров",
+    gearCategories: "Категории товаров",
+    serverPriced: "Цены с сервера",
+  },
+  activities: {
+    region: "Направления Sport Gear",
+    run: "Бег",
+    train: "Тренировки",
+    play: "Игры",
+    recover: "Восстановление",
+    explore: "Активный отдых",
+  },
 } satisfies CommonTranslations;
