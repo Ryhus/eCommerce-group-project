@@ -113,6 +113,83 @@ test("manages product quantity and a promo code in the cart", async ({ page }) =
   await expect(page.getByRole("heading", { name: "Your cart is empty" })).toBeVisible();
 });
 
+test("hides stale catalog and product content while slow requests are pending", async ({ page }) => {
+  let delayNextCatalogRequest = false;
+  let catalogRequestBlocked = false;
+  let releaseCatalogRequest = () => {};
+  let delayNextProductRequest = false;
+  let productRequestBlocked = false;
+  let releaseProductRequest = () => {};
+
+  await page.route(/\/api\/v1\/catalog\/products(?:\?.*)?$/, async (route) => {
+    if (delayNextCatalogRequest) {
+      delayNextCatalogRequest = false;
+      catalogRequestBlocked = true;
+      await new Promise<void>((resolve) => {
+        releaseCatalogRequest = resolve;
+      });
+      catalogRequestBlocked = false;
+    }
+    await route.continue();
+  });
+
+  await page.route(/\/api\/v1\/catalog\/products\/[^/?]+(?:\?.*)?$/, async (route) => {
+    if (delayNextProductRequest) {
+      delayNextProductRequest = false;
+      productRequestBlocked = true;
+      await new Promise<void>((resolve) => {
+        releaseProductRequest = resolve;
+      });
+      productRequestBlocked = false;
+    }
+    await route.continue();
+  });
+
+  await page.goto("/catalog");
+  await expect(page.getByText("Showing 1-6 of 8 products")).toBeVisible();
+  const previousCatalogProduct = await page
+    .getByRole("link", { name: /^View / })
+    .first()
+    .getAttribute("aria-label");
+
+  delayNextCatalogRequest = true;
+  await page.getByRole("button", { name: "Next page" }).click();
+
+  await expect(page.getByRole("status", { name: "Catalog loading" })).toBeVisible();
+  await expect(page.getByRole("article")).toHaveCount(0);
+  await expect.poll(() => catalogRequestBlocked).toBe(true);
+  if (previousCatalogProduct) {
+    await expect(page.getByRole("link", { name: previousCatalogProduct })).toHaveCount(0);
+  }
+
+  releaseCatalogRequest();
+  await expect(page.getByText("Showing 7-8 of 8 products")).toBeVisible();
+
+  await page
+    .getByRole("link", { name: /^View / })
+    .first()
+    .click();
+  const currentProductHeading = page.locator(".product-page__main h1");
+  await expect(currentProductHeading).toBeVisible();
+  const previousProductName = await currentProductHeading.textContent();
+  const relatedProductLink = page.locator(".related-products .product-card__link").first();
+  await expect(relatedProductLink).toBeVisible();
+  const nextProductLabel = await relatedProductLink.getAttribute("aria-label");
+  if (!nextProductLabel) throw new Error("Related product link must have an accessible label.");
+
+  delayNextProductRequest = true;
+  await relatedProductLink.click();
+
+  await expect(page.getByRole("status", { name: "Product loading" })).toBeVisible();
+  await expect.poll(() => productRequestBlocked).toBe(true);
+  if (previousProductName) {
+    await expect(page.getByRole("heading", { name: previousProductName })).toHaveCount(0);
+  }
+
+  releaseProductRequest();
+  await expect(page.getByRole("heading", { name: nextProductLabel.replace(/^View /, "") })).toBeVisible();
+});
+
 test("opens the team page from the storefront navigation", async ({ page }) => {
   await page.goto("/");
 
