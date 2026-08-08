@@ -163,4 +163,10 @@ export const ruCommon = {
     next: "Вперёд",
     goToPage: "Перейти на страницу {{page}}",
   },
+  productCard: {
+    view: "Открыть {{name}}",
+    addToCart: "Добавить в корзину",
+    inCart: "В корзине",
+    noProducts: "Товары не найдены.",
+  },
 } satisfies CommonTranslations;

@@ -1,6 +1,9 @@
+import { useTranslation } from "react-i18next";
+
+import type { Product } from "../../services/productService/types";
 import Paragraph from "../common/paragraph/paragraph";
 import ProductCard, { type ProductCardVariant } from "../productCard/productCard";
-import type { Product } from "../../services/productService/types";
+
 import "./ProductList.scss";
 
 type ProductListProps = {
@@ -10,8 +13,10 @@ type ProductListProps = {
 };
 
 const ProductList = ({ products, className = "", variant = "catalog" }: ProductListProps) => {
+  const { t } = useTranslation("common");
+
   if (!products.length) {
-    return <Paragraph text="No products found." className="product-list__empty" />;
+    return <Paragraph text={t("productCard.noProducts")} className="product-list__empty" />;
   }
 
   return (

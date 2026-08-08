@@ -167,4 +167,10 @@ export const deCommon = {
     next: "Weiter",
     goToPage: "Zu Seite {{page}} wechseln",
   },
+  productCard: {
+    view: "{{name}} ansehen",
+    addToCart: "In den Warenkorb",
+    inCart: "Im Warenkorb",
+    noProducts: "Keine Produkte gefunden.",
+  },
 } satisfies CommonTranslations;

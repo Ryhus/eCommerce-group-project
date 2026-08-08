@@ -163,6 +163,12 @@ export const enCommon = {
     next: "Next",
     goToPage: "Go to page {{page}}",
   },
+  productCard: {
+    view: "View {{name}}",
+    addToCart: "Add to Cart",
+    inCart: "In Cart",
+    noProducts: "No products found.",
+  },
 } as const;
 
 export type CommonTranslations = {
