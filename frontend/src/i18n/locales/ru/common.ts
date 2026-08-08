@@ -5,6 +5,7 @@ export const ruCommon = {
     title: "Sport Gear | Спортивные товары",
   },
   language: {
+    label: "Язык",
     change: "Изменить язык",
     menu: "Доступные языки",
     selected: "Текущий язык: {{language}}",

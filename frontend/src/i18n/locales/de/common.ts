@@ -5,6 +5,7 @@ export const deCommon = {
     title: "Sport Gear | Sportausrüstung",
   },
   language: {
+    label: "Sprache",
     change: "Sprache ändern",
     menu: "Verfügbare Sprachen",
     selected: "Aktuelle Sprache: {{language}}",

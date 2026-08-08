@@ -1,0 +1,114 @@
+.language-switcher {
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.language-switcher__trigger {
+  display: inline-flex;
+  min-width: 8.4rem;
+  height: 4rem;
+  padding-inline: var(--space-3);
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  border: var(--border-subtle);
+  border-radius: var(--radius-pill);
+  background-color: var(--color-surface);
+  color: var(--color-ink);
+  cursor: pointer;
+  transition:
+    background-color var(--transition-fast),
+    transform var(--transition-fast);
+
+  &:hover,
+  &[aria-expanded="true"] {
+    background-color: var(--color-surface-subtle);
+  }
+
+  &:active {
+    transform: scale(0.97);
+  }
+}
+
+.language-switcher__translate-icon {
+  width: 2rem;
+  height: 2rem;
+}
+
+.language-switcher__code {
+  min-width: 2ch;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: 0.04em;
+}
+
+.language-switcher__caret {
+  width: 1.4rem;
+  height: 1.4rem;
+  transition: transform var(--transition-fast);
+
+  [aria-expanded="true"] & {
+    transform: rotate(180deg);
+  }
+}
+
+.language-switcher__menu {
+  position: absolute;
+  z-index: 20;
+  top: calc(100% + var(--space-2));
+  display: grid;
+  width: 19.2rem;
+  padding: var(--space-2);
+  border: var(--border-subtle);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-surface);
+  box-shadow: 0 1.2rem 3.2rem rgb(0 0 0 / 14%);
+}
+
+.language-switcher--right .language-switcher__menu {
+  right: 0;
+}
+
+.language-switcher--left .language-switcher__menu {
+  left: 0;
+}
+
+.language-switcher__option {
+  display: grid;
+  min-height: 4.4rem;
+  padding: var(--space-2) var(--space-3);
+  grid-template-columns: 3.2rem 1fr 2rem;
+  align-items: center;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-ink);
+  cursor: pointer;
+  text-align: left;
+
+  &:hover,
+  &:focus-visible {
+    background-color: var(--color-surface-subtle);
+  }
+}
+
+.language-switcher__option-code {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: 0.04em;
+}
+
+.language-switcher__option-label {
+  font-size: var(--font-size-sm);
+}
+
+.language-switcher__check {
+  width: 1.8rem;
+  height: 1.8rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .language-switcher__caret {
+    transition: none;
+  }
+}

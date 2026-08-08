@@ -3,6 +3,7 @@ export const enCommon = {
     title: "Sport Gear | Sports equipment",
   },
   language: {
+    label: "Language",
     change: "Change language",
     menu: "Available languages",
     selected: "Current language: {{language}}",
