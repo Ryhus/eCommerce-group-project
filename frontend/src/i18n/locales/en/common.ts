@@ -391,6 +391,7 @@ export const enCommon = {
     editAddressTitle: "Edit address",
     editAddress: "Edit",
     addressFallback: "Address {{number}}",
+    unknownAddress: "This address",
     defaultShipping: "Default shipping",
     shipping: "Shipping",
     defaultBilling: "Default billing",

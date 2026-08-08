@@ -395,6 +395,7 @@ export const deCommon = {
     editAddressTitle: "Adresse bearbeiten",
     editAddress: "Bearbeiten",
     addressFallback: "Adresse {{number}}",
+    unknownAddress: "Diese Adresse",
     defaultShipping: "Standardlieferadresse",
     shipping: "Lieferadresse",
     defaultBilling: "Standardrechnungsadresse",

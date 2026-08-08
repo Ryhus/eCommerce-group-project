@@ -200,7 +200,7 @@ export function UserInfo({
 
       {addressToDelete && (
         <DeleteAddressDialog
-          addressName={addressToDelete.streetName || "This address"}
+          addressName={addressToDelete.streetName || t("profile.unknownAddress")}
           error={deleteError}
           isDeleting={isDeletingAddress}
           onCancel={cancelAddressDeletion}

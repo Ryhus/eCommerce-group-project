@@ -18,7 +18,8 @@ function formatDateOfBirth(value: string, language: string) {
   const date = new Date(`${value}T00:00:00`);
   if (Number.isNaN(date.getTime())) return value;
 
-  return new Intl.DateTimeFormat(language, { day: "numeric", month: "long", year: "numeric" }).format(date);
+  const locale = language === "en" ? "en-GB" : language;
+  return new Intl.DateTimeFormat(locale, { day: "numeric", month: "long", year: "numeric" }).format(date);
 }
 
 export function ProfileDetails({ dateOfBirth, email, firstName, lastName, onEdit }: ProfileDetailsProps) {

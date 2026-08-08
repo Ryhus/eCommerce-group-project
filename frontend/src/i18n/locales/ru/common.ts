@@ -393,6 +393,7 @@ export const ruCommon = {
     editAddressTitle: "Изменить адрес",
     editAddress: "Изменить",
     addressFallback: "Адрес {{number}}",
+    unknownAddress: "Этот адрес",
     defaultShipping: "Основной адрес доставки",
     shipping: "Доставка",
     defaultBilling: "Основной платёжный адрес",
