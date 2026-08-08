@@ -68,6 +68,33 @@ test("switches the language from mobile navigation", async ({ page }) => {
   await expect(page.getByRole("button", { name: "Текущий язык: Русский" })).toContainText("RU");
 });
 
+test("localizes catalog controls across desktop and mobile layouts", async ({ page }) => {
+  await page.goto("/catalog");
+
+  await page.getByRole("button", { name: "Current language: English" }).click();
+  await page.getByRole("menuitemradio", { name: "DE Deutsch" }).click();
+
+  await expect(page.getByRole("heading", { level: 1, name: "Alle Produkte" })).toBeVisible();
+  await expect(page.getByText("1-6 von 8 Produkten")).toBeVisible();
+  await expect(page.getByRole("navigation", { name: "Breadcrumb-Navigation" })).toContainText("StartseiteKatalog");
+  await expect(page.getByRole("region", { name: "Kategorien" })).toContainText("Alle Produkte");
+  await expect(page.getByRole("combobox", { name: "Produkte sortieren" })).toHaveValue("default");
+  await expect(page.getByRole("button", { name: "In den Warenkorb" }).first()).toBeVisible();
+  await expect(page.locator(".product-card__current-price").first()).toContainText(/\d+,\d{2}\s€/);
+  await expect(page.getByRole("navigation", { name: "Katalogseiten" })).toBeVisible();
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.getByRole("button", { name: "Katalogoptionen öffnen" }).click();
+
+  const drawer = page.getByRole("dialog", { name: "Katalogoptionen" });
+  await expect(drawer).toBeVisible();
+  await expect(drawer.getByRole("combobox", { name: "Produkte sortieren" })).toBeVisible();
+  await expect(drawer.getByRole("region", { name: "Kategorien" })).toContainText("Alle Produkte");
+
+  await drawer.getByRole("button", { name: "Katalogoptionen schließen" }).click();
+  await expect(drawer).toHaveCount(0);
+});
+
 test("registers, shops with a promo code, opens profile and logs out", async ({ page }) => {
   const email = `playwright-${Date.now()}@example.com`;
 
