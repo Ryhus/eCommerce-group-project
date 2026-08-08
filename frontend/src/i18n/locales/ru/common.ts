@@ -215,4 +215,11 @@ export const ruCommon = {
     loadError: "Не удалось загрузить товар. Попробуйте ещё раз.",
     retry: "Попробовать снова",
   },
+  basketItem: {
+    region: "{{name}} в корзине",
+    view: "Открыть {{name}}",
+    remove: "Удалить {{name}} из корзины",
+    each: "{{price}} за шт.",
+    updateError: "Не удалось обновить товар. Попробуйте ещё раз.",
+  },
 } satisfies CommonTranslations;

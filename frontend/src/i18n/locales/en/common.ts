@@ -215,6 +215,13 @@ export const enCommon = {
     loadError: "We couldn't load this product. Please try again.",
     retry: "Try again",
   },
+  basketItem: {
+    region: "{{name}} in cart",
+    view: "View {{name}}",
+    remove: "Remove {{name}} from cart",
+    each: "{{price}} each",
+    updateError: "We couldn't update this item. Please try again.",
+  },
 } as const;
 
 export type CommonTranslations = {

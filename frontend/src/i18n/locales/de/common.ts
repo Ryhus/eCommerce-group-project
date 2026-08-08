@@ -219,4 +219,11 @@ export const deCommon = {
     loadError: "Dieses Produkt konnte nicht geladen werden. Bitte versuche es erneut.",
     retry: "Erneut versuchen",
   },
+  basketItem: {
+    region: "{{name}} im Warenkorb",
+    view: "{{name}} ansehen",
+    remove: "{{name}} aus dem Warenkorb entfernen",
+    each: "je {{price}}",
+    updateError: "Dieser Artikel konnte nicht aktualisiert werden. Bitte versuche es erneut.",
+  },
 } satisfies CommonTranslations;
