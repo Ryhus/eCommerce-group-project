@@ -1,0 +1,120 @@
+.profile-section__action .btn {
+  width: auto;
+  height: 4rem;
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-sm);
+  white-space: nowrap;
+}
+
+.profile-addresses {
+  padding-inline: var(--space-5);
+  list-style: none;
+}
+
+.profile-addresses__item {
+  display: grid;
+  padding-block: var(--space-4);
+  align-items: center;
+  gap: var(--space-3);
+  grid-template-columns: 4rem minmax(0, 1fr) auto;
+  border-bottom: var(--border-subtle);
+}
+
+.profile-addresses__item:last-child {
+  border-bottom: 0;
+}
+
+.profile-addresses__icon,
+.profile-addresses__empty > span {
+  display: grid;
+  width: 4rem;
+  height: 4rem;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--color-surface-subtle);
+  color: var(--color-ink);
+}
+
+.profile-addresses__icon svg,
+.profile-addresses__empty svg {
+  width: 2.2rem;
+  height: 2.2rem;
+}
+
+.profile-addresses__content {
+  min-width: 0;
+}
+
+.profile-addresses__content h3,
+.profile-addresses__empty h3 {
+  color: var(--color-ink);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-heading);
+}
+
+.profile-addresses__content p,
+.profile-addresses__empty p {
+  margin-top: var(--space-1);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+  line-height: var(--line-height-body);
+}
+
+.profile-addresses__roles {
+  display: flex;
+  margin-top: var(--space-2);
+  gap: var(--space-1);
+  flex-wrap: wrap;
+}
+
+.profile-addresses__roles span {
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface-subtle);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-body);
+}
+
+.profile-addresses__actions {
+  display: flex;
+  gap: var(--space-1);
+}
+
+.profile-addresses__delete {
+  color: var(--color-danger);
+}
+
+.profile-addresses__empty {
+  display: grid;
+  padding: var(--space-8) var(--space-5);
+  justify-items: center;
+  text-align: center;
+}
+
+.profile-addresses__empty h3 {
+  margin-top: var(--space-3);
+}
+
+@media (max-width: 480px) {
+  .profile-section__action .btn {
+    padding-inline: var(--space-3);
+  }
+
+  .profile-addresses {
+    padding-inline: var(--space-4);
+  }
+
+  .profile-addresses__item {
+    align-items: start;
+    grid-template-columns: 4rem minmax(0, 1fr);
+  }
+
+  .profile-addresses__actions {
+    padding-left: 5.2rem;
+    grid-column: 1 / -1;
+  }
+}
