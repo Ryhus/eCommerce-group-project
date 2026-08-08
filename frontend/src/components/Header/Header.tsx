@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { IoCloseOutline, IoMenuOutline, IoSearchOutline } from "react-icons/io5";
+import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
 
 import { IconButton } from "../common/IconButton/IconButton";
+import { LanguageSwitcher } from "../common/LanguageSwitcher/LanguageSwitcher";
 import { PageContainer } from "../common/PageContainer/PageContainer";
 import { StoreLogo } from "../common/StoreLogo/StoreLogo";
 import { HeaderActions } from "./HeaderActions/HeaderActions";
@@ -12,6 +14,7 @@ import { HeaderSearch } from "./HeaderSearch/HeaderSearch";
 import "./Header.scss";
 
 function Header() {
+  const { t } = useTranslation("common");
   const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -51,6 +54,7 @@ function Header() {
         <StoreLogo className="site-header__logo" />
         <HeaderNavigation className="site-header__desktop-navigation" />
         <HeaderSearch className="site-header__desktop-search" />
+        <LanguageSwitcher className="site-header__desktop-language" />
         <IconButton
           aria-controls="mobile-search"
           aria-expanded={isSearchOpen}
@@ -72,6 +76,10 @@ function Header() {
         <div className="site-header__mobile-menu" id="mobile-navigation">
           <PageContainer className="site-header__mobile-menu-inner">
             <HeaderNavigation onNavigate={() => setIsMenuOpen(false)} orientation="vertical" />
+            <div className="site-header__mobile-language">
+              <span className="site-header__mobile-language-label">{t("language.label")}</span>
+              <LanguageSwitcher />
+            </div>
           </PageContainer>
         </div>
       )}

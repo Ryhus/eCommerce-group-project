@@ -51,6 +51,7 @@ describe("Header", () => {
     expect(screen.getByRole("link", { name: "Sport Gear home" })).toBeInTheDocument();
     expect(screen.getByRole("navigation", { name: "Primary navigation" })).toBeInTheDocument();
     expect(screen.getByRole("search", { name: "Product search" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Current language: English" })).toHaveTextContent("EN");
     expect(screen.getByRole("link", { name: "Shopping cart, empty" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Sign in" })).toBeInTheDocument();
   });
@@ -63,6 +64,7 @@ describe("Header", () => {
     expect(screen.getByRole("button", { name: "Close menu" })).toHaveAttribute("aria-expanded", "true");
     expect(document.body).toHaveClass("no-scroll");
     expect(screen.getAllByRole("navigation", { name: "Primary navigation" })).toHaveLength(2);
+    expect(screen.getByText("Language")).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole("button", { name: "Open search" }));
 

@@ -26,7 +26,8 @@
 .site-header__menu-toggle,
 .site-header__search-toggle,
 .site-header__mobile-search,
-.site-header__mobile-menu {
+.site-header__mobile-menu,
+.site-header__mobile-language {
   display: none;
 }
 
@@ -46,7 +47,8 @@
   }
 
   .site-header__desktop-navigation,
-  .site-header__desktop-search {
+  .site-header__desktop-search,
+  .site-header__desktop-language {
     display: none;
   }
 
@@ -73,5 +75,20 @@
 
   .site-header__mobile-menu-inner {
     padding-block: var(--space-3);
+  }
+
+  .site-header__mobile-language {
+    display: flex;
+    padding-top: var(--space-4);
+    margin-top: var(--space-4);
+    align-items: center;
+    justify-content: space-between;
+    border-top: var(--border-subtle);
+  }
+
+  .site-header__mobile-language-label {
+    color: var(--color-text-muted);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
   }
 }
