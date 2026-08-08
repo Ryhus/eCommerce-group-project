@@ -206,6 +206,9 @@ export const enCommon = {
     added: "{{quantity}} × {{name}} added to your cart.",
     addError: "We couldn't add this product. Please try again.",
   },
+  relatedProducts: {
+    heading: "You might also like",
+  },
 } as const;
 
 export type CommonTranslations = {

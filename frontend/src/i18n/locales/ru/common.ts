@@ -206,4 +206,7 @@ export const ruCommon = {
     added: "{{quantity}} × {{name}} добавлено в корзину.",
     addError: "Не удалось добавить товар. Попробуйте ещё раз.",
   },
+  relatedProducts: {
+    heading: "Вам также может понравиться",
+  },
 } satisfies CommonTranslations;

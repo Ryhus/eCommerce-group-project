@@ -210,4 +210,7 @@ export const deCommon = {
     added: "{{quantity}} × {{name}} zum Warenkorb hinzugefügt.",
     addError: "Dieses Produkt konnte nicht hinzugefügt werden. Bitte versuche es erneut.",
   },
+  relatedProducts: {
+    heading: "Das könnte dir auch gefallen",
+  },
 } satisfies CommonTranslations;
