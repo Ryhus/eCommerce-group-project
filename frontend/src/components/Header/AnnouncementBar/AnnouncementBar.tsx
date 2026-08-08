@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { IoCloseOutline } from "react-icons/io5";
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 
 import { IconButton } from "../../common/IconButton/IconButton";
@@ -8,6 +9,7 @@ import { PageContainer } from "../../common/PageContainer/PageContainer";
 import "./AnnouncementBar.scss";
 
 export function AnnouncementBar() {
+  const { t } = useTranslation("common");
   const [isVisible, setIsVisible] = useState(true);
 
   if (!isVisible) {
@@ -15,18 +17,18 @@ export function AnnouncementBar() {
   }
 
   return (
-    <aside aria-label="Promotional announcement" className="announcement-bar">
+    <aside aria-label={t("announcement.region")} className="announcement-bar">
       <PageContainer className="announcement-bar__inner">
         <p className="announcement-bar__message">
-          Sign up and get 20% off to your first order.{" "}
+          {t("announcement.message")}{" "}
           <Link className="announcement-bar__link" to="/sign-up">
-            Sign Up Now
+            {t("announcement.signUp")}
           </Link>
         </p>
         <IconButton
           className="announcement-bar__dismiss"
           icon={<IoCloseOutline />}
-          label="Dismiss promotion"
+          label={t("announcement.dismiss")}
           onClick={() => setIsVisible(false)}
           size="small"
         />

@@ -9,17 +9,49 @@ test("switches and persists the interface language", async ({ page }) => {
   await expect(page.locator("html")).toHaveAttribute("lang", "de");
   await expect(page).toHaveTitle("Sport Gear | Sportausrüstung");
   await expect(page.getByRole("button", { name: "Aktuelle Sprache: Deutsch" })).toContainText("DE");
+  await expect(page.getByRole("complementary", { name: "Aktionsankündigung" })).toContainText("20 % Rabatt");
+  await expect(
+    page.getByRole("navigation", { name: "Hauptnavigation" }).getByRole("link", { name: "Über uns" })
+  ).toBeVisible();
+  await expect(page.getByRole("search", { name: "Produktsuche" })).toBeVisible();
+  await expect(page.getByRole("navigation", { name: "Unternehmen" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "VERPASSE KEINE UNSERER NEUESTEN ANGEBOTE" })).toBeVisible();
 
   await page.reload();
 
   await expect(page.locator("html")).toHaveAttribute("lang", "de");
   await expect(page.getByRole("button", { name: "Aktuelle Sprache: Deutsch" })).toContainText("DE");
+  await expect(page.getByRole("navigation", { name: "Hauptnavigation" })).toBeVisible();
 
   await page.getByRole("button", { name: "Aktuelle Sprache: Deutsch" }).click();
   await page.getByRole("menuitemradio", { name: "RU Русский" }).click();
 
   await expect(page.locator("html")).toHaveAttribute("lang", "ru");
   await expect(page).toHaveTitle("Sport Gear | Спортивные товары");
+  await expect(page.getByRole("button", { name: "Текущий язык: Русский" })).toContainText("RU");
+  await expect(page.getByRole("navigation", { name: "Основная навигация" })).toBeVisible();
+  await expect(page.getByRole("searchbox", { name: "Поиск товаров" })).toHaveAttribute(
+    "placeholder",
+    "Найти товары..."
+  );
+  await expect(page.getByRole("navigation", { name: "Компания" })).toBeVisible();
+  await expect(page.getByText("Демонстрационный магазин · Платежи не проводятся")).toBeVisible();
+});
+
+test("switches the language from mobile navigation", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/");
+
+  await page.getByRole("button", { name: "Open menu" }).click();
+  await expect(page.getByText("Language", { exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "Current language: English" }).click();
+  await page.getByRole("menuitemradio", { name: "RU Русский" }).click();
+
+  await expect(page.getByRole("button", { name: "Закрыть меню" })).toBeVisible();
+  await expect(page.getByText("Язык", { exact: true })).toBeVisible();
+  await expect(
+    page.getByRole("navigation", { name: "Основная навигация" }).getByRole("link", { name: "Магазин" })
+  ).toBeVisible();
   await expect(page.getByRole("button", { name: "Текущий язык: Русский" })).toContainText("RU");
 });
 
@@ -59,7 +91,7 @@ test("registers, shops with a promo code, opens profile and logs out", async ({ 
   await page.getByRole("link", { name: "Catalog" }).click();
   await page.getByRole("button", { name: "Add to Cart" }).first().click();
 
-  const cartLink = page.getByRole("link", { name: "Shopping cart, 1 items" });
+  const cartLink = page.getByRole("link", { name: "Shopping cart, 1 item" });
   await expect(cartLink).toBeVisible();
   await cartLink.click();
   await page.getByPlaceholder("Add promo code").fill("WELCOME10");

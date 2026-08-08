@@ -48,7 +48,7 @@ function Header() {
           aria-expanded={isMenuOpen}
           className="site-header__menu-toggle"
           icon={isMenuOpen ? <IoCloseOutline /> : <IoMenuOutline />}
-          label={isMenuOpen ? "Close menu" : "Open menu"}
+          label={isMenuOpen ? t("header.closeMenu") : t("header.openMenu")}
           onClick={toggleMenu}
         />
         <StoreLogo className="site-header__logo" />
@@ -60,7 +60,7 @@ function Header() {
           aria-expanded={isSearchOpen}
           className="site-header__search-toggle"
           icon={isSearchOpen ? <IoCloseOutline /> : <IoSearchOutline />}
-          label={isSearchOpen ? "Close search" : "Open search"}
+          label={isSearchOpen ? t("header.closeSearch") : t("header.openSearch")}
           onClick={toggleSearch}
         />
         <HeaderActions />

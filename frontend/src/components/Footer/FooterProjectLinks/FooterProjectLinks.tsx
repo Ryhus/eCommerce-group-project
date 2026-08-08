@@ -1,44 +1,46 @@
 import type { ComponentPropsWithoutRef, ReactNode } from "react";
 import { FaFigma, FaGithub } from "react-icons/fa";
 import { IoSchoolOutline } from "react-icons/io5";
+import { useTranslation } from "react-i18next";
 
 import "./FooterProjectLinks.scss";
 
 type ProjectLink = {
   href: string;
   icon: ReactNode;
-  label: string;
+  labelKey: "projectLinks.sourceCode" | "projectLinks.design" | "projectLinks.school";
 };
 
 const projectLinks: ProjectLink[] = [
   {
     href: "https://github.com/Ryhus/eCommerce-group-project",
     icon: <FaGithub />,
-    label: "Sport Gear source code on GitHub",
+    labelKey: "projectLinks.sourceCode",
   },
   {
     href: "https://www.figma.com/design/5YOFNziZ7GHoRl7tgAo3ii/E-commerce-Website-Template--Freebie---Community-",
     icon: <FaFigma />,
-    label: "Original storefront design in Figma",
+    labelKey: "projectLinks.design",
   },
   {
     href: "https://rs.school/",
     icon: <IoSchoolOutline />,
-    label: "RS School website",
+    labelKey: "projectLinks.school",
   },
 ];
 
 type FooterProjectLinksProps = Omit<ComponentPropsWithoutRef<"ul">, "children">;
 
 const FooterProjectLinks = ({ className = "", ...props }: FooterProjectLinksProps) => {
+  const { t } = useTranslation("common");
   const listClassName = `footer-project-links ${className}`.trim();
 
   return (
-    <ul {...props} aria-label="Project links" className={listClassName}>
-      {projectLinks.map(({ href, icon, label }) => (
+    <ul {...props} aria-label={t("projectLinks.list")} className={listClassName}>
+      {projectLinks.map(({ href, icon, labelKey }) => (
         <li key={href}>
           <a
-            aria-label={label}
+            aria-label={t(labelKey)}
             className="footer-project-links__link"
             href={href}
             rel="noopener noreferrer"

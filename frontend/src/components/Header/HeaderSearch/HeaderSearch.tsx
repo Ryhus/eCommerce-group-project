@@ -1,5 +1,6 @@
 import { useEffect, useState, type ComponentPropsWithoutRef, type FormEvent } from "react";
 import { IoSearchOutline } from "react-icons/io5";
+import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate } from "react-router-dom";
 
 import { IconButton } from "../../common/IconButton/IconButton";
@@ -16,6 +17,7 @@ function getSearchTerm(search: string) {
 }
 
 export function HeaderSearch({ autoFocus = false, className = "", onSearch, ...props }: HeaderSearchProps) {
+  const { t } = useTranslation("common");
   const location = useLocation();
   const navigate = useNavigate();
   const [query, setQuery] = useState(() => getSearchTerm(location.search));
@@ -41,22 +43,22 @@ export function HeaderSearch({ autoFocus = false, className = "", onSearch, ...p
   const classes = `header-search ${className}`.trim();
 
   return (
-    <form {...props} aria-label="Product search" className={classes} onSubmit={handleSubmit} role="search">
+    <form {...props} aria-label={t("search.region")} className={classes} onSubmit={handleSubmit} role="search">
       <IconButton
         className="header-search__submit"
         icon={<IoSearchOutline />}
-        label="Search products"
+        label={t("search.submit")}
         size="small"
         type="submit"
       />
       <input
-        aria-label="Search for products"
+        aria-label={t("search.input")}
         autoComplete="off"
         autoFocus={autoFocus}
         className="header-search__input"
         maxLength={100}
         onChange={(event) => setQuery(event.target.value)}
-        placeholder="Search for products..."
+        placeholder={t("search.placeholder")}
         type="search"
         value={query}
       />

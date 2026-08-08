@@ -1,9 +1,10 @@
 import { render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { AuthContext, type AuthContextValue } from "../../context/AuthContext";
 import { CartContext, type CartContextType } from "../../context/CartContext";
+import i18n from "../../../i18n/i18n";
 import { HeaderActions } from "./HeaderActions";
 
 const customer = {
@@ -51,6 +52,10 @@ function renderActions({ isAuthenticated = false, loading = false, quantity = 0 
 }
 
 describe("HeaderActions", () => {
+  beforeEach(async () => {
+    await i18n.changeLanguage("en");
+  });
+
   it("links anonymous users to login and describes an empty cart", () => {
     renderActions();
 
@@ -72,5 +77,16 @@ describe("HeaderActions", () => {
 
     expect(screen.getByRole("status", { name: "Checking account status" })).toBeVisible();
     expect(screen.queryByRole("link", { name: "Sign in" })).not.toBeInTheDocument();
+  });
+
+  it.each([
+    [1, "Корзина, 1 товар"],
+    [2, "Корзина, 2 товара"],
+    [5, "Корзина, 5 товаров"],
+  ])("uses the correct Russian cart form for %i items", async (quantity, accessibleName) => {
+    await i18n.changeLanguage("ru");
+    renderActions({ quantity });
+
+    expect(screen.getByRole("link", { name: accessibleName })).toBeInTheDocument();
   });
 });
