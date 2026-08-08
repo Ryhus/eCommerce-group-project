@@ -47,6 +47,20 @@ export const STEP_FIELDS: Record<RegistrationStep, RegistrationField[]> = {
   2: ["street", "city", "postalCode", "country"],
 };
 
+export const REGISTRATION_FIELD_IDS: Record<RegistrationField, string> = {
+  firstName: "registration-first-name",
+  lastName: "registration-last-name",
+  email: "registration-email",
+  password: "registration-password",
+  confirmPassword: "registration-confirm-password",
+  dateOfBirth: "registration-date-of-birth",
+  street: "registration-street",
+  city: "registration-city",
+  postalCode: "registration-postal-code",
+  country: "registration-country",
+  useAsDefaultAddress: "registration-default-address",
+};
+
 export const COUNTRY_OPTIONS = [
   ["", "Select a country"],
   ["AT", "Austria"],
