@@ -85,7 +85,7 @@ export default function LoginPage() {
   };
 
   return (
-    <AuthLayout panelDescription="Pick up where you left off." panelTitle="KEEP MOVING.">
+    <AuthLayout>
       <form aria-label="Login" className="login-form" noValidate onSubmit={handleLogin}>
         <header className="login-form__header">
           <h1>Welcome back</h1>

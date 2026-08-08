@@ -4,16 +4,15 @@ import { describe, expect, it } from "vitest";
 import { AuthLayout } from "./AuthLayout";
 
 describe("AuthLayout", () => {
-  it("presents account context alongside the supplied form", () => {
+  it("presents the supplied form without an adjacent visual panel", () => {
     render(
-      <AuthLayout panelDescription="Pick up where you left off." panelTitle="KEEP MOVING.">
+      <AuthLayout>
         <form aria-label="Example authentication form" />
       </AuthLayout>
     );
 
-    const panel = screen.getByRole("complementary", { name: "Sport Gear account benefits" });
-    expect(panel).toHaveTextContent("KEEP MOVING.");
-    expect(panel).toHaveTextContent("Pick up where you left off.");
     expect(screen.getByRole("form", { name: "Example authentication form" })).toBeVisible();
+    expect(screen.queryByRole("complementary")).not.toBeInTheDocument();
+    expect(document.querySelector(".auth-layout__panel")).not.toBeInTheDocument();
   });
 });

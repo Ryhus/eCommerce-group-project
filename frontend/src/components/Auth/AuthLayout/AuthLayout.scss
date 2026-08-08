@@ -1,76 +1,11 @@
 .auth-layout {
-  display: grid;
-  min-height: 62rem;
+  width: calc(100% - var(--container-gutter-tablet) - var(--container-gutter-tablet));
+  max-width: 64rem;
   overflow: hidden;
   margin-top: var(--space-10);
   border: var(--border-subtle);
   border-radius: var(--radius-md);
   background: var(--color-surface);
-  grid-template-columns: minmax(32rem, 0.9fr) minmax(44rem, 1.1fr);
-}
-
-.auth-layout__panel {
-  position: relative;
-  display: flex;
-  overflow: hidden;
-  padding: var(--space-12);
-  align-items: flex-end;
-  background: var(--color-ink);
-  color: var(--color-surface);
-}
-
-.auth-layout__decoration,
-.auth-layout__decoration::before,
-.auth-layout__decoration::after {
-  position: absolute;
-  border: 1px solid rgb(255 255 255 / 18%);
-  border-radius: 50%;
-  content: "";
-}
-
-.auth-layout__decoration {
-  top: -12rem;
-  right: -14rem;
-  width: 42rem;
-  height: 42rem;
-}
-
-.auth-layout__decoration::before {
-  inset: 6rem;
-}
-
-.auth-layout__decoration::after {
-  inset: 13rem;
-  background: rgb(255 255 255 / 5%);
-}
-
-.auth-layout__panel-content {
-  position: relative;
-  z-index: 1;
-  max-width: 38rem;
-}
-
-.auth-layout__eyebrow {
-  margin-bottom: var(--space-5);
-  color: rgb(255 255 255 / 64%);
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-medium);
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-}
-
-.auth-layout__panel-title {
-  font-size: clamp(4.8rem, 5vw, 7.2rem);
-  font-weight: var(--font-weight-bold);
-  letter-spacing: -0.04em;
-  line-height: var(--line-height-tight);
-}
-
-.auth-layout__panel-description {
-  margin-top: var(--space-5);
-  color: rgb(255 255 255 / 76%);
-  font-size: var(--font-size-lg);
-  line-height: var(--line-height-relaxed);
 }
 
 .auth-layout__form-column {
@@ -78,17 +13,6 @@
   padding: var(--space-12);
   align-items: center;
   justify-content: center;
-}
-
-@media (max-width: 900px) {
-  .auth-layout {
-    min-height: auto;
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .auth-layout__panel {
-    display: none;
-  }
 }
 
 @media (max-width: 480px) {
