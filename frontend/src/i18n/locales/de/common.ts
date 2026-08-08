@@ -187,4 +187,12 @@ export const deCommon = {
     noSearchResults: "Keine Produkte für „{{term}}“ gefunden.",
     noCategoryProducts: "In dieser Kategorie wurden keine Produkte gefunden.",
   },
+  productGallery: {
+    region: "Bilder von {{name}}",
+    image: "{{name}}, Bild {{current}} von {{total}}",
+    viewImage: "Bild {{index}} von {{name}} anzeigen",
+    expand: "{{name}}, Bild {{current}} von {{total}} vergrößern",
+    dialog: "Vergrößertes Bild von {{name}}",
+    close: "Vergrößertes Bild schließen",
+  },
 } satisfies CommonTranslations;

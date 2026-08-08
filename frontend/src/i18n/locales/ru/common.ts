@@ -183,4 +183,12 @@ export const ruCommon = {
     noSearchResults: "По запросу «{{term}}» товары не найдены.",
     noCategoryProducts: "В этой категории товары не найдены.",
   },
+  productGallery: {
+    region: "Изображения {{name}}",
+    image: "{{name}}, изображение {{current}} из {{total}}",
+    viewImage: "Показать изображение {{index}} товара {{name}}",
+    expand: "Увеличить {{name}}, изображение {{current}} из {{total}}",
+    dialog: "Увеличенное изображение {{name}}",
+    close: "Закрыть увеличенное изображение",
+  },
 } satisfies CommonTranslations;

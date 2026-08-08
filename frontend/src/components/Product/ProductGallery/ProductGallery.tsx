@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { PiX } from "react-icons/pi";
+import { useTranslation } from "react-i18next";
 
 import "./ProductGallery.scss";
 
@@ -11,6 +12,7 @@ type ProductGalleryProps = {
 const FALLBACK_IMAGE = "/images/loading.gif";
 
 export function ProductGallery({ images, productName }: ProductGalleryProps) {
+  const { t } = useTranslation("common");
   const galleryImages = images.length ? images : [FALLBACK_IMAGE];
   const [activeIndex, setActiveIndex] = useState(0);
   const [isExpanded, setIsExpanded] = useState(false);
@@ -36,16 +38,20 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
   }, [isExpanded]);
 
   const activeImage = galleryImages[activeIndex] ?? galleryImages[0];
-  const imageLabel = `${productName}, image ${activeIndex + 1} of ${galleryImages.length}`;
+  const imageLabel = t("productGallery.image", {
+    name: productName,
+    current: activeIndex + 1,
+    total: galleryImages.length,
+  });
   const galleryClassName = `product-gallery${galleryImages.length === 1 ? " product-gallery--single" : ""}`;
 
   return (
-    <section aria-label={`${productName} images`} className={galleryClassName}>
+    <section aria-label={t("productGallery.region", { name: productName })} className={galleryClassName}>
       {galleryImages.length > 1 && (
         <div className="product-gallery__thumbnails">
           {galleryImages.map((image, index) => (
             <button
-              aria-label={`View ${productName} image ${index + 1}`}
+              aria-label={t("productGallery.viewImage", { name: productName, index: index + 1 })}
               aria-pressed={activeIndex === index}
               className="product-gallery__thumbnail"
               key={`${image}-${index}`}
@@ -59,7 +65,11 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
       )}
 
       <button
-        aria-label={`Expand ${imageLabel}`}
+        aria-label={t("productGallery.expand", {
+          name: productName,
+          current: activeIndex + 1,
+          total: galleryImages.length,
+        })}
         className="product-gallery__main"
         onClick={() => setIsExpanded(true)}
         type="button"
@@ -75,7 +85,7 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
 
       {isExpanded && (
         <div
-          aria-label={`${productName} enlarged image`}
+          aria-label={t("productGallery.dialog", { name: productName })}
           aria-modal="true"
           className="product-gallery__dialog"
           onClick={(event) => {
@@ -85,7 +95,7 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
         >
           <div className="product-gallery__dialog-content">
             <button
-              aria-label="Close enlarged image"
+              aria-label={t("productGallery.close")}
               className="product-gallery__close"
               onClick={() => setIsExpanded(false)}
               type="button"

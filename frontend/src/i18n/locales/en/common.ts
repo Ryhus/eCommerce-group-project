@@ -183,6 +183,14 @@ export const enCommon = {
     noSearchResults: "No products found for “{{term}}”.",
     noCategoryProducts: "No products found in this category.",
   },
+  productGallery: {
+    region: "{{name}} images",
+    image: "{{name}}, image {{current}} of {{total}}",
+    viewImage: "View {{name}} image {{index}}",
+    expand: "Expand {{name}}, image {{current}} of {{total}}",
+    dialog: "{{name}} enlarged image",
+    close: "Close enlarged image",
+  },
 } as const;
 
 export type CommonTranslations = {
