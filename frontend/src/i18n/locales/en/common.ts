@@ -446,6 +446,12 @@ export const enCommon = {
     olhaAccessibility: "Improved accessibility and user experience",
     olhaTesting: "Tested critical user flows and application quality",
   },
+  notFound: {
+    title: "This page doesn't exist",
+    description: "We couldn't find the page you're looking for. Explore our gear and find your next goal.",
+    backHome: "Back to home",
+    browseGear: "Browse gear",
+  },
 } as const;
 
 export type CommonTranslations = {
