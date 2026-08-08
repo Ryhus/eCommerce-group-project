@@ -2,6 +2,7 @@ import { act, fireEvent, render, screen, waitFor } from "@testing-library/react"
 import { MemoryRouter, useLocation } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+import i18n from "../../i18n/i18n";
 import { useAuth } from "../../components/context/useAuth";
 import { useCart } from "../../components/context/useCart";
 import { signIn } from "../../services/customerService/customerService";
@@ -37,7 +38,8 @@ function fillCredentials() {
 }
 
 describe("LoginPage", () => {
-  beforeEach(() => {
+  beforeEach(async () => {
+    await i18n.changeLanguage("en");
     vi.clearAllMocks();
     vi.mocked(useAuth).mockReturnValue({ isAuthenticated: false, refreshUser } as never);
     vi.mocked(useCart).mockReturnValue({ setNewCart } as never);
@@ -118,5 +120,41 @@ describe("LoginPage", () => {
 
     expect(await screen.findByRole("alert")).toHaveTextContent("Wrong email or password. Please try again.");
     expect(screen.getByRole("button", { name: "Log in" })).toBeEnabled();
+  });
+
+  it("localizes the form and authentication error", async () => {
+    await i18n.changeLanguage("de");
+    signInMock.mockRejectedValue(new Error("Unauthorized"));
+    renderLogin();
+
+    expect(screen.getByRole("heading", { name: "Willkommen zurück" })).toBeVisible();
+    expect(screen.getByRole("form", { name: "Anmeldung" })).toBeVisible();
+    fireEvent.change(screen.getByRole("textbox", { name: "E-Mail-Adresse" }), {
+      target: { value: "shopper@example.com" },
+    });
+    fireEvent.change(screen.getByLabelText("Passwort"), { target: { value: "password" } });
+    fireEvent.submit(screen.getByRole("form", { name: "Anmeldung" }));
+
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "E-Mail-Adresse oder Passwort ist falsch. Bitte versuche es erneut."
+    );
+    expect(screen.getByRole("link", { name: "Konto erstellen" })).toHaveAttribute("href", "/sign-up");
+  });
+
+  it("localizes email validation and updates an existing message after a language change", async () => {
+    const { rerender } = renderLogin();
+    fireEvent.submit(screen.getByRole("form", { name: "Login" }));
+    expect(screen.getByText(/must contain an '@' symbol/i)).toBeVisible();
+
+    await i18n.changeLanguage("ru");
+    rerender(
+      <MemoryRouter initialEntries={["/login"]}>
+        <LoginPage />
+      </MemoryRouter>
+    );
+
+    expect(
+      screen.getByText("Электронная почта должна содержать один символ '@' между именем и доменом.")
+    ).toBeVisible();
   });
 });

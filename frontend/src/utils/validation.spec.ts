@@ -1,6 +1,20 @@
 import { describe, expect, it } from "vitest";
 
-import { validatePasswordStrength } from "./validation";
+import { getEmailValidationErrorCode, validateEmailFormat, validatePasswordStrength } from "./validation";
+
+describe("email validation", () => {
+  it("returns semantic codes without changing the legacy message API", () => {
+    expect(getEmailValidationErrorCode("shopper.example.com")).toBe("atSymbol");
+    expect(validateEmailFormat("shopper.example.com")).toBe(
+      "Email address must contain an '@' symbol separating local part and domain name."
+    );
+  });
+
+  it("accepts a complete email address", () => {
+    expect(getEmailValidationErrorCode("shopper@example.com")).toBeNull();
+    expect(validateEmailFormat("shopper@example.com")).toBeNull();
+  });
+});
 
 describe("validatePasswordStrength", () => {
   it("accepts an underscore as the required special character", () => {

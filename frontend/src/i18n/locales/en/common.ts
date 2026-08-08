@@ -256,6 +256,36 @@ export const enCommon = {
     loadError: "We couldn't load your cart. Please try again.",
     retry: "Try again",
   },
+  passwordVisibility: {
+    show: "Show password",
+    hide: "Hide password",
+  },
+  login: {
+    form: "Login",
+    title: "Welcome back",
+    description: "Sign in to continue your journey.",
+    emailLabel: "Email address",
+    emailPlaceholder: "you@example.com",
+    passwordLabel: "Password",
+    passwordPlaceholder: "Enter your password",
+    passwordRequired: "Enter your password.",
+    authError: "Wrong email or password. Please try again.",
+    submitting: "Logging in…",
+    submit: "Log in",
+    newCustomer: "New to Sport Gear?",
+    createAccount: "Create an account",
+  },
+  emailValidation: {
+    whitespace: "Email address must not contain leading or trailing whitespace.",
+    atSymbol: "Email address must contain an '@' symbol separating local part and domain name.",
+    parts: "Email address must contain a local part and a domain name.",
+    spaces: "Email address must not contain spaces in the local or domain part.",
+    domain: "Email address must contain a domain name (e.g., example.com).",
+    format: "Email address must be properly formatted (e.g., user@example.com).",
+  },
+  authRoute: {
+    checkingAccount: "Checking your account…",
+  },
 } as const;
 
 export type CommonTranslations = {
