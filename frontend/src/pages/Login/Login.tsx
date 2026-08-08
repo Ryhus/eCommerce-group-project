@@ -1,4 +1,4 @@
-import { type FormEvent, useEffect, useRef, useState } from "react";
+import { type FormEvent, useRef, useState } from "react";
 import { FaEnvelope, FaLock } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -14,15 +14,9 @@ import { validateEmailFormat } from "../../utils/validation";
 import "./Login.scss";
 
 export default function LoginPage() {
-  const { isAuthenticated, refreshUser } = useAuth();
+  const { refreshUser } = useAuth();
 
   const navigate = useNavigate();
-  useEffect(() => {
-    if (isAuthenticated) {
-      navigate("/");
-    }
-  }, [isAuthenticated, navigate]);
-
   const { setNewCart } = useCart();
   const [authError, setAuthError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
