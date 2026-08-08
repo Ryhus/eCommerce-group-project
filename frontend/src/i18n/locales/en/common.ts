@@ -135,6 +135,54 @@ export const enCommon = {
     sessionsDescription:
       "HttpOnly cookies, rotating refresh sessions, and CSRF protection keep credentials out of frontend code.",
   },
+  breadcrumbs: {
+    navigation: "Breadcrumb",
+    home: "Home",
+    catalog: "Catalog",
+  },
+  catalogNavigation: {
+    categories: "Categories",
+    allProducts: "All products",
+    options: "Catalog options",
+    closeOptions: "Close catalog options",
+  },
+  sorting: {
+    label: "Sort by:",
+    control: "Sort products",
+    relevance: "Most relevant",
+    priceAscending: "Price: low to high",
+    priceDescending: "Price: high to low",
+    nameAscending: "Name: A to Z",
+    nameDescending: "Name: Z to A",
+  },
+  pagination: {
+    navigation: "Catalog pagination",
+    previousPage: "Previous page",
+    previous: "Previous",
+    nextPage: "Next page",
+    next: "Next",
+    goToPage: "Go to page {{page}}",
+  },
+  productCard: {
+    view: "View {{name}}",
+    addToCart: "Add to Cart",
+    inCart: "In Cart",
+    noProducts: "No products found.",
+  },
+  catalog: {
+    title: "Catalog",
+    allProducts: "All products",
+    searchResults: "Search results for “{{term}}”",
+    loadingProducts: "Loading products…",
+    loading: "Catalog loading",
+    openOptions: "Open catalog options",
+    loadError: "Unable to load the catalog. Please try again.",
+    retry: "Try again",
+    zeroProducts: "0 products",
+    pageSummary: "Showing {{first}}-{{last}} of {{total}} products",
+    noSearchResults: "No products found for “{{term}}”.",
+    noCategoryProducts: "No products found in this category.",
+  },
 } as const;
 
 export type CommonTranslations = {

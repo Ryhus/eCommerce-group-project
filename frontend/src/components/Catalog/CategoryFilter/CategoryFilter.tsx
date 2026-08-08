@@ -1,5 +1,6 @@
 import { useId } from "react";
 import { PiCaretRight, PiSlidersHorizontal } from "react-icons/pi";
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 
 import "./CategoryFilter.scss";
@@ -18,19 +19,20 @@ type CategoryFilterProps = {
 };
 
 export function CategoryFilter({ className = "", items, onNavigate }: CategoryFilterProps) {
+  const { t } = useTranslation("common");
   const titleId = useId();
 
   return (
     <section aria-labelledby={titleId} className={`category-filter ${className}`.trim()}>
       <div className="category-filter__header">
-        <h2 id={titleId}>Categories</h2>
+        <h2 id={titleId}>{t("catalogNavigation.categories")}</h2>
         <PiSlidersHorizontal aria-hidden="true" />
       </div>
 
       <ul className="category-filter__list">
         <li>
           <Link className="category-filter__link" onClick={onNavigate} to="/catalog">
-            <span>All products</span>
+            <span>{t("catalogNavigation.allProducts")}</span>
             <PiCaretRight aria-hidden="true" />
           </Link>
         </li>

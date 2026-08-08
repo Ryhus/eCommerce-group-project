@@ -1,5 +1,6 @@
 import { useEffect, type ReactNode } from "react";
 import { PiX } from "react-icons/pi";
+import { useTranslation } from "react-i18next";
 
 import "./FilterDrawer.scss";
 
@@ -10,6 +11,8 @@ type FilterDrawerProps = {
 };
 
 export function FilterDrawer({ children, isOpen, onClose }: FilterDrawerProps) {
+  const { t } = useTranslation("common");
+
   useEffect(() => {
     if (!isOpen) return;
 
@@ -38,8 +41,8 @@ export function FilterDrawer({ children, isOpen, onClose }: FilterDrawerProps) {
     >
       <aside aria-labelledby="filter-drawer-title" aria-modal="true" className="filter-drawer" role="dialog">
         <div className="filter-drawer__header">
-          <h2 id="filter-drawer-title">Catalog options</h2>
-          <button aria-label="Close catalog options" onClick={onClose} type="button">
+          <h2 id="filter-drawer-title">{t("catalogNavigation.options")}</h2>
+          <button aria-label={t("catalogNavigation.closeOptions")} onClick={onClose} type="button">
             <PiX aria-hidden="true" />
           </button>
         </div>

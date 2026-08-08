@@ -1,5 +1,7 @@
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 
+import { formatMoney } from "../../utils/formatMoney";
 import Button from "../common/button/button";
 import { useCart } from "../context/useCart";
 
@@ -19,11 +21,6 @@ type ProductCardProps = {
   variant?: ProductCardVariant;
 };
 
-const moneyFormatter = new Intl.NumberFormat("en-IE", {
-  style: "currency",
-  currency: "EUR",
-});
-
 const ProductCard = ({
   id,
   name,
@@ -35,15 +32,17 @@ const ProductCard = ({
   className = "",
   variant = "catalog",
 }: ProductCardProps) => {
+  const { i18n, t } = useTranslation("common");
   const { cart, addToCart } = useCart();
   const productInCart = cart?.items.some((item) => item.productId === id) ?? false;
   const discount = oldPrice > currentPrice ? Math.round(((oldPrice - currentPrice) / oldPrice) * 100) : 0;
   const shortDescription = description.length > 50 ? `${description.slice(0, 47)}...` : description;
   const cardClassName = `product-card product-card--${variant} ${className}`.trim();
+  const language = i18n.resolvedLanguage ?? i18n.language;
 
   return (
     <article className={cardClassName}>
-      <Link aria-label={`View ${name}`} className="product-card__link" to={`/product/${id}`}>
+      <Link aria-label={t("productCard.view", { name })} className="product-card__link" to={`/product/${id}`}>
         <div className="product-card__img-wrapper">
           <img
             alt={altText}
@@ -60,10 +59,10 @@ const ProductCard = ({
           <h3 className="product-card__name">{name}</h3>
           {description && variant === "catalog" && <p className="product-card__description">{shortDescription}</p>}
           <div className="product-card__prices">
-            <span className="product-card__current-price">{moneyFormatter.format(currentPrice / 100)}</span>
+            <span className="product-card__current-price">{formatMoney(currentPrice, language)}</span>
             {discount > 0 && (
               <>
-                <span className="product-card__old-price">{moneyFormatter.format(oldPrice / 100)}</span>
+                <span className="product-card__old-price">{formatMoney(oldPrice, language)}</span>
                 <span className="product-card__discount">-{discount}%</span>
               </>
             )}
@@ -78,7 +77,7 @@ const ProductCard = ({
           onClick={() => {
             if (!productInCart) void addToCart(id);
           }}
-          text={productInCart ? "In Cart" : "Add to Cart"}
+          text={productInCart ? t("productCard.inCart") : t("productCard.addToCart")}
         />
       )}
     </article>

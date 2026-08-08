@@ -1,4 +1,5 @@
 import { PiArrowLeft, PiArrowRight } from "react-icons/pi";
+import { useTranslation } from "react-i18next";
 
 import "./Pagination.scss";
 
@@ -26,20 +27,21 @@ function paginationItems(currentPage: number, totalPages: number): PaginationIte
 }
 
 export function Pagination({ className = "", currentPage, onPageChange, pageSize, totalItems }: PaginationProps) {
+  const { t } = useTranslation("common");
   const totalPages = Math.ceil(totalItems / pageSize);
   if (totalPages <= 1) return null;
 
   return (
-    <nav aria-label="Catalog pagination" className={`pagination ${className}`.trim()}>
+    <nav aria-label={t("pagination.navigation")} className={`pagination ${className}`.trim()}>
       <button
-        aria-label="Previous page"
+        aria-label={t("pagination.previousPage")}
         className="pagination__direction"
         disabled={currentPage === 1}
         onClick={() => onPageChange(currentPage - 1)}
         type="button"
       >
         <PiArrowLeft aria-hidden="true" />
-        <span>Previous</span>
+        <span>{t("pagination.previous")}</span>
       </button>
 
       <div className="pagination__pages">
@@ -47,7 +49,7 @@ export function Pagination({ className = "", currentPage, onPageChange, pageSize
           typeof item === "number" ? (
             <button
               aria-current={item === currentPage ? "page" : undefined}
-              aria-label={`Go to page ${item}`}
+              aria-label={t("pagination.goToPage", { page: item })}
               className="pagination__page"
               key={item}
               onClick={() => onPageChange(item)}
@@ -64,13 +66,13 @@ export function Pagination({ className = "", currentPage, onPageChange, pageSize
       </div>
 
       <button
-        aria-label="Next page"
+        aria-label={t("pagination.nextPage")}
         className="pagination__direction"
         disabled={currentPage === totalPages}
         onClick={() => onPageChange(currentPage + 1)}
         type="button"
       >
-        <span>Next</span>
+        <span>{t("pagination.next")}</span>
         <PiArrowRight aria-hidden="true" />
       </button>
     </nav>
