@@ -240,6 +240,15 @@ export const enCommon = {
     required: "Enter a promo code.",
     request: "We couldn't update this promo code. Please try again.",
   },
+  orderSummary: {
+    title: "Order Summary",
+    subtotal: "Subtotal",
+    discount: "Discount",
+    total: "Total",
+    checkoutUnavailable: "Checkout unavailable",
+    checkoutNote: "Checkout is not available in this demo yet.",
+    continueShopping: "Continue shopping",
+  },
 } as const;
 
 export type CommonTranslations = {

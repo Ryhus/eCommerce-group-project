@@ -240,4 +240,13 @@ export const ruCommon = {
     required: "Введите промокод.",
     request: "Не удалось обновить промокод. Попробуйте ещё раз.",
   },
+  orderSummary: {
+    title: "Сумма заказа",
+    subtotal: "Стоимость товаров",
+    discount: "Скидка",
+    total: "Итого",
+    checkoutUnavailable: "Оформление недоступно",
+    checkoutNote: "Оформление заказа пока недоступно в демоверсии.",
+    continueShopping: "Продолжить покупки",
+  },
 } satisfies CommonTranslations;

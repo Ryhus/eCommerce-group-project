@@ -244,4 +244,13 @@ export const deCommon = {
     required: "Gib einen Aktionscode ein.",
     request: "Der Aktionscode konnte nicht aktualisiert werden. Bitte versuche es erneut.",
   },
+  orderSummary: {
+    title: "Bestellübersicht",
+    subtotal: "Zwischensumme",
+    discount: "Rabatt",
+    total: "Gesamtsumme",
+    checkoutUnavailable: "Kasse nicht verfügbar",
+    checkoutNote: "Die Kasse ist in dieser Demo noch nicht verfügbar.",
+    continueShopping: "Weiter einkaufen",
+  },
 } satisfies CommonTranslations;
