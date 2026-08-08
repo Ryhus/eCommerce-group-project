@@ -520,8 +520,8 @@ test("localizes the not found recovery page", async ({ page }) => {
   await expect(page).toHaveURL(/\/missing-page$/);
   await expect(page.getByRole("heading", { name: "Diese Seite existiert nicht" })).toBeVisible();
   await expect(page.getByRole("button", { name: "Ausrüstung entdecken" })).toBeVisible();
-  await expect(page.getByRole("contentinfo")).not.toBeInTheDocument();
-  await expect(page.getByRole("button", { name: "Aktuelle Sprache: Deutsch" })).not.toBeInTheDocument();
+  await expect(page.getByRole("contentinfo")).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Aktuelle Sprache: Deutsch" })).toHaveCount(0);
 
   await page.getByRole("button", { name: "Zur Startseite" }).click();
   await expect(page).toHaveURL(/\/$/);
