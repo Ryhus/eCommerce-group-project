@@ -222,6 +222,12 @@ export const enCommon = {
     each: "{{price}} each",
     updateError: "We couldn't update this item. Please try again.",
   },
+  basketList: {
+    items: "Cart items",
+    emptyTitle: "Your cart is empty",
+    emptyDescription: "Explore the catalog and add something for your next training session.",
+    browseProducts: "Browse products",
+  },
 } as const;
 
 export type CommonTranslations = {

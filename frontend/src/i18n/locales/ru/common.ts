@@ -222,4 +222,10 @@ export const ruCommon = {
     each: "{{price}} за шт.",
     updateError: "Не удалось обновить товар. Попробуйте ещё раз.",
   },
+  basketList: {
+    items: "Товары в корзине",
+    emptyTitle: "Ваша корзина пуста",
+    emptyDescription: "Откройте каталог и выберите товары для следующей тренировки.",
+    browseProducts: "Перейти к товарам",
+  },
 } satisfies CommonTranslations;

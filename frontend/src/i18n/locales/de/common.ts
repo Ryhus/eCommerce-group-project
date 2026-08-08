@@ -226,4 +226,10 @@ export const deCommon = {
     each: "je {{price}}",
     updateError: "Dieser Artikel konnte nicht aktualisiert werden. Bitte versuche es erneut.",
   },
+  basketList: {
+    items: "Artikel im Warenkorb",
+    emptyTitle: "Dein Warenkorb ist leer",
+    emptyDescription: "Entdecke den Katalog und finde etwas für deine nächste Trainingseinheit.",
+    browseProducts: "Produkte entdecken",
+  },
 } satisfies CommonTranslations;
