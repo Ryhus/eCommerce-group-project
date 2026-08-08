@@ -1,5 +1,6 @@
 import { type FormEvent, useRef, useState } from "react";
 import { FaEnvelope, FaLock } from "react-icons/fa";
+import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
 
 import { AuthLayout } from "../../components/Auth/AuthLayout/AuthLayout";
@@ -14,18 +15,19 @@ import { validateEmailFormat } from "../../utils/validation";
 import "./Login.scss";
 
 export default function LoginPage() {
+  const { t } = useTranslation("common");
   const { refreshUser } = useAuth();
 
   const navigate = useNavigate();
   const { setNewCart } = useCart();
-  const [authError, setAuthError] = useState("");
+  const [hasAuthError, setHasAuthError] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const [emailError, setEmailError] = useState("");
-  const [passwordError, setPasswordError] = useState("");
+  const [hasPasswordError, setHasPasswordError] = useState(false);
 
   const [showPassword, setShowPassword] = useState(false);
   const emailInputRef = useRef<HTMLInputElement>(null);
@@ -38,7 +40,7 @@ export default function LoginPage() {
 
   const handlePasswordChange = (value: string) => {
     setPassword(value);
-    if (passwordError) validatePassword(value);
+    if (hasPasswordError) validatePassword(value);
   };
 
   const handleLogin = async (event: FormEvent<HTMLFormElement>) => {
@@ -53,14 +55,14 @@ export default function LoginPage() {
     }
 
     try {
-      setAuthError("");
+      setHasAuthError(false);
       setIsSubmitting(true);
       const loginData = await signIn(email, password);
       setNewCart(loginData.cart);
       await refreshUser();
       navigate("/");
     } catch {
-      setAuthError("Wrong email or password. Please try again.");
+      setHasAuthError(true);
     } finally {
       setIsSubmitting(false);
     }
@@ -73,22 +75,22 @@ export default function LoginPage() {
   };
 
   const validatePassword = (value: string) => {
-    const error = value ? "" : "Enter your password.";
-    setPasswordError(error);
-    return !error;
+    const isValid = Boolean(value);
+    setHasPasswordError(!isValid);
+    return isValid;
   };
 
   return (
     <AuthLayout>
-      <form aria-label="Login" className="login-form" noValidate onSubmit={handleLogin}>
+      <form aria-label={t("login.form")} className="login-form" noValidate onSubmit={handleLogin}>
         <header className="login-form__header">
-          <h1>Welcome back</h1>
-          <p>Sign in to continue your journey.</p>
+          <h1>{t("login.title")}</h1>
+          <p>{t("login.description")}</p>
         </header>
 
         <div className="login-form__fields">
           <div className="login-form__field">
-            <label htmlFor="login-email">Email address</label>
+            <label htmlFor="login-email">{t("login.emailLabel")}</label>
             <InputField
               aria-describedby={emailError ? "login-email-error" : undefined}
               autoComplete="email"
@@ -100,7 +102,7 @@ export default function LoginPage() {
               name="email"
               onBlur={() => validateEmail(email)}
               onChange={handleEmailChange}
-              placeholder="you@example.com"
+              placeholder={t("login.emailPlaceholder")}
               type="email"
               value={email}
             />
@@ -110,18 +112,18 @@ export default function LoginPage() {
           </div>
 
           <div className="login-form__field">
-            <label htmlFor="login-password">Password</label>
+            <label htmlFor="login-password">{t("login.passwordLabel")}</label>
             <InputField
-              aria-describedby={passwordError ? "login-password-error" : undefined}
+              aria-describedby={hasPasswordError ? "login-password-error" : undefined}
               autoComplete="current-password"
               icon={<FaLock />}
               id="login-password"
               inputRef={passwordInputRef}
-              isValid={!passwordError}
+              isValid={!hasPasswordError}
               name="password"
               onBlur={() => validatePassword(password)}
               onChange={handlePasswordChange}
-              placeholder="Enter your password"
+              placeholder={t("login.passwordPlaceholder")}
               rightIcon={
                 <PasswordVisibilityButton
                   isVisible={showPassword}
@@ -132,26 +134,26 @@ export default function LoginPage() {
               value={password}
             />
             <p aria-live="polite" className="login-form__error" id="login-password-error">
-              {passwordError}
+              {hasPasswordError ? t("login.passwordRequired") : ""}
             </p>
           </div>
         </div>
 
-        {authError && (
+        {hasAuthError && (
           <p className="login-form__auth-error" role="alert">
-            {authError}
+            {t("login.authError")}
           </p>
         )}
 
         <Button
           className="login-form__submit"
           disabled={isSubmitting}
-          text={isSubmitting ? "Logging in…" : "Log in"}
+          text={isSubmitting ? t("login.submitting") : t("login.submit")}
           type="submit"
         />
 
         <p className="login-form__registration">
-          <span>New to Sport Gear?</span> <Link to="/sign-up">Create an account</Link>
+          <span>{t("login.newCustomer")}</span> <Link to="/sign-up">{t("login.createAccount")}</Link>
         </p>
       </form>
     </AuthLayout>

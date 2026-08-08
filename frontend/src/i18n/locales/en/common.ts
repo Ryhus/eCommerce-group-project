@@ -260,6 +260,21 @@ export const enCommon = {
     show: "Show password",
     hide: "Hide password",
   },
+  login: {
+    form: "Login",
+    title: "Welcome back",
+    description: "Sign in to continue your journey.",
+    emailLabel: "Email address",
+    emailPlaceholder: "you@example.com",
+    passwordLabel: "Password",
+    passwordPlaceholder: "Enter your password",
+    passwordRequired: "Enter your password.",
+    authError: "Wrong email or password. Please try again.",
+    submitting: "Logging in…",
+    submit: "Log in",
+    newCustomer: "New to Sport Gear?",
+    createAccount: "Create an account",
+  },
 } as const;
 
 export type CommonTranslations = {
