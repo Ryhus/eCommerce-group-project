@@ -1,3 +1,5 @@
+import { useEffect, useRef } from "react";
+
 import Button from "../../common/button/button";
 
 import "./DeleteAddressDialog.scss";
@@ -17,13 +19,28 @@ export function DeleteAddressDialog({
   onCancel,
   onConfirm,
 }: DeleteAddressDialogProps) {
+  const dialogRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    dialogRef.current?.querySelector<HTMLButtonElement>("button")?.focus();
+  }, []);
+
   return (
-    <div className="delete-address-dialog__backdrop">
+    <div
+      className="delete-address-dialog__backdrop"
+      onKeyDown={(event) => {
+        if (event.key === "Escape" && !isDeleting) onCancel();
+      }}
+      onMouseDown={(event) => {
+        if (event.target === event.currentTarget && !isDeleting) onCancel();
+      }}
+    >
       <div
         aria-describedby="delete-address-description"
         aria-labelledby="delete-address-title"
         aria-modal="true"
         className="delete-address-dialog"
+        ref={dialogRef}
         role="alertdialog"
       >
         <h2 id="delete-address-title">Delete address?</h2>
