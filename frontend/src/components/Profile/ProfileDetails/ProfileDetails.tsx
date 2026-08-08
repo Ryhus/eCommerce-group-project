@@ -1,4 +1,5 @@
 import { HiPencilAlt } from "react-icons/hi";
+import { useTranslation } from "react-i18next";
 
 import { IconButton } from "../../common/IconButton/IconButton";
 import { ProfileSection } from "../ProfileSection/ProfileSection";
@@ -13,26 +14,30 @@ type ProfileDetailsProps = {
   onEdit: () => void;
 };
 
-function formatDateOfBirth(value: string) {
+function formatDateOfBirth(value: string, language: string) {
   const date = new Date(`${value}T00:00:00`);
   if (Number.isNaN(date.getTime())) return value;
 
-  return new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "long", year: "numeric" }).format(date);
+  const locale = language === "en" ? "en-GB" : language;
+  return new Intl.DateTimeFormat(locale, { day: "numeric", month: "long", year: "numeric" }).format(date);
 }
 
 export function ProfileDetails({ dateOfBirth, email, firstName, lastName, onEdit }: ProfileDetailsProps) {
+  const { i18n, t } = useTranslation("common");
   const details = [
-    ["First name", firstName || "Not provided"],
-    ["Last name", lastName || "Not provided"],
-    ["Email", email],
-    ["Date of birth", formatDateOfBirth(dateOfBirth)],
+    [t("profile.firstName"), firstName || t("profile.notProvided")],
+    [t("profile.lastName"), lastName || t("profile.notProvided")],
+    [t("profile.email"), email],
+    [t("profile.dateOfBirth"), formatDateOfBirth(dateOfBirth, i18n.language)],
   ] as const;
 
   return (
     <ProfileSection
-      action={<IconButton icon={<HiPencilAlt />} label="Edit personal details" onClick={onEdit} variant="subtle" />}
-      description="Information used for your account."
-      title="Personal details"
+      action={
+        <IconButton icon={<HiPencilAlt />} label={t("profile.editPersonalDetails")} onClick={onEdit} variant="subtle" />
+      }
+      description={t("profile.personalDetailsDescription")}
+      title={t("profile.personalDetails")}
     >
       <dl className="profile-details">
         {details.map(([label, value]) => (

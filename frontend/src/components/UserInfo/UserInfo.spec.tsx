@@ -1,7 +1,8 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { createMemoryRouter, RouterProvider } from "react-router-dom";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
+import i18n from "../../i18n/i18n";
 import { updateCustomer } from "../../services/customerService/customerService";
 import { UserInfo } from "./UserInfo";
 
@@ -47,7 +48,12 @@ function renderProfile() {
 }
 
 describe("UserInfo", () => {
-  beforeEach(() => {
+  afterEach(async () => {
+    await i18n.changeLanguage("en");
+  });
+
+  beforeEach(async () => {
+    await i18n.changeLanguage("en");
     vi.clearAllMocks();
     updateCustomerMock.mockResolvedValue({} as never);
   });
@@ -97,5 +103,23 @@ describe("UserInfo", () => {
     fireEvent.click(screen.getByRole("button", { name: "Log out" }));
 
     expect(onLogout).toHaveBeenCalledOnce();
+  });
+
+  it("updates profile labels when the language changes", async () => {
+    renderProfile();
+
+    await i18n.changeLanguage("de");
+
+    expect(screen.getByRole("heading", { level: 1, name: "Mein Konto" })).toBeVisible();
+    expect(screen.getByRole("region", { name: "Persönliche Daten" })).toBeVisible();
+    expect(screen.getByRole("region", { name: "Gespeicherte Adressen" })).toBeVisible();
+    expect(screen.getByRole("button", { name: "Abmelden" })).toBeVisible();
+    expect(screen.getByText("Standardlieferadresse")).toBeVisible();
+
+    await i18n.changeLanguage("ru");
+
+    expect(screen.getByRole("heading", { level: 1, name: "Мой аккаунт" })).toBeVisible();
+    expect(screen.getByRole("region", { name: "Личные данные" })).toBeVisible();
+    expect(screen.getByRole("button", { name: "Выйти" })).toBeVisible();
   });
 });

@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { useTranslation } from "react-i18next";
 
 import Button from "../../common/button/button";
 
@@ -19,6 +20,7 @@ export function DeleteAddressDialog({
   onCancel,
   onConfirm,
 }: DeleteAddressDialogProps) {
+  const { t } = useTranslation("common");
   const dialogRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -43,18 +45,20 @@ export function DeleteAddressDialog({
         ref={dialogRef}
         role="alertdialog"
       >
-        <h2 id="delete-address-title">Delete address?</h2>
-        <p id="delete-address-description">
-          <strong>{addressName}</strong> will be permanently removed from your account.
-        </p>
+        <h2 id="delete-address-title">{t("profile.deleteAddressTitle")}</h2>
+        <p id="delete-address-description">{t("profile.deleteAddressDescription", { address: addressName })}</p>
 
         <div aria-live="polite" className="delete-address-dialog__error">
           {error && <p>{error}</p>}
         </div>
 
         <div className="delete-address-dialog__actions">
-          <Button disabled={isDeleting} onClick={onCancel} text="Cancel" variant="light" />
-          <Button disabled={isDeleting} onClick={onConfirm} text={isDeleting ? "Deleting…" : "Delete address"} />
+          <Button disabled={isDeleting} onClick={onCancel} text={t("profile.cancel")} variant="light" />
+          <Button
+            disabled={isDeleting}
+            onClick={onConfirm}
+            text={isDeleting ? t("profile.deleting") : t("profile.deleteAddress")}
+          />
         </div>
       </div>
     </div>

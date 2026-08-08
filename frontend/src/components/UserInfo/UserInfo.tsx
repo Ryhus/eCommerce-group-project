@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { HiOutlineLogout } from "react-icons/hi";
 import { useRevalidator } from "react-router-dom";
 
@@ -46,6 +47,7 @@ export function UserInfo({
   defaultBillingAddressId,
   onLogout,
 }: UserInfoProps) {
+  const { t } = useTranslation("common");
   const revalidator = useRevalidator();
   const [activeEditor, setActiveEditor] = useState<ActiveEditor>(null);
   const [editingAddress, setEditingAddress] = useState<Address | null>(null);
@@ -101,7 +103,7 @@ export function UserInfo({
       await revalidator.revalidate();
       setAddressToDelete(null);
     } catch {
-      setDeleteError("Unable to delete this address. Please try again.");
+      setDeleteError(t("profile.unableToDeleteAddress"));
     } finally {
       setIsDeletingAddress(false);
     }
@@ -109,18 +111,18 @@ export function UserInfo({
 
   return (
     <PageContainer className="profile-page">
-      <Breadcrumbs crumbs={[{ name: "My account", path: "/profile" }]} includeCatalog={false} />
+      <Breadcrumbs crumbs={[{ name: t("profile.breadcrumb"), path: "/profile" }]} includeCatalog={false} />
 
       <header className="profile-page__header">
         <div>
-          <h1>My account</h1>
-          <p>Manage your account information and delivery preferences.</p>
+          <h1>{t("profile.title")}</h1>
+          <p>{t("profile.description")}</p>
         </div>
         <Button
           className="profile-page__logout"
           icon={<HiOutlineLogout aria-hidden="true" />}
           onClick={() => void onLogout()}
-          text="Log out"
+          text={t("profile.logout")}
           variant="light"
         />
       </header>
@@ -136,7 +138,10 @@ export function UserInfo({
       <div className="profile-page__sections">
         <div>
           {activeEditor === "details" ? (
-            <ProfileSection description="Update your account contact details." title="Edit personal details">
+            <ProfileSection
+              description={t("profile.personalDetailsDescription")}
+              title={t("profile.editPersonalDetails")}
+            >
               <ProfileDetailsForm
                 dateOfBirth={dateOfBirth}
                 email={email}
@@ -159,7 +164,10 @@ export function UserInfo({
 
         <div>
           {activeEditor === "password" ? (
-            <ProfileSection description="Choose a new password for your account." title="Change password">
+            <ProfileSection
+              description={t("profile.changePasswordDescription")}
+              title={t("profile.changePasswordTitle")}
+            >
               <ProfilePasswordForm onCancel={closeEditor} onSuccess={closeEditor} />
             </ProfileSection>
           ) : (
@@ -170,8 +178,8 @@ export function UserInfo({
         <div className="profile-page__addresses">
           {activeEditor === "address" ? (
             <ProfileSection
-              description="Set where you want your future purchases delivered and billed."
-              title={editingAddress ? "Edit address" : "Add address"}
+              description={t("profile.savedAddressesDescription")}
+              title={editingAddress ? t("profile.editAddressTitle") : t("profile.addAddressTitle")}
             >
               <ProfileAddressForm address={editingAddress} onCancel={closeEditor} onSuccess={closeEditor} />
             </ProfileSection>
@@ -192,7 +200,7 @@ export function UserInfo({
 
       {addressToDelete && (
         <DeleteAddressDialog
-          addressName={addressToDelete.streetName || "This address"}
+          addressName={addressToDelete.streetName || t("profile.unknownAddress")}
           error={deleteError}
           isDeleting={isDeletingAddress}
           onCancel={cancelAddressDeletion}
