@@ -1,7 +1,8 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter, Route, Routes, useLocation } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+import i18n from "../../i18n/i18n";
 import { fetchChildCategories } from "../../services/categoryService/categoryService";
 import { fetchProductPage } from "../../services/productService/productService";
 import type { Product } from "../../services/productService/types";
@@ -63,7 +64,8 @@ function renderCatalog(initialEntry = "/catalog") {
 }
 
 describe("CategoryPage", () => {
-  beforeEach(() => {
+  beforeEach(async () => {
+    await i18n.changeLanguage("en");
     vi.mocked(fetchChildCategories).mockReset();
     vi.mocked(fetchProductPage).mockReset();
     vi.mocked(fetchChildCategories).mockResolvedValue([{ id: "balls", name: "Balls", slug: "balls", parentId: null }]);
@@ -129,5 +131,30 @@ describe("CategoryPage", () => {
 
     expect(screen.getByRole("dialog", { name: "Catalog options" })).toBeVisible();
     expect(screen.getAllByRole("link", { name: "Balls" })).toHaveLength(2);
+  });
+
+  it("localizes catalog summaries and controls", async () => {
+    await i18n.changeLanguage("ru");
+    renderCatalog();
+
+    expect(await screen.findByText("Показано 1-6 из 8 товаров")).toBeVisible();
+    expect(screen.getByRole("heading", { level: 1, name: "Все товары" })).toBeVisible();
+    expect(screen.getByRole("combobox", { name: "Сортировка товаров" })).toBeVisible();
+    expect(screen.getByRole("button", { name: "Открыть параметры каталога" })).toBeVisible();
+  });
+
+  it("updates an existing load error when the language changes", async () => {
+    vi.mocked(fetchProductPage).mockRejectedValue(new Error("Unavailable"));
+    renderCatalog();
+
+    expect(await screen.findByRole("alert")).toHaveTextContent("Unable to load the catalog");
+
+    await act(async () => {
+      await i18n.changeLanguage("de");
+    });
+
+    expect(screen.getByRole("alert")).toHaveTextContent("Der Katalog konnte nicht geladen werden");
+    expect(screen.getByRole("button", { name: "Erneut versuchen" })).toBeVisible();
+    expect(fetchProductPage).toHaveBeenCalledTimes(1);
   });
 });

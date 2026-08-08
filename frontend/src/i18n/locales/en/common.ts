@@ -169,6 +169,20 @@ export const enCommon = {
     inCart: "In Cart",
     noProducts: "No products found.",
   },
+  catalog: {
+    title: "Catalog",
+    allProducts: "All products",
+    searchResults: "Search results for “{{term}}”",
+    loadingProducts: "Loading products…",
+    loading: "Catalog loading",
+    openOptions: "Open catalog options",
+    loadError: "Unable to load the catalog. Please try again.",
+    retry: "Try again",
+    zeroProducts: "0 products",
+    pageSummary: "Showing {{first}}-{{last}} of {{total}} products",
+    noSearchResults: "No products found for “{{term}}”.",
+    noCategoryProducts: "No products found in this category.",
+  },
 } as const;
 
 export type CommonTranslations = {

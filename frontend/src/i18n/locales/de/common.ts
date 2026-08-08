@@ -173,4 +173,18 @@ export const deCommon = {
     inCart: "Im Warenkorb",
     noProducts: "Keine Produkte gefunden.",
   },
+  catalog: {
+    title: "Katalog",
+    allProducts: "Alle Produkte",
+    searchResults: "Suchergebnisse für „{{term}}“",
+    loadingProducts: "Produkte werden geladen…",
+    loading: "Katalog wird geladen",
+    openOptions: "Katalogoptionen öffnen",
+    loadError: "Der Katalog konnte nicht geladen werden. Bitte versuche es erneut.",
+    retry: "Erneut versuchen",
+    zeroProducts: "0 Produkte",
+    pageSummary: "{{first}}-{{last}} von {{total}} Produkten",
+    noSearchResults: "Keine Produkte für „{{term}}“ gefunden.",
+    noCategoryProducts: "In dieser Kategorie wurden keine Produkte gefunden.",
+  },
 } satisfies CommonTranslations;

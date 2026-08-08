@@ -169,4 +169,18 @@ export const ruCommon = {
     inCart: "В корзине",
     noProducts: "Товары не найдены.",
   },
+  catalog: {
+    title: "Каталог",
+    allProducts: "Все товары",
+    searchResults: "Результаты поиска по запросу «{{term}}»",
+    loadingProducts: "Загружаем товары…",
+    loading: "Загрузка каталога",
+    openOptions: "Открыть параметры каталога",
+    loadError: "Не удалось загрузить каталог. Попробуйте ещё раз.",
+    retry: "Попробовать снова",
+    zeroProducts: "0 товаров",
+    pageSummary: "Показано {{first}}-{{last}} из {{total}} товаров",
+    noSearchResults: "По запросу «{{term}}» товары не найдены.",
+    noCategoryProducts: "В этой категории товары не найдены.",
+  },
 } satisfies CommonTranslations;

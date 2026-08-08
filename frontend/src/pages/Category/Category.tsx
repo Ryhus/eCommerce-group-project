@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { PiSlidersHorizontal } from "react-icons/pi";
+import { useTranslation } from "react-i18next";
 import { useLocation, useSearchParams } from "react-router-dom";
 
 import Breadcrumbs, { type Crumb } from "../../components/Breadcrumbs/Breadcrumbs";
@@ -50,14 +51,15 @@ function categoryPath(parentSegments: string[], slug: string): string {
   return ["", "catalog", ...parentSegments, slug].join("/");
 }
 
-function pageSummary(page: ProductPage): string {
-  if (!page.total) return "0 products";
+function pageRange(page: ProductPage): { first: number; last: number; total: number } | null {
+  if (!page.total) return null;
   const firstItem = page.offset + 1;
   const lastItem = Math.min(page.offset + page.items.length, page.total);
-  return `Showing ${firstItem}-${lastItem} of ${page.total} products`;
+  return { first: firstItem, last: lastItem, total: page.total };
 }
 
 export default function CategoryPage() {
+  const { t } = useTranslation("common");
   const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -66,7 +68,7 @@ export default function CategoryPage() {
   const [currentCategory, setCurrentCategory] = useState<Category | null>(null);
   const [productPage, setProductPage] = useState<ProductPage>(EMPTY_PAGE);
   const [resolvedRequestKey, setResolvedRequestKey] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [hasError, setHasError] = useState(false);
   const [categoryNotFound, setCategoryNotFound] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [reloadKey, setReloadKey] = useState(0);
@@ -83,7 +85,7 @@ export default function CategoryPage() {
     let cancelled = false;
 
     const loadCatalog = async () => {
-      setError(null);
+      setHasError(false);
       setCategoryNotFound(false);
 
       try {
@@ -138,7 +140,7 @@ export default function CategoryPage() {
       } catch (loadError) {
         if (cancelled) return;
         if (loadError instanceof CategoryNotFoundError) setCategoryNotFound(true);
-        else setError(loadError instanceof Error ? loadError.message : "Unable to load the catalog.");
+        else setHasError(true);
       } finally {
         if (!cancelled) setResolvedRequestKey(requestKey);
       }
@@ -169,12 +171,13 @@ export default function CategoryPage() {
   if (!isLoading && categoryNotFound) return <NotFoundPage />;
 
   const title = searchTerm
-    ? `Search results for “${searchTerm}”`
+    ? t("catalog.searchResults", { term: searchTerm })
     : isLoading
-      ? "Catalog"
-      : (currentCategory?.name ?? "All products");
+      ? t("catalog.title")
+      : (currentCategory?.name ?? t("catalog.allProducts"));
   const visibleBreadcrumbs = isLoading ? [] : breadcrumbs;
   const visibleCategoryItems = isLoading ? [] : categoryItems;
+  const visibleRange = pageRange(productPage);
 
   return (
     <PageContainer className="category-page">
@@ -189,14 +192,20 @@ export default function CategoryPage() {
           <header className="category-page__toolbar">
             <div className="category-page__heading">
               <h1 id="catalog-title">{title}</h1>
-              <p>{isLoading ? "Loading products…" : pageSummary(productPage)}</p>
+              <p>
+                {isLoading
+                  ? t("catalog.loadingProducts")
+                  : visibleRange
+                    ? t("catalog.pageSummary", visibleRange)
+                    : t("catalog.zeroProducts")}
+              </p>
             </div>
 
             <Sorting className="category-page__desktop-sort" currentSort={currentSort} onSortChange={updateSort} />
             <button
               aria-controls="catalog-options"
               aria-expanded={isDrawerOpen}
-              aria-label="Open catalog options"
+              aria-label={t("catalog.openOptions")}
               className="category-page__filter-toggle"
               onClick={() => setIsDrawerOpen(true)}
               type="button"
@@ -206,15 +215,15 @@ export default function CategoryPage() {
           </header>
 
           {isLoading ? (
-            <div aria-label="Catalog loading" aria-live="polite" className="category-page__status" role="status">
+            <div aria-label={t("catalog.loading")} aria-live="polite" className="category-page__status" role="status">
               <span className="category-page__spinner" />
-              Loading products…
+              {t("catalog.loadingProducts")}
             </div>
-          ) : error ? (
+          ) : hasError ? (
             <div className="category-page__status" role="alert">
-              <p>{error}</p>
+              <p>{t("catalog.loadError")}</p>
               <button className="category-page__retry" onClick={() => setReloadKey((key) => key + 1)} type="button">
-                Try again
+                {t("catalog.retry")}
               </button>
             </div>
           ) : productPage.items.length ? (
@@ -230,7 +239,7 @@ export default function CategoryPage() {
             </>
           ) : (
             <div className="category-page__status">
-              <p>{searchTerm ? `No products found for “${searchTerm}”.` : "No products found in this category."}</p>
+              <p>{searchTerm ? t("catalog.noSearchResults", { term: searchTerm }) : t("catalog.noCategoryProducts")}</p>
             </div>
           )}
         </main>
