@@ -232,4 +232,16 @@ export const deCommon = {
     emptyDescription: "Entdecke den Katalog und finde etwas für deine nächste Trainingseinheit.",
     browseProducts: "Produkte entdecken",
   },
+  promoCode: {
+    applied: "Angewendeter Aktionscode",
+    appliedDescription: "Aktionscode angewendet",
+    remove: "Aktionscode {{code}} entfernen",
+    form: "Aktionscode",
+    label: "Aktionscode",
+    placeholder: "Aktionscode hinzufügen",
+    applying: "Wird angewendet…",
+    apply: "Anwenden",
+    required: "Gib einen Aktionscode ein.",
+    request: "Der Aktionscode konnte nicht aktualisiert werden. Bitte versuche es erneut.",
+  },
 } satisfies CommonTranslations;

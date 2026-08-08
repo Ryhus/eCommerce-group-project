@@ -228,4 +228,16 @@ export const ruCommon = {
     emptyDescription: "Откройте каталог и выберите товары для следующей тренировки.",
     browseProducts: "Перейти к товарам",
   },
+  promoCode: {
+    applied: "Применённый промокод",
+    appliedDescription: "Промокод применён",
+    remove: "Удалить промокод {{code}}",
+    form: "Промокод",
+    label: "Промокод",
+    placeholder: "Добавить промокод",
+    applying: "Применяем…",
+    apply: "Применить",
+    required: "Введите промокод.",
+    request: "Не удалось обновить промокод. Попробуйте ещё раз.",
+  },
 } satisfies CommonTranslations;

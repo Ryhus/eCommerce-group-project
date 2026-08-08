@@ -228,6 +228,18 @@ export const enCommon = {
     emptyDescription: "Explore the catalog and add something for your next training session.",
     browseProducts: "Browse products",
   },
+  promoCode: {
+    applied: "Applied promo code",
+    appliedDescription: "Promo code applied",
+    remove: "Remove promo code {{code}}",
+    form: "Promo code",
+    label: "Promo code",
+    placeholder: "Add promo code",
+    applying: "Applying…",
+    apply: "Apply",
+    required: "Enter a promo code.",
+    request: "We couldn't update this promo code. Please try again.",
+  },
 } as const;
 
 export type CommonTranslations = {
