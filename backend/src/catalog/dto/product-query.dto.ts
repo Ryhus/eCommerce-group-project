@@ -1,5 +1,16 @@
 import { Transform, Type } from "class-transformer";
-import { IsEnum, IsInt, IsOptional, IsString, IsUUID, Max, MaxLength, Min } from "class-validator";
+import {
+  ArrayMaxSize,
+  IsArray,
+  IsEnum,
+  IsInt,
+  IsOptional,
+  IsString,
+  IsUUID,
+  Max,
+  MaxLength,
+  Min,
+} from "class-validator";
 
 function listValue(value: unknown): string[] | undefined {
   if (value == null) return undefined;
@@ -43,16 +54,22 @@ export class ProductQueryDto {
 
   @IsOptional()
   @Transform(({ value }) => listValue(value))
+  @IsArray()
+  @ArrayMaxSize(20)
   @IsString({ each: true })
   colors?: string[];
 
   @IsOptional()
   @Transform(({ value }) => listValue(value))
+  @IsArray()
+  @ArrayMaxSize(20)
   @IsString({ each: true })
   sizes?: string[];
 
   @IsOptional()
   @Transform(({ value }) => listValue(value))
+  @IsArray()
+  @ArrayMaxSize(20)
   @IsString({ each: true })
   equipmentTypes?: string[];
 

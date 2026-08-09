@@ -1,3 +1,4 @@
+import { BadRequestException } from "@nestjs/common";
 import { describe, expect, it, vi } from "vitest";
 import { CatalogService } from "./catalog.service.js";
 import { ProductQueryDto, ProductSort } from "./dto/product-query.dto.js";
@@ -133,5 +134,13 @@ describe("CatalogService", () => {
         },
       })
     );
+  });
+
+  it("rejects an inverted price range before querying the database", async () => {
+    const prisma = { $transaction: vi.fn() };
+    const query = Object.assign(new ProductQueryDto(), { minPrice: 9000, maxPrice: 2000 });
+
+    await expect(new CatalogService(prisma as never).products(query)).rejects.toThrow(BadRequestException);
+    expect(prisma.$transaction).not.toHaveBeenCalled();
   });
 });

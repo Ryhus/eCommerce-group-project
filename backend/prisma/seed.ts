@@ -106,21 +106,21 @@ const products = [
   },
 ];
 
-const attributeValues: Record<string, { color: string; size: string }> = {
-  football: { color: "orange", size: "standard" },
-  basketball: { color: "brown", size: "standard" },
-  shoes: { color: "red", size: "large" },
-  strength: { color: "black", size: "standard" },
-  yoga: { color: "green", size: "standard" },
-  hydration: { color: "blue", size: "standard" },
-  tennis: { color: "yellow", size: "standard" },
-  accessories: { color: "black", size: "medium" },
+const attributeValues: Record<string, { colors: string[]; size: string }> = {
+  football: { colors: ["blue", "white"], size: "size-5" },
+  basketball: { colors: ["orange"], size: "size-7" },
+  shoes: { colors: ["red"], size: "eu-42" },
+  strength: { colors: ["black"], size: "20-kg" },
+  yoga: { colors: ["black", "blue", "green", "purple"], size: "standard" },
+  hydration: { colors: ["green"], size: "750-ml" },
+  tennis: { colors: ["black"], size: "grip-3" },
+  accessories: { colors: ["navy"], size: "25-l" },
 };
 
 function productAttributes(categoryKey: string) {
-  const values = attributeValues[categoryKey] ?? { color: "black", size: "standard" };
+  const values = attributeValues[categoryKey] ?? { colors: ["black"], size: "standard" };
   return [
-    { type: ProductAttributeType.COLOR, value: values.color },
+    ...values.colors.map((value) => ({ type: ProductAttributeType.COLOR, value })),
     { type: ProductAttributeType.SIZE, value: values.size },
     { type: ProductAttributeType.EQUIPMENT_TYPE, value: categoryKey },
   ];

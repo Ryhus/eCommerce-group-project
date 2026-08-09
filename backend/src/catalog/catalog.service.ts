@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
 import type { Prisma } from "@prisma/client";
 import { ProductAttributeType } from "@prisma/client";
 import { PrismaService } from "../database/prisma.service.js";
@@ -37,6 +37,10 @@ export class CatalogService {
   }
 
   async products(query: ProductQueryDto) {
+    if (query.minPrice !== undefined && query.maxPrice !== undefined && query.minPrice > query.maxPrice) {
+      throw new BadRequestException("Minimum price cannot exceed maximum price");
+    }
+
     const attributeFilters: Prisma.ProductWhereInput[] = [];
     if (query.colors?.length) {
       attributeFilters.push({
