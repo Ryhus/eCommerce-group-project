@@ -1,7 +1,7 @@
 import { Controller, Get, Param, ParseUUIDPipe, Query } from "@nestjs/common";
 import { ApiOkResponse, ApiTags } from "@nestjs/swagger";
 import { CatalogService } from "./catalog.service.js";
-import { CategoryDto, ProductDto, ProductPageDto } from "./dto/catalog-response.dto.js";
+import { CatalogFiltersDto, CategoryDto, ProductDto, ProductPageDto } from "./dto/catalog-response.dto.js";
 import { ProductQueryDto } from "./dto/product-query.dto.js";
 
 @Controller("catalog")
@@ -19,6 +19,12 @@ export class CatalogController {
   @ApiOkResponse({ type: ProductPageDto })
   products(@Query() query: ProductQueryDto) {
     return this.catalog.products(query);
+  }
+
+  @Get("filters")
+  @ApiOkResponse({ type: CatalogFiltersDto })
+  filters(@Query("categoryId", new ParseUUIDPipe({ optional: true })) categoryId?: string) {
+    return this.catalog.filters(categoryId);
   }
 
   @Get("products/:productId")

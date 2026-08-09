@@ -99,4 +99,39 @@ describe("CatalogService", () => {
     expect(transaction.product.findMany).toHaveBeenCalledWith(expect.objectContaining({ where }));
     expect(transaction.product.count).toHaveBeenCalledWith({ where });
   });
+
+  it("combines price and attribute filters on the server", async () => {
+    const transaction = {
+      product: {
+        findMany: vi.fn().mockResolvedValue([]),
+        count: vi.fn().mockResolvedValue(0),
+      },
+    };
+    const prisma = {
+      $transaction: vi.fn(async (callback: (tx: typeof transaction) => Promise<unknown>) => callback(transaction)),
+    };
+    const query = Object.assign(new ProductQueryDto(), {
+      minPrice: 2500,
+      maxPrice: 8000,
+      colors: ["blue"],
+      sizes: ["standard"],
+      equipmentTypes: ["hydration"],
+    });
+
+    await new CatalogService(prisma as never).products(query);
+
+    expect(transaction.product.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: {
+          isActive: true,
+          variant: { is: { priceAmount: { gte: 2500, lte: 8000 } } },
+          AND: [
+            { attributes: { some: { type: "COLOR", value: { in: ["blue"] } } } },
+            { attributes: { some: { type: "SIZE", value: { in: ["standard"] } } } },
+            { attributes: { some: { type: "EQUIPMENT_TYPE", value: { in: ["hydration"] } } } },
+          ],
+        },
+      })
+    );
+  });
 });

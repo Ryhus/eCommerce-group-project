@@ -1,5 +1,5 @@
 import { PrismaPg } from "@prisma/adapter-pg";
-import { DiscountType, PrismaClient } from "@prisma/client";
+import { DiscountType, PrismaClient, ProductAttributeType } from "@prisma/client";
 
 const connectionString = process.env.DATABASE_URL;
 if (!connectionString) throw new Error("DATABASE_URL is required for seeding");
@@ -106,6 +106,26 @@ const products = [
   },
 ];
 
+const attributeValues: Record<string, { color: string; size: string }> = {
+  football: { color: "orange", size: "standard" },
+  basketball: { color: "brown", size: "standard" },
+  shoes: { color: "red", size: "large" },
+  strength: { color: "black", size: "standard" },
+  yoga: { color: "green", size: "standard" },
+  hydration: { color: "blue", size: "standard" },
+  tennis: { color: "yellow", size: "standard" },
+  accessories: { color: "black", size: "medium" },
+};
+
+function productAttributes(categoryKey: string) {
+  const values = attributeValues[categoryKey] ?? { color: "black", size: "standard" };
+  return [
+    { type: ProductAttributeType.COLOR, value: values.color },
+    { type: ProductAttributeType.SIZE, value: values.size },
+    { type: ProductAttributeType.EQUIPMENT_TYPE, value: categoryKey },
+  ];
+}
+
 async function main() {
   const categoryIds = new Map<string, string>();
 
@@ -155,6 +175,7 @@ async function main() {
         },
         images: { deleteMany: {}, create: [{ url: product.image, alt: product.name, sortOrder: 0 }] },
         categories: { deleteMany: {}, create: [{ categoryId }] },
+        attributes: { deleteMany: {}, create: productAttributes(product.categoryKey) },
       },
       create: {
         key: product.key,
@@ -170,6 +191,7 @@ async function main() {
         },
         images: { create: [{ url: product.image, alt: product.name, sortOrder: 0 }] },
         categories: { create: [{ categoryId }] },
+        attributes: { create: productAttributes(product.categoryKey) },
       },
     });
   }
