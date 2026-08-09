@@ -1,5 +1,6 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
 import type { Prisma } from "@prisma/client";
+import { ProductAttributeType } from "@prisma/client";
 import { PrismaService } from "../database/prisma.service.js";
 import { ProductQueryDto, ProductSort } from "./dto/product-query.dto.js";
 
@@ -36,9 +37,34 @@ export class CatalogService {
   }
 
   async products(query: ProductQueryDto) {
+    if (query.minPrice !== undefined && query.maxPrice !== undefined && query.minPrice > query.maxPrice) {
+      throw new BadRequestException("Minimum price cannot exceed maximum price");
+    }
+
+    const attributeFilters: Prisma.ProductWhereInput[] = [];
+    if (query.colors?.length) {
+      attributeFilters.push({
+        attributes: { some: { type: ProductAttributeType.COLOR, value: { in: query.colors } } },
+      });
+    }
+    if (query.sizes?.length) {
+      attributeFilters.push({ attributes: { some: { type: ProductAttributeType.SIZE, value: { in: query.sizes } } } });
+    }
+    if (query.equipmentTypes?.length) {
+      attributeFilters.push({
+        attributes: { some: { type: ProductAttributeType.EQUIPMENT_TYPE, value: { in: query.equipmentTypes } } },
+      });
+    }
+
+    const variantWhere: Prisma.ProductVariantWhereInput = {
+      ...(query.minPrice !== undefined ? { priceAmount: { gte: query.minPrice } } : {}),
+      ...(query.maxPrice !== undefined
+        ? { priceAmount: { ...(query.minPrice !== undefined ? { gte: query.minPrice } : {}), lte: query.maxPrice } }
+        : {}),
+    };
     const baseWhere: Prisma.ProductWhereInput = {
       isActive: true,
-      variant: { isNot: null },
+      variant: Object.keys(variantWhere).length ? { is: variantWhere } : { isNot: null },
       ...(query.search
         ? {
             OR: [
@@ -47,6 +73,7 @@ export class CatalogService {
             ],
           }
         : {}),
+      ...(attributeFilters.length ? { AND: attributeFilters } : {}),
     };
     const orderBy = this.orderBy(query.sort);
     const [items, total] = await this.prisma.$transaction(async (tx) => {
@@ -73,7 +100,46 @@ export class CatalogService {
     };
   }
 
-  private async categoryScope(tx: Prisma.TransactionClient, categoryId: string): Promise<string[]> {
+  async filters(categoryId?: string) {
+    const categoryIds = categoryId ? await this.categoryScope(this.prisma, categoryId) : undefined;
+    const productWhere: Prisma.ProductWhereInput = {
+      isActive: true,
+      variant: { isNot: null },
+      ...(categoryIds ? { categories: { some: { categoryId: { in: categoryIds } } } } : {}),
+    };
+
+    const [priceRows, colors, sizes, equipmentTypes] = await Promise.all([
+      this.prisma.productVariant.findMany({ where: { product: productWhere }, select: { priceAmount: true } }),
+      this.attributeOptions(productWhere, ProductAttributeType.COLOR),
+      this.attributeOptions(productWhere, ProductAttributeType.SIZE),
+      this.attributeOptions(productWhere, ProductAttributeType.EQUIPMENT_TYPE),
+    ]);
+
+    const prices = priceRows.map((row) => row.priceAmount);
+    return {
+      price: { min: prices.length ? Math.min(...prices) : 0, max: prices.length ? Math.max(...prices) : 0 },
+      colors,
+      sizes,
+      equipmentTypes,
+    };
+  }
+
+  private async attributeOptions(productWhere: Prisma.ProductWhereInput, type: ProductAttributeType) {
+    const values = await this.prisma.productAttribute.findMany({
+      where: { type, product: productWhere },
+      select: { value: true },
+      distinct: ["value"],
+      orderBy: { value: "asc" },
+    });
+    return Promise.all(
+      values.map(async ({ value }) => ({
+        value,
+        count: await this.prisma.productAttribute.count({ where: { type, value, product: productWhere } }),
+      }))
+    );
+  }
+
+  private async categoryScope(tx: Prisma.TransactionClient | PrismaService, categoryId: string): Promise<string[]> {
     const categories = await tx.category.findMany({ select: { id: true, parentId: true } });
     const categoryIds = new Set([categoryId]);
 

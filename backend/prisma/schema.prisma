@@ -20,6 +20,12 @@ enum DiscountType {
   FIXED_AMOUNT
 }
 
+enum ProductAttributeType {
+  COLOR
+  SIZE
+  EQUIPMENT_TYPE
+}
+
 model User {
   id           String           @id @default(uuid()) @db.Uuid
   email        String           @unique
@@ -83,17 +89,31 @@ model Category {
 }
 
 model Product {
-  id          String            @id @default(uuid()) @db.Uuid
-  key         String            @unique
-  slug        String            @unique
+  id          String             @id @default(uuid()) @db.Uuid
+  key         String             @unique
+  slug        String             @unique
   name        String
   description String?
-  isActive    Boolean           @default(true)
+  isActive    Boolean            @default(true)
   variant     ProductVariant?
   images      ProductImage[]
   categories  ProductCategory[]
-  createdAt   DateTime          @default(now())
-  updatedAt   DateTime          @updatedAt
+  attributes  ProductAttribute[]
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+}
+
+model ProductAttribute {
+  id        String               @id @default(uuid()) @db.Uuid
+  productId String               @db.Uuid
+  product   Product              @relation(fields: [productId], references: [id], onDelete: Cascade)
+  type      ProductAttributeType
+  value     String
+  createdAt DateTime             @default(now())
+
+  @@unique([productId, type, value])
+  @@index([type, value])
+  @@index([productId])
 }
 
 model ProductVariant {

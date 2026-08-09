@@ -1,10 +1,10 @@
-import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { act, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { createMemoryRouter, MemoryRouter, Outlet, Route, RouterProvider, Routes, useLocation } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import i18n from "../../i18n/i18n";
 import { fetchCategoryBySlug, fetchChildCategories } from "../../services/categoryService/categoryService";
-import { fetchProductPage } from "../../services/productService/productService";
+import { fetchCatalogFilters, fetchProductPage } from "../../services/productService/productService";
 import type { Product } from "../../services/productService/types";
 import NotFoundPage from "../NotFound/NotFound";
 import CategoryPage from "./Category";
@@ -15,6 +15,7 @@ vi.mock("../../services/categoryService/categoryService", () => ({
 }));
 
 vi.mock("../../services/productService/productService", () => ({
+  fetchCatalogFilters: vi.fn(),
   fetchProductPage: vi.fn(),
 }));
 
@@ -91,8 +92,18 @@ describe("CategoryPage", () => {
     await i18n.changeLanguage("en");
     vi.mocked(fetchChildCategories).mockReset();
     vi.mocked(fetchCategoryBySlug).mockReset();
+    vi.mocked(fetchCatalogFilters).mockReset();
     vi.mocked(fetchProductPage).mockReset();
     vi.mocked(fetchChildCategories).mockResolvedValue([{ id: "balls", name: "Balls", slug: "balls", parentId: null }]);
+    vi.mocked(fetchCatalogFilters).mockResolvedValue({
+      price: { min: 2499, max: 8999 },
+      colors: [
+        { value: "blue", count: 2 },
+        { value: "red", count: 1 },
+      ],
+      sizes: [{ value: "standard", count: 3 }],
+      equipmentTypes: [{ value: "hydration", count: 1 }],
+    });
     vi.mocked(fetchProductPage).mockImplementation(async (query = {}) => {
       const { offset = 0, limit = 6 } = query;
       return {
@@ -142,7 +153,7 @@ describe("CategoryPage", () => {
     renderCatalog();
 
     await screen.findByText("Showing 1-6 of 8 products");
-    fireEvent.change(screen.getByRole("combobox", { name: "Sort products" }), {
+    fireEvent.change(screen.getAllByRole("combobox", { name: "Sort products" })[0], {
       target: { value: "price desc" },
     });
 
@@ -153,8 +164,45 @@ describe("CategoryPage", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "Open catalog options" }));
 
-    expect(screen.getByRole("dialog", { name: "Catalog options" })).toBeVisible();
+    expect(screen.getByRole("dialog", { name: "Filters" })).toBeVisible();
     expect(screen.getAllByRole("link", { name: "Balls" })).toHaveLength(2);
+  });
+
+  it("applies catalog filters to the URL and the server query", async () => {
+    renderCatalog();
+
+    await screen.findByText("Showing 1-6 of 8 products");
+    fireEvent.click(screen.getByRole("button", { name: "Open catalog options" }));
+    const dialog = screen.getByRole("dialog", { name: "Filters" });
+    fireEvent.click(within(dialog).getByRole("button", { name: "Blue (2)" }));
+    fireEvent.click(within(dialog).getByRole("button", { name: "Apply filters" }));
+
+    await waitFor(() =>
+      expect(screen.getByRole("status", { name: "Location search" })).toHaveTextContent("colors=blue")
+    );
+    expect(fetchProductPage).toHaveBeenLastCalledWith(expect.objectContaining({ colors: ["blue"] }));
+  });
+
+  it("collapses and expands individual filter sections", async () => {
+    renderCatalog();
+
+    await screen.findByText("Showing 1-6 of 8 products");
+    fireEvent.click(screen.getByRole("button", { name: "Open catalog options" }));
+    const dialog = screen.getByRole("dialog", { name: "Filters" });
+    const colorsToggle = within(dialog).getByRole("button", { name: "Colors" });
+
+    expect(colorsToggle).toHaveAttribute("aria-expanded", "true");
+    expect(within(dialog).getByRole("button", { name: "Blue (2)" })).toBeVisible();
+
+    fireEvent.click(colorsToggle);
+
+    expect(colorsToggle).toHaveAttribute("aria-expanded", "false");
+    expect(within(dialog).queryByRole("button", { name: "Blue (2)" })).not.toBeInTheDocument();
+
+    fireEvent.click(colorsToggle);
+
+    expect(colorsToggle).toHaveAttribute("aria-expanded", "true");
+    expect(within(dialog).getByRole("button", { name: "Blue (2)" })).toBeVisible();
   });
 
   it("localizes catalog summaries and controls", async () => {
@@ -163,7 +211,7 @@ describe("CategoryPage", () => {
 
     expect(await screen.findByText("Показано 1-6 из 8 товаров")).toBeVisible();
     expect(screen.getByRole("heading", { level: 1, name: "Все товары" })).toBeVisible();
-    expect(screen.getByRole("combobox", { name: "Сортировка товаров" })).toBeVisible();
+    expect(screen.getAllByRole("combobox", { name: "Сортировка товаров" })[0]).toBeVisible();
     expect(screen.getByRole("button", { name: "Открыть параметры каталога" })).toBeVisible();
   });
 

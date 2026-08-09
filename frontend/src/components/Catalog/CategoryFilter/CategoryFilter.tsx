@@ -16,18 +16,25 @@ type CategoryFilterProps = {
   items: CategoryFilterItem[];
   onNavigate?: () => void;
   className?: string;
+  embedded?: boolean;
 };
 
-export function CategoryFilter({ className = "", items, onNavigate }: CategoryFilterProps) {
+export function CategoryFilter({ className = "", embedded = false, items, onNavigate }: CategoryFilterProps) {
   const { t } = useTranslation("common");
   const titleId = useId();
 
   return (
-    <section aria-labelledby={titleId} className={`category-filter ${className}`.trim()}>
-      <div className="category-filter__header">
-        <h2 id={titleId}>{t("catalogNavigation.categories")}</h2>
-        <PiSlidersHorizontal aria-hidden="true" />
-      </div>
+    <section
+      aria-label={embedded ? t("catalogNavigation.categories") : undefined}
+      aria-labelledby={embedded ? undefined : titleId}
+      className={`category-filter ${embedded ? "category-filter--embedded" : ""} ${className}`.trim()}
+    >
+      {!embedded && (
+        <div className="category-filter__header">
+          <h2 id={titleId}>{t("catalogNavigation.categories")}</h2>
+          <PiSlidersHorizontal aria-hidden="true" />
+        </div>
+      )}
 
       <ul className="category-filter__list">
         <li>

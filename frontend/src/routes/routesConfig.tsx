@@ -13,44 +13,48 @@ import { actionCustomerData } from "./DataHandlers/Profile/ProfileActions";
 import ProductPage from "../pages/Product/Product";
 import BasketPage from "../pages/Basket/Basket";
 import { GuestOnlyRoute } from "./guards/GuestOnlyRoute";
+import { ScrollToTopLayout } from "./ScrollToTopLayout";
 
 const router = createBrowserRouter(
   [
     {
-      path: "/",
-      Component: MainLayout,
+      Component: ScrollToTopLayout,
       errorElement: <NotFoundPage />,
       children: [
-        { index: true, Component: HomePage },
         {
-          Component: GuestOnlyRoute,
+          path: "/",
+          Component: MainLayout,
+          errorElement: <NotFoundPage />,
           children: [
-            { path: "login", Component: LoginPage },
-            { path: "sign-up", Component: RegistrationPage },
+            { index: true, Component: HomePage },
+            {
+              Component: GuestOnlyRoute,
+              children: [
+                { path: "login", Component: LoginPage },
+                { path: "sign-up", Component: RegistrationPage },
+              ],
+            },
+            {
+              path: "profile",
+              loader: loadCutomerData,
+              action: actionCustomerData,
+              Component: UserPage,
+              errorElement: <ProfileFallBack />,
+            },
+            {
+              path: "catalog/*",
+              Component: CategoryPage,
+            },
+            { path: "product/:id", Component: ProductPage },
+            { path: "about", Component: AboutPage },
+            {
+              path: "basket",
+              Component: BasketPage,
+            },
           ],
         },
-        {
-          path: "profile",
-          loader: loadCutomerData,
-          action: actionCustomerData,
-          Component: UserPage,
-          errorElement: <ProfileFallBack />,
-        },
-        {
-          path: "catalog/*",
-          Component: CategoryPage,
-        },
-        { path: "product/:id", Component: ProductPage },
-        { path: "about", Component: AboutPage },
-        {
-          path: "basket",
-          Component: BasketPage,
-        },
+        { path: "*", Component: NotFoundPage },
       ],
-    },
-    {
-      path: "*",
-      Component: NotFoundPage,
     },
   ],
   {

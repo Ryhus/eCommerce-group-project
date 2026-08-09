@@ -15,3 +15,23 @@ export interface ProductPage {
   limit: number;
   total: number;
 }
+
+export interface CatalogFilterOption {
+  value: string;
+  count: number;
+}
+
+export interface CatalogFilters {
+  price: { min: number; max: number };
+  colors: CatalogFilterOption[];
+  sizes: CatalogFilterOption[];
+  equipmentTypes: CatalogFilterOption[];
+}
+
+export interface ProductFilterState {
+  minPrice?: number;
+  maxPrice?: number;
+  colors: string[];
+  sizes: string[];
+  equipmentTypes: string[];
+}

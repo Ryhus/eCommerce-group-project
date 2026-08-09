@@ -69,7 +69,7 @@ describe("HeaderActions", () => {
 
     expect(screen.getByRole("link", { name: "Shopping cart, 3 items" })).toHaveTextContent("3");
     expect(screen.getByRole("link", { name: "Open Yevhen's account" })).toHaveAttribute("href", "/profile");
-    expect(screen.getByRole("link", { name: "Open Yevhen's account" })).toHaveTextContent("YRHi, YevhenMy account");
+    expect(screen.getByRole("link", { name: "Open Yevhen's account" })).toHaveTextContent("YRYevhenMy account");
   });
 
   it("does not expose the wrong account destination while authentication is loading", () => {

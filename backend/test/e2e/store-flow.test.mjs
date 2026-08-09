@@ -41,6 +41,24 @@ test("merges an anonymous cart on registration and protects profile data", async
     .expect(200)
     .expect(({ body }) => assert.ok(body[0].children.length > 0));
   await agent
+    .get("/api/v1/catalog/filters")
+    .expect(200)
+    .expect(({ body }) => {
+      assert.equal(body.price.min, 2499);
+      assert.equal(body.price.max, 8999);
+      assert.ok(body.colors.some((option) => option.value === "navy" && option.count === 1));
+      assert.ok(body.sizes.some((option) => option.value === "25-l" && option.count === 1));
+    });
+  await agent
+    .get("/api/v1/catalog/products")
+    .query({ colors: "navy", sizes: "25-l", limit: 100 })
+    .expect(200)
+    .expect(({ body }) => {
+      assert.equal(body.total, 1);
+      assert.equal(body.items[0].name, "Training Backpack");
+    });
+  await agent.get("/api/v1/catalog/products").query({ minPrice: 9000, maxPrice: 2000 }).expect(400);
+  await agent
     .get("/api/v1/promotions/public")
     .expect(200)
     .expect(({ body }) => assert.ok(body.some((promotion) => promotion.code === "WELCOME10")));

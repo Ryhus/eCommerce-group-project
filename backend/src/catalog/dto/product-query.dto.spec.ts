@@ -19,4 +19,29 @@ describe("ProductQueryDto", () => {
 
     expect(await validate(query)).not.toHaveLength(0);
   });
+
+  it("normalizes comma-separated filter values and price bounds", async () => {
+    const query = plainToInstance(ProductQueryDto, {
+      minPrice: "2500",
+      maxPrice: "8000",
+      colors: "Blue, blue, RED",
+      sizes: [" Standard ", "large"],
+    });
+
+    expect(query).toMatchObject({
+      minPrice: 2500,
+      maxPrice: 8000,
+      colors: ["blue", "red"],
+      sizes: ["standard", "large"],
+    });
+    expect(await validate(query)).toHaveLength(0);
+  });
+
+  it("limits the number of values accepted by a facet", async () => {
+    const query = plainToInstance(ProductQueryDto, {
+      colors: Array.from({ length: 21 }, (_, index) => `color-${index}`).join(","),
+    });
+
+    expect(await validate(query)).not.toHaveLength(0);
+  });
 });

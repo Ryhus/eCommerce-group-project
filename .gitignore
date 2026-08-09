@@ -36,3 +36,4 @@ eslint.config.js
 *.sw?
 .flaskenv*
 /design-reference
+**/.vite/
