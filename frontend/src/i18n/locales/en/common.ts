@@ -145,6 +145,49 @@ export const enCommon = {
     options: "Catalog options",
     closeOptions: "Close catalog options",
   },
+  catalogFilters: {
+    title: "Filters",
+    loading: "Loading filters…",
+    price: "Price",
+    minimumPrice: "Minimum price",
+    maximumPrice: "Maximum price",
+    colors: "Colors",
+    sizes: "Sizes",
+    equipmentType: "Sport / use",
+    apply: "Apply filters",
+    clear: "Clear all",
+    values: {
+      orange: "Orange",
+      brown: "Brown",
+      red: "Red",
+      black: "Black",
+      green: "Green",
+      blue: "Blue",
+      navy: "Navy",
+      purple: "Purple",
+      white: "White",
+      yellow: "Yellow",
+      standard: "Standard",
+      small: "Small",
+      medium: "Medium",
+      large: "Large",
+      "size-5": "Size 5",
+      "size-7": "Size 7",
+      "eu-42": "EU 42",
+      "20-kg": "20 kg",
+      "750-ml": "750 ml",
+      "grip-3": "Grip 3",
+      "25-l": "25 L",
+      football: "Football",
+      basketball: "Basketball",
+      shoes: "Footwear",
+      strength: "Strength",
+      yoga: "Yoga",
+      hydration: "Hydration",
+      tennis: "Tennis",
+      accessories: "Accessories",
+    },
+  },
   sorting: {
     label: "Sort by:",
     control: "Sort products",
@@ -453,8 +496,6 @@ export const enCommon = {
   },
 } as const;
 
-export type CommonTranslations = {
-  [Key in keyof typeof enCommon]: {
-    [NestedKey in keyof (typeof enCommon)[Key]]: string;
-  };
-};
+type TranslationValue<T> = T extends Record<string, unknown> ? { [Key in keyof T]: TranslationValue<T[Key]> } : string;
+
+export type CommonTranslations = TranslationValue<typeof enCommon>;

@@ -49,6 +49,36 @@ export class ProductPageDto {
   total!: number;
 }
 
+export class FilterOptionDto {
+  @ApiProperty()
+  value!: string;
+
+  @ApiProperty()
+  count!: number;
+}
+
+export class PriceRangeDto {
+  @ApiProperty({ description: "Price in EUR minor units" })
+  min!: number;
+
+  @ApiProperty({ description: "Price in EUR minor units" })
+  max!: number;
+}
+
+export class CatalogFiltersDto {
+  @ApiProperty({ type: PriceRangeDto })
+  price!: PriceRangeDto;
+
+  @ApiProperty({ type: FilterOptionDto, isArray: true })
+  colors!: FilterOptionDto[];
+
+  @ApiProperty({ type: FilterOptionDto, isArray: true })
+  sizes!: FilterOptionDto[];
+
+  @ApiProperty({ type: FilterOptionDto, isArray: true })
+  equipmentTypes!: FilterOptionDto[];
+}
+
 export class CategoryDto {
   @ApiProperty({ format: "uuid" })
   id!: string;

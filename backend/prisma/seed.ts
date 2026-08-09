@@ -1,5 +1,5 @@
 import { PrismaPg } from "@prisma/adapter-pg";
-import { DiscountType, PrismaClient } from "@prisma/client";
+import { DiscountType, PrismaClient, ProductAttributeType } from "@prisma/client";
 
 const connectionString = process.env.DATABASE_URL;
 if (!connectionString) throw new Error("DATABASE_URL is required for seeding");
@@ -106,6 +106,26 @@ const products = [
   },
 ];
 
+const attributeValues: Record<string, { colors: string[]; size: string }> = {
+  football: { colors: ["blue", "white"], size: "size-5" },
+  basketball: { colors: ["orange"], size: "size-7" },
+  shoes: { colors: ["red"], size: "eu-42" },
+  strength: { colors: ["black"], size: "20-kg" },
+  yoga: { colors: ["black", "blue", "green", "purple"], size: "standard" },
+  hydration: { colors: ["green"], size: "750-ml" },
+  tennis: { colors: ["black"], size: "grip-3" },
+  accessories: { colors: ["navy"], size: "25-l" },
+};
+
+function productAttributes(categoryKey: string) {
+  const values = attributeValues[categoryKey] ?? { colors: ["black"], size: "standard" };
+  return [
+    ...values.colors.map((value) => ({ type: ProductAttributeType.COLOR, value })),
+    { type: ProductAttributeType.SIZE, value: values.size },
+    { type: ProductAttributeType.EQUIPMENT_TYPE, value: categoryKey },
+  ];
+}
+
 async function main() {
   const categoryIds = new Map<string, string>();
 
@@ -155,6 +175,7 @@ async function main() {
         },
         images: { deleteMany: {}, create: [{ url: product.image, alt: product.name, sortOrder: 0 }] },
         categories: { deleteMany: {}, create: [{ categoryId }] },
+        attributes: { deleteMany: {}, create: productAttributes(product.categoryKey) },
       },
       create: {
         key: product.key,
@@ -170,6 +191,7 @@ async function main() {
         },
         images: { create: [{ url: product.image, alt: product.name, sortOrder: 0 }] },
         categories: { create: [{ categoryId }] },
+        attributes: { create: productAttributes(product.categoryKey) },
       },
     });
   }

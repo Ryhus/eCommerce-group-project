@@ -1,5 +1,25 @@
 import { Transform, Type } from "class-transformer";
-import { IsEnum, IsInt, IsOptional, IsString, IsUUID, Max, MaxLength, Min } from "class-validator";
+import {
+  ArrayMaxSize,
+  IsArray,
+  IsEnum,
+  IsInt,
+  IsOptional,
+  IsString,
+  IsUUID,
+  Max,
+  MaxLength,
+  Min,
+} from "class-validator";
+
+function listValue(value: unknown): string[] | undefined {
+  if (value == null) return undefined;
+  const values = (Array.isArray(value) ? value : String(value).split(","))
+    .flatMap((item) => String(item).split(","))
+    .map((item) => item.trim().toLowerCase())
+    .filter(Boolean);
+  return values.length ? [...new Set(values)] : undefined;
+}
 
 export enum ProductSort {
   RELEVANCE = "RELEVANCE",
@@ -19,6 +39,39 @@ export class ProductQueryDto {
   @IsOptional()
   @IsUUID()
   categoryId?: string;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(0)
+  minPrice?: number;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(0)
+  maxPrice?: number;
+
+  @IsOptional()
+  @Transform(({ value }) => listValue(value))
+  @IsArray()
+  @ArrayMaxSize(20)
+  @IsString({ each: true })
+  colors?: string[];
+
+  @IsOptional()
+  @Transform(({ value }) => listValue(value))
+  @IsArray()
+  @ArrayMaxSize(20)
+  @IsString({ each: true })
+  sizes?: string[];
+
+  @IsOptional()
+  @Transform(({ value }) => listValue(value))
+  @IsArray()
+  @ArrayMaxSize(20)
+  @IsString({ each: true })
+  equipmentTypes?: string[];
 
   @IsOptional()
   @IsEnum(ProductSort)
