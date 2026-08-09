@@ -183,6 +183,28 @@ describe("CategoryPage", () => {
     expect(fetchProductPage).toHaveBeenLastCalledWith(expect.objectContaining({ colors: ["blue"] }));
   });
 
+  it("collapses and expands individual filter sections", async () => {
+    renderCatalog();
+
+    await screen.findByText("Showing 1-6 of 8 products");
+    fireEvent.click(screen.getByRole("button", { name: "Open catalog options" }));
+    const dialog = screen.getByRole("dialog", { name: "Filters" });
+    const colorsToggle = within(dialog).getByRole("button", { name: "Colors" });
+
+    expect(colorsToggle).toHaveAttribute("aria-expanded", "true");
+    expect(within(dialog).getByRole("button", { name: "Blue (2)" })).toBeVisible();
+
+    fireEvent.click(colorsToggle);
+
+    expect(colorsToggle).toHaveAttribute("aria-expanded", "false");
+    expect(within(dialog).queryByRole("button", { name: "Blue (2)" })).not.toBeInTheDocument();
+
+    fireEvent.click(colorsToggle);
+
+    expect(colorsToggle).toHaveAttribute("aria-expanded", "true");
+    expect(within(dialog).getByRole("button", { name: "Blue (2)" })).toBeVisible();
+  });
+
   it("localizes catalog summaries and controls", async () => {
     await i18n.changeLanguage("ru");
     renderCatalog();

@@ -1,4 +1,4 @@
-import { useId, type ChangeEvent, type CSSProperties } from "react";
+import { useId, useState, type ChangeEvent, type CSSProperties, type ReactNode } from "react";
 import { PiCaretUp, PiCheck, PiSlidersHorizontal } from "react-icons/pi";
 import { useTranslation } from "react-i18next";
 
@@ -16,6 +16,11 @@ type CatalogFilterPanelProps = {
   categoryItems: CategoryFilterItem[];
   onNavigate?: () => void;
   showHeader?: boolean;
+};
+
+type CollapsibleFilterSectionProps = {
+  children: ReactNode;
+  label: string;
 };
 
 const SWATCH_CLASSES: Record<string, string> = {
@@ -38,6 +43,33 @@ function toggleValue(values: string[], value: string): string[] {
 function priceLabel(amount: number, language: string): string {
   return new Intl.NumberFormat(language, { currency: "EUR", maximumFractionDigits: 2, style: "currency" }).format(
     amount / 100
+  );
+}
+
+function CollapsibleFilterSection({ children, label }: CollapsibleFilterSectionProps) {
+  const [isExpanded, setIsExpanded] = useState(true);
+  const contentId = useId();
+
+  return (
+    <fieldset className="catalog-filter-panel__section">
+      <legend>
+        <button
+          aria-controls={contentId}
+          aria-expanded={isExpanded}
+          className="catalog-filter-panel__section-toggle"
+          onClick={() => setIsExpanded((current) => !current)}
+          type="button"
+        >
+          <span>{label}</span>
+          <PiCaretUp aria-hidden="true" />
+        </button>
+      </legend>
+      {isExpanded && (
+        <div className="catalog-filter-panel__section-content" id={contentId}>
+          {children}
+        </div>
+      )}
+    </fieldset>
   );
 }
 
@@ -122,13 +154,7 @@ export function CatalogFilterPanel({
       {panelHeader}
       <CategoryFilter embedded items={categoryItems} onNavigate={onNavigate} />
 
-      <fieldset className="catalog-filter-panel__section">
-        <legend>
-          <span>
-            {t("catalogFilters.price")}
-            <PiCaretUp aria-hidden="true" />
-          </span>
-        </legend>
+      <CollapsibleFilterSection label={t("catalogFilters.price")}>
         <div
           className="catalog-filter-panel__range"
           style={{ "--range-start": `${rangeStart}%`, "--range-end": `${rangeEnd}%` } as CSSProperties}
@@ -158,15 +184,9 @@ export function CatalogFilterPanel({
           <span>{priceLabel(selectedMin, i18n.resolvedLanguage ?? i18n.language)}</span>
           <span>{priceLabel(selectedMax, i18n.resolvedLanguage ?? i18n.language)}</span>
         </div>
-      </fieldset>
+      </CollapsibleFilterSection>
 
-      <fieldset className="catalog-filter-panel__section">
-        <legend>
-          <span>
-            {t("catalogFilters.colors")}
-            <PiCaretUp aria-hidden="true" />
-          </span>
-        </legend>
+      <CollapsibleFilterSection label={t("catalogFilters.colors")}>
         <div className="catalog-filter-panel__swatches">
           {options.colors.map((option) => (
             <button
@@ -183,15 +203,9 @@ export function CatalogFilterPanel({
             </button>
           ))}
         </div>
-      </fieldset>
+      </CollapsibleFilterSection>
 
-      <fieldset className="catalog-filter-panel__section">
-        <legend>
-          <span>
-            {t("catalogFilters.sizes")}
-            <PiCaretUp aria-hidden="true" />
-          </span>
-        </legend>
+      <CollapsibleFilterSection label={t("catalogFilters.sizes")}>
         <div className="catalog-filter-panel__chips">
           {options.sizes.map((option) => (
             <button
@@ -205,15 +219,9 @@ export function CatalogFilterPanel({
             </button>
           ))}
         </div>
-      </fieldset>
+      </CollapsibleFilterSection>
 
-      <fieldset className="catalog-filter-panel__section">
-        <legend>
-          <span>
-            {t("catalogFilters.equipmentType")}
-            <PiCaretUp aria-hidden="true" />
-          </span>
-        </legend>
+      <CollapsibleFilterSection label={t("catalogFilters.equipmentType")}>
         <div className="catalog-filter-panel__chips">
           {options.equipmentTypes.map((option) => (
             <button
@@ -227,7 +235,7 @@ export function CatalogFilterPanel({
             </button>
           ))}
         </div>
-      </fieldset>
+      </CollapsibleFilterSection>
 
       <button className="catalog-filter-panel__apply" onClick={onApply} type="button">
         {t("catalogFilters.apply")}
