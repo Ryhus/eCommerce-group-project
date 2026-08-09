@@ -17,6 +17,7 @@ export default defineConfig(({ mode }) => ({
   // lint transform keeps standalone service builds independent of root config.
   plugins: [react(), ...(mode === "production" ? [] : [eslint()])],
   server: {
+    host: true,
     proxy: apiProxy,
   },
   preview: {
