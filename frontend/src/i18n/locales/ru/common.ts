@@ -47,7 +47,6 @@ export const ruCommon = {
     signIn: "Войти",
     openNamedAccount: "Открыть аккаунт пользователя {{name}}",
     openAccount: "Открыть ваш аккаунт",
-    greeting: "Привет, {{name}}",
     myAccount: "Мой аккаунт",
     yourAccount: "Ваш аккаунт",
   },
