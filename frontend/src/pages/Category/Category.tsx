@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useLocation, useSearchParams } from "react-router-dom";
 
 import Breadcrumbs, { type Crumb } from "../../components/Breadcrumbs/Breadcrumbs";
-import { CategoryFilter, type CategoryFilterItem } from "../../components/Catalog/CategoryFilter/CategoryFilter";
+import type { CategoryFilterItem } from "../../components/Catalog/CategoryFilter/CategoryFilter";
 import { CatalogFilterPanel } from "../../components/Catalog/CatalogFilterPanel/CatalogFilterPanel";
 import { FilterDrawer } from "../../components/Catalog/FilterDrawer/FilterDrawer";
 import { PageContainer } from "../../components/common/PageContainer/PageContainer";
@@ -264,8 +264,8 @@ export default function CategoryPage() {
 
       <div className="category-page__layout">
         <aside className="category-page__sidebar">
-          <CategoryFilter items={visibleCategoryItems} />
           <CatalogFilterPanel
+            categoryItems={visibleCategoryItems}
             onApply={() => applyFilters(draftFilters)}
             onChange={setDraftFilters}
             onClear={clearFilters}
@@ -288,16 +288,19 @@ export default function CategoryPage() {
             </div>
 
             <Sorting className="category-page__desktop-sort" currentSort={currentSort} onSortChange={updateSort} />
-            <button
-              aria-controls="catalog-options"
-              aria-expanded={isDrawerOpen}
-              aria-label={t("catalog.openOptions")}
-              className="category-page__filter-toggle"
-              onClick={() => setIsDrawerOpen(true)}
-              type="button"
-            >
-              <PiSlidersHorizontal aria-hidden="true" />
-            </button>
+            <div className="category-page__mobile-actions">
+              <Sorting className="category-page__mobile-sort" currentSort={currentSort} onSortChange={updateSort} />
+              <button
+                aria-controls="catalog-options"
+                aria-expanded={isDrawerOpen}
+                aria-label={t("catalog.openOptions")}
+                className="category-page__filter-toggle"
+                onClick={() => setIsDrawerOpen(true)}
+                type="button"
+              >
+                <PiSlidersHorizontal aria-hidden="true" />
+              </button>
+            </div>
           </header>
 
           {isLoading ? (
@@ -332,17 +335,18 @@ export default function CategoryPage() {
       </div>
 
       <div id="catalog-options">
-        <FilterDrawer isOpen={isDrawerOpen} onClose={closeDrawer}>
-          <Sorting currentSort={currentSort} onSortChange={updateSort} />
-          <CategoryFilter items={visibleCategoryItems} onNavigate={() => setIsDrawerOpen(false)} />
+        <FilterDrawer isOpen={isDrawerOpen} onClose={closeDrawer} title={t("catalogFilters.title")}>
           <CatalogFilterPanel
+            categoryItems={visibleCategoryItems}
             onApply={() => {
               applyFilters(draftFilters);
               setIsDrawerOpen(false);
             }}
             onChange={setDraftFilters}
             onClear={clearFilters}
+            onNavigate={closeDrawer}
             options={filterOptions}
+            showHeader={false}
             value={draftFilters}
           />
         </FilterDrawer>

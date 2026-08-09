@@ -34,6 +34,21 @@
   list-style: none;
 }
 
+.category-filter--embedded {
+  padding: 0 0 var(--space-4);
+  border: 0;
+  border-bottom: var(--border-subtle);
+  border-radius: 0;
+
+  .category-filter__list {
+    padding-top: 0;
+  }
+
+  .category-filter__link {
+    padding-inline: 0;
+  }
+}
+
 .category-filter__link {
   display: flex;
   min-height: 4rem;

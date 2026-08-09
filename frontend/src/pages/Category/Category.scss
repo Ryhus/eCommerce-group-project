@@ -71,6 +71,11 @@
   }
 }
 
+.category-page__mobile-actions,
+.category-page__mobile-sort {
+  display: none;
+}
+
 .category-products {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -187,6 +192,30 @@
   .category-page__filter-toggle {
     display: inline-flex;
     flex: none;
+  }
+
+  .category-page__mobile-actions {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .category-page__mobile-sort {
+    display: inline-flex;
+    width: auto;
+
+    .sorting__label {
+      display: none;
+    }
+
+    .sorting__select {
+      width: 11rem;
+      min-height: 4rem;
+      padding-left: var(--space-3);
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
   }
 
   .category-page__toolbar {

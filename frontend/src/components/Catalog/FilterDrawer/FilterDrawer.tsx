@@ -8,9 +8,10 @@ type FilterDrawerProps = {
   children: ReactNode;
   isOpen: boolean;
   onClose: () => void;
+  title?: string;
 };
 
-export function FilterDrawer({ children, isOpen, onClose }: FilterDrawerProps) {
+export function FilterDrawer({ children, isOpen, onClose, title }: FilterDrawerProps) {
   const { t } = useTranslation("common");
 
   useEffect(() => {
@@ -41,7 +42,7 @@ export function FilterDrawer({ children, isOpen, onClose }: FilterDrawerProps) {
     >
       <aside aria-labelledby="filter-drawer-title" aria-modal="true" className="filter-drawer" role="dialog">
         <div className="filter-drawer__header">
-          <h2 id="filter-drawer-title">{t("catalogNavigation.options")}</h2>
+          <h2 id="filter-drawer-title">{title ?? t("catalogNavigation.options")}</h2>
           <button aria-label={t("catalogNavigation.closeOptions")} onClick={onClose} type="button">
             <PiX aria-hidden="true" />
           </button>

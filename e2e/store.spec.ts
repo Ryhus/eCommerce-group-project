@@ -84,15 +84,22 @@ test("localizes catalog controls across desktop and mobile layouts", async ({ pa
   await expect(page.getByRole("navigation", { name: "Katalogseiten" })).toBeVisible();
 
   await page.setViewportSize({ width: 390, height: 844 });
+  await expect(page.getByRole("combobox", { name: "Produkte sortieren" })).toBeVisible();
   await page.getByRole("button", { name: "Katalogoptionen öffnen" }).click();
 
-  const drawer = page.getByRole("dialog", { name: "Katalogoptionen" });
+  const drawer = page.getByRole("dialog", { name: "Filter" });
   await expect(drawer).toBeVisible();
-  await expect(drawer.getByRole("combobox", { name: "Produkte sortieren" })).toBeVisible();
   await expect(drawer.getByRole("region", { name: "Kategorien" })).toContainText("Alle Produkte");
+  await expect(drawer.getByText("Preis", { exact: true })).toBeVisible();
+  await expect(drawer.getByText("Farben", { exact: true })).toBeVisible();
+  await expect(drawer.getByText("Größen", { exact: true })).toBeVisible();
+  await expect(drawer.getByText("Sport / Einsatz", { exact: true })).toBeVisible();
 
-  await drawer.getByRole("button", { name: "Katalogoptionen schließen" }).click();
+  await drawer.getByRole("button", { name: "Dunkelblau (1)" }).click();
+  await drawer.getByRole("button", { name: "Filter anwenden" }).click();
   await expect(drawer).toHaveCount(0);
+  await expect(page).toHaveURL(/colors=navy/);
+  await expect(page.getByText("Training Backpack", { exact: true })).toBeVisible();
 });
 
 test("localizes product purchase and gallery controls", async ({ page }) => {

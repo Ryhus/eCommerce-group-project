@@ -153,7 +153,7 @@ describe("CategoryPage", () => {
     renderCatalog();
 
     await screen.findByText("Showing 1-6 of 8 products");
-    fireEvent.change(screen.getByRole("combobox", { name: "Sort products" }), {
+    fireEvent.change(screen.getAllByRole("combobox", { name: "Sort products" })[0], {
       target: { value: "price desc" },
     });
 
@@ -164,7 +164,7 @@ describe("CategoryPage", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "Open catalog options" }));
 
-    expect(screen.getByRole("dialog", { name: "Catalog options" })).toBeVisible();
+    expect(screen.getByRole("dialog", { name: "Filters" })).toBeVisible();
     expect(screen.getAllByRole("link", { name: "Balls" })).toHaveLength(2);
   });
 
@@ -173,7 +173,7 @@ describe("CategoryPage", () => {
 
     await screen.findByText("Showing 1-6 of 8 products");
     fireEvent.click(screen.getByRole("button", { name: "Open catalog options" }));
-    const dialog = screen.getByRole("dialog", { name: "Catalog options" });
+    const dialog = screen.getByRole("dialog", { name: "Filters" });
     fireEvent.click(within(dialog).getByRole("button", { name: "Blue (2)" }));
     fireEvent.click(within(dialog).getByRole("button", { name: "Apply filters" }));
 
@@ -189,7 +189,7 @@ describe("CategoryPage", () => {
 
     expect(await screen.findByText("Показано 1-6 из 8 товаров")).toBeVisible();
     expect(screen.getByRole("heading", { level: 1, name: "Все товары" })).toBeVisible();
-    expect(screen.getByRole("combobox", { name: "Сортировка товаров" })).toBeVisible();
+    expect(screen.getAllByRole("combobox", { name: "Сортировка товаров" })[0]).toBeVisible();
     expect(screen.getByRole("button", { name: "Открыть параметры каталога" })).toBeVisible();
   });
 

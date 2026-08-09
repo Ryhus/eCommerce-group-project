@@ -6,26 +6,37 @@
   border-radius: var(--radius-md);
   background: var(--color-surface);
   flex-direction: column;
-  gap: var(--space-5);
 }
 
 .catalog-filter-panel__loading {
   margin: 0;
-  padding: var(--space-5) var(--space-6);
-  border: var(--border-subtle);
-  border-radius: var(--radius-md);
+  padding: var(--space-5) 0;
   color: var(--color-text-muted);
   font-size: var(--font-size-sm);
 }
 
 .catalog-filter-panel__header {
   display: flex;
+  padding-bottom: var(--space-5);
+  border-bottom: var(--border-subtle);
   align-items: center;
   justify-content: space-between;
 
   h2 {
     margin: 0;
     font-size: var(--font-size-lg);
+  }
+}
+
+.catalog-filter-panel__header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+
+  > svg {
+    width: 2rem;
+    height: 2rem;
+    color: var(--color-text-muted);
   }
 }
 
@@ -42,8 +53,9 @@
 .catalog-filter-panel__section {
   display: flex;
   margin: 0;
-  padding: 0;
+  padding: var(--space-5) 0;
   border: 0;
+  border-bottom: var(--border-subtle);
   flex-direction: column;
   gap: var(--space-3);
 
@@ -52,6 +64,17 @@
     margin-bottom: var(--space-1);
     color: var(--color-ink);
     font-weight: var(--font-weight-semibold);
+
+    > span {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    svg {
+      width: 1.6rem;
+      height: 1.6rem;
+    }
   }
 }
 
@@ -147,18 +170,26 @@
 
 .catalog-filter-panel__swatch {
   display: inline-flex;
-  width: 2.8rem;
-  height: 2.8rem;
+  width: 3.6rem;
+  height: 3.6rem;
   padding: 0;
   border: 0.1rem solid var(--color-border);
   border-radius: var(--radius-pill);
   align-items: center;
   justify-content: center;
+  color: var(--color-surface);
   cursor: pointer;
 
   &[aria-pressed="true"] {
-    outline: 0.2rem solid var(--color-ink);
-    outline-offset: 0.2rem;
+    border-color: var(--color-ink);
+    box-shadow:
+      0 0 0 0.2rem var(--color-surface),
+      0 0 0 0.3rem var(--color-ink);
+  }
+
+  svg {
+    width: 1.8rem;
+    height: 1.8rem;
   }
 }
 
@@ -174,14 +205,21 @@
 .catalog-filter-panel__swatch--green {
   background: #16a34a;
 }
+.catalog-filter-panel__swatch--navy {
+  background: #172554;
+}
 .catalog-filter-panel__swatch--orange {
   background: #f97316;
+}
+.catalog-filter-panel__swatch--purple {
+  background: #7e22ce;
 }
 .catalog-filter-panel__swatch--red {
   background: #dc2626;
 }
 .catalog-filter-panel__swatch--white {
   background: #fff;
+  color: var(--color-ink);
 }
 .catalog-filter-panel__swatch--yellow {
   background: #facc15;
@@ -190,9 +228,9 @@
 .catalog-filter-panel__chip {
   min-height: 3.6rem;
   padding: var(--space-2) var(--space-3);
-  border: var(--border-subtle);
-  border-radius: var(--radius-sm);
-  background: var(--color-surface);
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--color-surface-subtle);
   color: var(--color-text-muted);
   cursor: pointer;
   font-size: var(--font-size-sm);
@@ -214,6 +252,7 @@
 
 .catalog-filter-panel__apply {
   min-height: 4.4rem;
+  margin-top: var(--space-5);
   padding: var(--space-2) var(--space-4);
   border: 0;
   border-radius: var(--radius-pill);
@@ -239,5 +278,6 @@
   .catalog-filter-panel {
     padding: 0;
     border: 0;
+    border-radius: 0;
   }
 }

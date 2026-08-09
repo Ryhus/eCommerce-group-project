@@ -1,6 +1,8 @@
-import type { ChangeEvent, CSSProperties } from "react";
+import { useId, type ChangeEvent, type CSSProperties } from "react";
+import { PiCaretUp, PiCheck, PiSlidersHorizontal } from "react-icons/pi";
 import { useTranslation } from "react-i18next";
 
+import { CategoryFilter, type CategoryFilterItem } from "../CategoryFilter/CategoryFilter";
 import type { CatalogFilters, ProductFilterState } from "../../../services/productService/types";
 
 import "./CatalogFilterPanel.scss";
@@ -11,6 +13,9 @@ type CatalogFilterPanelProps = {
   onChange: (value: ProductFilterState) => void;
   onApply: () => void;
   onClear: () => void;
+  categoryItems: CategoryFilterItem[];
+  onNavigate?: () => void;
+  showHeader?: boolean;
 };
 
 const SWATCH_CLASSES: Record<string, string> = {
@@ -18,7 +23,9 @@ const SWATCH_CLASSES: Record<string, string> = {
   blue: "catalog-filter-panel__swatch--blue",
   brown: "catalog-filter-panel__swatch--brown",
   green: "catalog-filter-panel__swatch--green",
+  navy: "catalog-filter-panel__swatch--navy",
   orange: "catalog-filter-panel__swatch--orange",
+  purple: "catalog-filter-panel__swatch--purple",
   red: "catalog-filter-panel__swatch--red",
   white: "catalog-filter-panel__swatch--white",
   yellow: "catalog-filter-panel__swatch--yellow",
@@ -28,17 +35,55 @@ function toggleValue(values: string[], value: string): string[] {
   return values.includes(value) ? values.filter((item) => item !== value) : [...values, value];
 }
 
-function priceLabel(amount: number): string {
-  return new Intl.NumberFormat(undefined, { currency: "EUR", maximumFractionDigits: 2, style: "currency" }).format(
+function priceLabel(amount: number, language: string): string {
+  return new Intl.NumberFormat(language, { currency: "EUR", maximumFractionDigits: 2, style: "currency" }).format(
     amount / 100
   );
 }
 
-export function CatalogFilterPanel({ options, value, onChange, onApply, onClear }: CatalogFilterPanelProps) {
-  const { t } = useTranslation("common");
+export function CatalogFilterPanel({
+  categoryItems,
+  onApply,
+  onChange,
+  onClear,
+  onNavigate,
+  options,
+  showHeader = true,
+  value,
+}: CatalogFilterPanelProps) {
+  const { i18n, t } = useTranslation("common");
+  const titleId = useId();
+
+  const panelHeader = showHeader ? (
+    <div className="catalog-filter-panel__header">
+      <h2 id={titleId}>{t("catalogFilters.title")}</h2>
+      <div className="catalog-filter-panel__header-actions">
+        {value.minPrice !== undefined ||
+        value.maxPrice !== undefined ||
+        value.colors.length > 0 ||
+        value.sizes.length > 0 ||
+        value.equipmentTypes.length > 0 ? (
+          <button className="catalog-filter-panel__clear-link" onClick={onClear} type="button">
+            {t("catalogFilters.clear")}
+          </button>
+        ) : null}
+        <PiSlidersHorizontal aria-hidden="true" />
+      </div>
+    </div>
+  ) : null;
 
   if (!options) {
-    return <p className="catalog-filter-panel__loading">{t("catalogFilters.loading")}</p>;
+    return (
+      <section
+        aria-label={showHeader ? undefined : t("catalogFilters.title")}
+        aria-labelledby={showHeader ? titleId : undefined}
+        className="catalog-filter-panel"
+      >
+        {panelHeader}
+        <CategoryFilter embedded items={categoryItems} onNavigate={onNavigate} />
+        <p className="catalog-filter-panel__loading">{t("catalogFilters.loading")}</p>
+      </section>
+    );
   }
 
   const minBound = options.price.min;
@@ -52,13 +97,6 @@ export function CatalogFilterPanel({ options, value, onChange, onApply, onClear 
   const rangeSpan = maxBound - minBound;
   const rangeStart = rangeSpan ? ((selectedMin - minBound) / rangeSpan) * 100 : 0;
   const rangeEnd = rangeSpan ? ((selectedMax - minBound) / rangeSpan) * 100 : 100;
-  const hasActiveFilters =
-    value.minPrice !== undefined ||
-    value.maxPrice !== undefined ||
-    value.colors.length > 0 ||
-    value.sizes.length > 0 ||
-    value.equipmentTypes.length > 0;
-
   const labelFor = (filterValue: string) =>
     t(`catalogFilters.values.${filterValue}`, { defaultValue: filterValue.replace(/[-_]/g, " ") });
 
@@ -76,18 +114,21 @@ export function CatalogFilterPanel({ options, value, onChange, onApply, onClear 
   };
 
   return (
-    <section aria-labelledby="catalog-filters-title" className="catalog-filter-panel">
-      <div className="catalog-filter-panel__header">
-        <h2 id="catalog-filters-title">{t("catalogFilters.title")}</h2>
-        {hasActiveFilters && (
-          <button className="catalog-filter-panel__clear-link" onClick={onClear} type="button">
-            {t("catalogFilters.clear")}
-          </button>
-        )}
-      </div>
+    <section
+      aria-label={showHeader ? undefined : t("catalogFilters.title")}
+      aria-labelledby={showHeader ? titleId : undefined}
+      className="catalog-filter-panel"
+    >
+      {panelHeader}
+      <CategoryFilter embedded items={categoryItems} onNavigate={onNavigate} />
 
       <fieldset className="catalog-filter-panel__section">
-        <legend>{t("catalogFilters.price")}</legend>
+        <legend>
+          <span>
+            {t("catalogFilters.price")}
+            <PiCaretUp aria-hidden="true" />
+          </span>
+        </legend>
         <div
           className="catalog-filter-panel__range"
           style={{ "--range-start": `${rangeStart}%`, "--range-end": `${rangeEnd}%` } as CSSProperties}
@@ -114,13 +155,18 @@ export function CatalogFilterPanel({ options, value, onChange, onApply, onClear 
           />
         </div>
         <div className="catalog-filter-panel__range-values">
-          <span>{priceLabel(selectedMin)}</span>
-          <span>{priceLabel(selectedMax)}</span>
+          <span>{priceLabel(selectedMin, i18n.resolvedLanguage ?? i18n.language)}</span>
+          <span>{priceLabel(selectedMax, i18n.resolvedLanguage ?? i18n.language)}</span>
         </div>
       </fieldset>
 
       <fieldset className="catalog-filter-panel__section">
-        <legend>{t("catalogFilters.colors")}</legend>
+        <legend>
+          <span>
+            {t("catalogFilters.colors")}
+            <PiCaretUp aria-hidden="true" />
+          </span>
+        </legend>
         <div className="catalog-filter-panel__swatches">
           {options.colors.map((option) => (
             <button
@@ -132,6 +178,7 @@ export function CatalogFilterPanel({ options, value, onChange, onApply, onClear 
               title={labelFor(option.value)}
               type="button"
             >
+              {value.colors.includes(option.value) && <PiCheck aria-hidden="true" />}
               <span className="catalog-filter-panel__visually-hidden">{labelFor(option.value)}</span>
             </button>
           ))}
@@ -139,7 +186,12 @@ export function CatalogFilterPanel({ options, value, onChange, onApply, onClear 
       </fieldset>
 
       <fieldset className="catalog-filter-panel__section">
-        <legend>{t("catalogFilters.sizes")}</legend>
+        <legend>
+          <span>
+            {t("catalogFilters.sizes")}
+            <PiCaretUp aria-hidden="true" />
+          </span>
+        </legend>
         <div className="catalog-filter-panel__chips">
           {options.sizes.map((option) => (
             <button
@@ -156,7 +208,12 @@ export function CatalogFilterPanel({ options, value, onChange, onApply, onClear 
       </fieldset>
 
       <fieldset className="catalog-filter-panel__section">
-        <legend>{t("catalogFilters.equipmentType")}</legend>
+        <legend>
+          <span>
+            {t("catalogFilters.equipmentType")}
+            <PiCaretUp aria-hidden="true" />
+          </span>
+        </legend>
         <div className="catalog-filter-panel__chips">
           {options.equipmentTypes.map((option) => (
             <button
