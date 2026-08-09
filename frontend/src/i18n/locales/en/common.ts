@@ -45,7 +45,6 @@ export const enCommon = {
     signIn: "Sign in",
     openNamedAccount: "Open {{name}}'s account",
     openAccount: "Open your account",
-    greeting: "Hi, {{name}}",
     myAccount: "My account",
     yourAccount: "Your account",
   },
