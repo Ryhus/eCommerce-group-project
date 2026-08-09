@@ -67,13 +67,7 @@ export function HeaderActions({ className = "", ...props }: HeaderActionsProps) 
             </span>
           )}
           <span className="header-actions__account-copy">
-            <strong>
-              {isAuthenticated
-                ? firstName
-                  ? t("headerActions.greeting", { name: firstName })
-                  : t("headerActions.myAccount")
-                : t("headerActions.signIn")}
-            </strong>
+            <strong>{isAuthenticated ? firstName || t("headerActions.myAccount") : t("headerActions.signIn")}</strong>
             <span>{isAuthenticated ? t("headerActions.myAccount") : t("headerActions.yourAccount")}</span>
           </span>
         </Link>

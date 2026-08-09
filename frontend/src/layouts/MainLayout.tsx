@@ -10,8 +10,8 @@ import "./MainLayout.scss";
 function MainLayout() {
   return (
     <div className="app-shell">
-      <AnnouncementBar />
       <AuthProvider>
+        <AnnouncementBar />
         <CartDataProvider>
           <Header />
           <main className="app-shell__main">

@@ -284,7 +284,7 @@ test("registers, shops with a promo code, opens profile and logs out", async ({ 
 
   const accountLink = page.getByRole("link", { name: "Open Playwright's account" });
   await expect(accountLink).toContainText("PU");
-  await expect(accountLink).toContainText("Hi, Playwright");
+  await expect(accountLink).toContainText("Playwright");
 
   await page.goto("/login");
   await expect(page).toHaveURL(/\/$/);

@@ -47,7 +47,6 @@ export const deCommon = {
     signIn: "Anmelden",
     openNamedAccount: "Konto von {{name}} öffnen",
     openAccount: "Dein Konto öffnen",
-    greeting: "Hallo, {{name}}",
     myAccount: "Mein Konto",
     yourAccount: "Dein Konto",
   },
