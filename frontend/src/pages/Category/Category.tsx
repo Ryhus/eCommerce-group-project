@@ -5,6 +5,7 @@ import { useLocation, useSearchParams } from "react-router-dom";
 
 import Breadcrumbs, { type Crumb } from "../../components/Breadcrumbs/Breadcrumbs";
 import { CategoryFilter, type CategoryFilterItem } from "../../components/Catalog/CategoryFilter/CategoryFilter";
+import { CatalogFilterPanel } from "../../components/Catalog/CatalogFilterPanel/CatalogFilterPanel";
 import { FilterDrawer } from "../../components/Catalog/FilterDrawer/FilterDrawer";
 import { PageContainer } from "../../components/common/PageContainer/PageContainer";
 import { Pagination } from "../../components/common/Pagination/Pagination";
@@ -12,14 +13,15 @@ import ProductList from "../../components/productList/ProductList";
 import Sorting, { type SortOption } from "../../components/Sorting/Sorting";
 import { fetchCategoryBySlug, fetchChildCategories } from "../../services/categoryService/categoryService";
 import type { Category } from "../../services/categoryService/types";
-import { fetchProductPage } from "../../services/productService/productService";
-import type { ProductPage } from "../../services/productService/types";
+import { fetchCatalogFilters, fetchProductPage } from "../../services/productService/productService";
+import type { CatalogFilters, ProductFilterState, ProductPage } from "../../services/productService/types";
 
 import "./Category.scss";
 
 const PAGE_SIZE = 6;
 const EMPTY_PAGE: ProductPage = { items: [], offset: 0, limit: PAGE_SIZE, total: 0 };
 const SORT_OPTIONS: SortOption[] = ["default", "price asc", "price desc", "name asc", "name desc"];
+const EMPTY_FILTERS: ProductFilterState = { colors: [], sizes: [], equipmentTypes: [] };
 
 class CategoryNotFoundError extends Error {}
 
@@ -30,6 +32,39 @@ function readPage(value: string | null): number {
 
 function readSort(value: string | null): SortOption {
   return SORT_OPTIONS.includes(value as SortOption) ? (value as SortOption) : "default";
+}
+
+function readList(value: string | null): string[] {
+  return value
+    ? [
+        ...new Set(
+          value
+            .split(",")
+            .map((item) => item.trim().toLowerCase())
+            .filter(Boolean)
+        ),
+      ]
+    : [];
+}
+
+function readPrice(value: string | null): number | undefined {
+  if (!value) return undefined;
+  const parsed = Number(value);
+  return Number.isInteger(parsed) && parsed >= 0 ? parsed : undefined;
+}
+
+function readFilters(params: URLSearchParams): ProductFilterState {
+  return {
+    minPrice: readPrice(params.get("minPrice")),
+    maxPrice: readPrice(params.get("maxPrice")),
+    colors: readList(params.get("colors")),
+    sizes: readList(params.get("sizes")),
+    equipmentTypes: readList(params.get("equipmentTypes")),
+  };
+}
+
+function filtersKey(filters: ProductFilterState): string {
+  return JSON.stringify(filters);
 }
 
 function apiSort(sort: SortOption): string | undefined {
@@ -66,6 +101,8 @@ export default function CategoryPage() {
   const [categoryItems, setCategoryItems] = useState<CategoryFilterItem[]>([]);
   const [currentCategory, setCurrentCategory] = useState<Category | null>(null);
   const [productPage, setProductPage] = useState<ProductPage>(EMPTY_PAGE);
+  const [filterOptions, setFilterOptions] = useState<CatalogFilters | null>(null);
+  const [draftFilters, setDraftFilters] = useState<ProductFilterState>(EMPTY_FILTERS);
   const [resolvedRequestKey, setResolvedRequestKey] = useState<string | null>(null);
   const [hasError, setHasError] = useState(false);
   const [categoryNotFound, setCategoryNotFound] = useState(false);
@@ -77,8 +114,14 @@ export default function CategoryPage() {
   const currentPage = readPage(searchParams.get("page"));
   const currentSort = readSort(searchParams.get("sort"));
   const searchTerm = searchParams.get("search")?.trim() ?? "";
+  const currentFilters = useMemo(() => readFilters(searchParams), [searchParams]);
+  const currentFiltersKey = filtersKey(currentFilters);
   const requestKey = `${location.pathname}?${searchParams.toString()}#${reloadKey}`;
   const isLoading = resolvedRequestKey !== requestKey;
+
+  useEffect(() => {
+    setDraftFilters(currentFilters);
+  }, [currentFilters, currentFiltersKey]);
 
   useEffect(() => {
     let cancelled = false;
@@ -86,6 +129,7 @@ export default function CategoryPage() {
     const loadCatalog = async () => {
       setHasError(false);
       setCategoryNotFound(false);
+      setFilterOptions(null);
 
       try {
         let parentId: string | null = null;
@@ -105,7 +149,7 @@ export default function CategoryPage() {
           });
         }
 
-        const [children, nextProductPage] = await Promise.all([
+        const [children, nextProductPage, nextFilterOptions] = await Promise.all([
           fetchChildCategories(parentId),
           fetchProductPage({
             categoryId: parentId ?? undefined,
@@ -113,7 +157,9 @@ export default function CategoryPage() {
             offset: (currentPage - 1) * PAGE_SIZE,
             search: searchTerm,
             sort: apiSort(currentSort),
+            ...currentFilters,
           }),
+          fetchCatalogFilters(parentId ?? undefined),
         ]);
 
         let navigationCategories = children;
@@ -136,6 +182,7 @@ export default function CategoryPage() {
           }))
         );
         setProductPage(nextProductPage);
+        setFilterOptions(nextFilterOptions);
       } catch (loadError) {
         if (cancelled) return;
         if (loadError instanceof CategoryNotFoundError) setCategoryNotFound(true);
@@ -150,7 +197,7 @@ export default function CategoryPage() {
     return () => {
       cancelled = true;
     };
-  }, [currentPage, currentSort, requestKey, searchTerm, segments]);
+  }, [currentFilters, currentFiltersKey, currentPage, currentSort, requestKey, searchTerm, segments]);
 
   const updatePage = (page: number) => {
     const nextParams = new URLSearchParams(searchParams);
@@ -165,6 +212,37 @@ export default function CategoryPage() {
     else nextParams.set("sort", sort);
     nextParams.delete("page");
     setSearchParams(nextParams);
+  };
+
+  const applyFilters = (filters: ProductFilterState) => {
+    const nextParams = new URLSearchParams(searchParams);
+    const setOptional = (key: string, value: number | undefined) => {
+      if (value === undefined) nextParams.delete(key);
+      else nextParams.set(key, String(value));
+    };
+
+    setOptional("minPrice", filters.minPrice);
+    setOptional("maxPrice", filters.maxPrice);
+    const setList = (key: string, values: string[]) => {
+      if (values.length) nextParams.set(key, values.join(","));
+      else nextParams.delete(key);
+    };
+    setList("colors", filters.colors);
+    setList("sizes", filters.sizes);
+    setList("equipmentTypes", filters.equipmentTypes);
+    nextParams.delete("page");
+    setSearchParams(nextParams);
+  };
+
+  const clearFilters = () => {
+    const emptyFilters = { ...EMPTY_FILTERS };
+    setDraftFilters(emptyFilters);
+    applyFilters(emptyFilters);
+  };
+
+  const closeDrawer = () => {
+    setDraftFilters(currentFilters);
+    setIsDrawerOpen(false);
   };
 
   if (!isLoading && categoryNotFound) {
@@ -187,6 +265,13 @@ export default function CategoryPage() {
       <div className="category-page__layout">
         <aside className="category-page__sidebar">
           <CategoryFilter items={visibleCategoryItems} />
+          <CatalogFilterPanel
+            onApply={() => applyFilters(draftFilters)}
+            onChange={setDraftFilters}
+            onClear={clearFilters}
+            options={isLoading ? null : filterOptions}
+            value={draftFilters}
+          />
         </aside>
 
         <main aria-labelledby="catalog-title" className="category-page__main">
@@ -247,9 +332,19 @@ export default function CategoryPage() {
       </div>
 
       <div id="catalog-options">
-        <FilterDrawer isOpen={isDrawerOpen} onClose={() => setIsDrawerOpen(false)}>
+        <FilterDrawer isOpen={isDrawerOpen} onClose={closeDrawer}>
           <Sorting currentSort={currentSort} onSortChange={updateSort} />
           <CategoryFilter items={visibleCategoryItems} onNavigate={() => setIsDrawerOpen(false)} />
+          <CatalogFilterPanel
+            onApply={() => {
+              applyFilters(draftFilters);
+              setIsDrawerOpen(false);
+            }}
+            onChange={setDraftFilters}
+            onClear={clearFilters}
+            options={filterOptions}
+            value={draftFilters}
+          />
         </FilterDrawer>
       </div>
     </PageContainer>

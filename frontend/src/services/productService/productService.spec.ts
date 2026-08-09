@@ -2,7 +2,7 @@ import { AxiosError } from "axios";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { apiClient } from "../apiClient";
-import { fetchProductById, fetchProductPage, fetchProducts } from "./productService";
+import { fetchCatalogFilters, fetchProductById, fetchProductPage, fetchProducts } from "./productService";
 
 vi.mock("../apiClient", () => ({
   apiClient: { get: vi.fn() },
@@ -42,6 +42,42 @@ describe("productService", () => {
     expect(apiClient.get).toHaveBeenCalledWith("/catalog/products", {
       params: { sort: "RELEVANCE", offset: 0, limit: 20 },
     });
+  });
+
+  it("sends price and attribute filters as compact query parameters", async () => {
+    await fetchProducts({
+      minPrice: 2500,
+      maxPrice: 8000,
+      colors: ["blue", "red"],
+      sizes: ["standard"],
+      equipmentTypes: ["hydration"],
+    });
+
+    expect(apiClient.get).toHaveBeenCalledWith("/catalog/products", {
+      params: {
+        minPrice: 2500,
+        maxPrice: 8000,
+        colors: "blue,red",
+        sizes: "standard",
+        equipmentTypes: "hydration",
+        sort: "RELEVANCE",
+        offset: 0,
+        limit: 20,
+      },
+    });
+  });
+
+  it("loads filter metadata for the selected category", async () => {
+    const filters = {
+      price: { min: 2500, max: 8000 },
+      colors: [{ value: "blue", count: 2 }],
+      sizes: [{ value: "standard", count: 3 }],
+      equipmentTypes: [{ value: "hydration", count: 1 }],
+    };
+    vi.mocked(apiClient.get).mockResolvedValueOnce({ data: filters });
+
+    await expect(fetchCatalogFilters("category-id")).resolves.toEqual(filters);
+    expect(apiClient.get).toHaveBeenCalledWith("/catalog/filters", { params: { categoryId: "category-id" } });
   });
 
   it("returns pagination metadata with mapped products", async () => {

@@ -1,7 +1,7 @@
 import { isAxiosError } from "axios";
 
 import { apiClient } from "../apiClient";
-import type { Product, ProductPage } from "./types";
+import type { CatalogFilters, Product, ProductFilterState, ProductPage } from "./types";
 
 interface ProductDto {
   id: string;
@@ -21,6 +21,8 @@ interface ProductPageDto {
   total: number;
 }
 
+type CatalogFiltersDto = CatalogFilters;
+
 const sortMap: Record<string, string> = {
   "price asc": "PRICE_ASC",
   "price desc": "PRICE_DESC",
@@ -28,7 +30,7 @@ const sortMap: Record<string, string> = {
   "name.en desc": "NAME_DESC",
 };
 
-interface ProductListQuery {
+export interface ProductListQuery extends Partial<ProductFilterState> {
   categoryId?: string;
   sort?: string;
   search?: string;
@@ -62,6 +64,11 @@ export async function fetchProductPage({
   categoryId,
   sort,
   search,
+  minPrice,
+  maxPrice,
+  colors,
+  sizes,
+  equipmentTypes,
   offset = 0,
   limit = 20,
 }: ProductListQuery = {}): Promise<ProductPage> {
@@ -70,6 +77,11 @@ export async function fetchProductPage({
     params: {
       ...(categoryId ? { categoryId } : {}),
       ...(normalizedSearch ? { search: normalizedSearch } : {}),
+      ...(minPrice !== undefined ? { minPrice } : {}),
+      ...(maxPrice !== undefined ? { maxPrice } : {}),
+      ...(colors?.length ? { colors: colors.join(",") } : {}),
+      ...(sizes?.length ? { sizes: sizes.join(",") } : {}),
+      ...(equipmentTypes?.length ? { equipmentTypes: equipmentTypes.join(",") } : {}),
       sort: sort ? sortMap[sort] : "RELEVANCE",
       offset,
       limit,
@@ -81,6 +93,13 @@ export async function fetchProductPage({
     limit: response.data.limit,
     total: response.data.total,
   };
+}
+
+export async function fetchCatalogFilters(categoryId?: string): Promise<CatalogFilters> {
+  const response = await apiClient.get<CatalogFiltersDto>("/catalog/filters", {
+    params: categoryId ? { categoryId } : undefined,
+  });
+  return response.data;
 }
 
 export async function fetchProducts(query: ProductListQuery = {}): Promise<Product[]> {
