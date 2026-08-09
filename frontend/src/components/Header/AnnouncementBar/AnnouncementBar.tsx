@@ -5,14 +5,16 @@ import { Link } from "react-router-dom";
 
 import { IconButton } from "../../common/IconButton/IconButton";
 import { PageContainer } from "../../common/PageContainer/PageContainer";
+import { useAuth } from "../../context/useAuth";
 
 import "./AnnouncementBar.scss";
 
 export function AnnouncementBar() {
   const { t } = useTranslation("common");
+  const { isAuthenticated, loading } = useAuth();
   const [isVisible, setIsVisible] = useState(true);
 
-  if (!isVisible) {
+  if (loading || isAuthenticated || !isVisible) {
     return null;
   }
 
